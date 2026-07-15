@@ -13,7 +13,7 @@ export default function SovereigntyJurisdictionSection() {
         <div className="flex flex-col gap-8">
           <div className="relative h-[360px] w-full overflow-hidden sm:h-[480px] lg:h-[594px] lg:max-w-[642px]">
             <Image
-              src="/images/sovereignty/split-image.jpg"
+              src="/Sovereignity/split.png"
               alt="Sovereign infrastructure hardware in a minimalist setting"
               fill
               className="object-cover"

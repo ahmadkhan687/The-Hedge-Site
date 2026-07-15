@@ -49,7 +49,8 @@ function SectionButton({
 export default function OperatingModelSection() {
   return (
     <section id="operating-model" className="overflow-hidden bg-[#F4F0EA] pb-10 sm:pb-10 lg:pb-12">
-      <div className={`${HOME_CONTENT_SHELL} border-t-[4.14px] border-[#111] pt-10 lg:pt-12`}>
+      <div className={HOME_CONTENT_SHELL}>
+        <div className="border-t-[4.14px] border-[#111] pt-10 lg:pt-12">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <p className="font-inter text-sm font-extrabold uppercase leading-normal text-[#E83387] sm:text-base">
             Operating Model
@@ -86,6 +87,7 @@ export default function OperatingModelSection() {
             className="h-auto w-full object-cover"
             sizes="(max-width: 1728px) 100vw, 1728px"
           />
+        </div>
         </div>
       </div>
     </section>

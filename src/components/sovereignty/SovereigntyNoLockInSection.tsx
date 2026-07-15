@@ -38,7 +38,7 @@ export default function SovereigntyNoLockInSection() {
 
           <div className="relative h-[280px] w-full overflow-hidden sm:h-[360px] lg:h-[400px]">
             <Image
-              src="/images/sovereignty/inset-photo.jpg"
+              src="/Sovereignity/three.png"
               alt="Sovereign capability equipment and tools"
               fill
               className="object-cover"

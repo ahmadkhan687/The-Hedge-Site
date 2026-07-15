@@ -6,31 +6,31 @@ const steps = [
     number: "01",
     title: "Detect",
     body: "Identify anomalies across open signals and intercepted data.",
-    icon: "/images/domains/icon-search.svg",
+    icon: "/Domains/search.png",
   },
   {
     number: "02",
     title: "Decode",
     body: "Translate signals into intent and map the operational thread.",
-    icon: "/images/domains/icon-code.svg",
+    icon: "/Domains/code.png",
   },
   {
     number: "03",
     title: "Decide",
     body: "Validate confidence and choose the right response path.",
-    icon: "/images/domains/icon-shield.svg",
+    icon: "/Domains/shield-check.png",
   },
   {
     number: "04",
     title: "Deploy",
     body: "Move capability to the edge with speed and precision.",
-    icon: "/images/domains/icon-send.svg",
+    icon: "/Domains/Vector.png",
   },
   {
     number: "05",
     title: "Deepen",
     body: "Refine the model and improve detection for the next cycle.",
-    icon: "/images/domains/icon-layers.svg",
+    icon: "/Domains/Vector.png",
   },
 ];
 

@@ -5,7 +5,7 @@ export default function DomainsHeroSection() {
     <section className="relative flex items-center justify-center overflow-hidden px-5 py-24 sm:px-8 lg:px-[120px] lg:py-[160px]">
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <Image
-          src="/images/domains/hero-world-map.png"
+          src="/Domains/Hero.png"
           alt=""
           fill
           className="object-cover object-bottom opacity-60"

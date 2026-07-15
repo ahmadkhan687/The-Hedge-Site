@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import createGlobe, { type COBEOptions } from "cobe";
 import { useMotionValue, useSpring } from "motion/react";
 
@@ -38,6 +38,7 @@ export function Globe({
   const widthRef = useRef(0);
   const pointerInteracting = useRef<number | null>(null);
   const pointerInteractionMovement = useRef(0);
+  const globeRef = useRef<ReturnType<typeof createGlobe> | null>(null);
 
   const r = useMotionValue(0);
   const rs = useSpring(r, {
@@ -61,6 +62,30 @@ export function Globe({
     }
   };
 
+  const initGlobe = useCallback(() => {
+    if (!canvasRef.current) return;
+
+    widthRef.current = canvasRef.current.offsetWidth;
+
+    try {
+      globeRef.current = createGlobe(canvasRef.current, {
+        ...config,
+        width: widthRef.current * 2,
+        height: widthRef.current * 2,
+        onRender: (state) => {
+          if (!pointerInteracting.current) phiRef.current += 0.005;
+          state.phi = phiRef.current + rs.get();
+          state.width = widthRef.current * 2;
+          state.height = widthRef.current * 2;
+        },
+      });
+
+      canvasRef.current.style.opacity = "1";
+    } catch {
+      // WebGL context unavailable, skip rendering
+    }
+  }, [config, rs]);
+
   useEffect(() => {
     const onResize = () => {
       if (canvasRef.current) {
@@ -68,27 +93,44 @@ export function Globe({
       }
     };
 
-    window.addEventListener("resize", onResize);
-    onResize();
-
-    const globe = createGlobe(canvasRef.current!, {
-      ...config,
-      width: widthRef.current * 2,
-      height: widthRef.current * 2,
-      onRender: (state) => {
-        if (!pointerInteracting.current) phiRef.current += 0.005;
-        state.phi = phiRef.current + rs.get();
-        state.width = widthRef.current * 2;
-        state.height = widthRef.current * 2;
-      },
-    });
-
-    setTimeout(() => (canvasRef.current!.style.opacity = "1"), 0);
-    return () => {
-      globe.destroy();
-      window.removeEventListener("resize", onResize);
+    const onVisibilityChange = () => {
+      if (document.hidden) {
+        globeRef.current?.destroy();
+        globeRef.current = null;
+      } else {
+        initGlobe();
+      }
     };
-  }, [rs, config]);
+
+    const onContextLost = (e: Event) => {
+      e.preventDefault();
+      globeRef.current?.destroy();
+      globeRef.current = null;
+    };
+
+    const onContextRestored = () => {
+      initGlobe();
+    };
+
+    const canvas = canvasRef.current;
+
+    window.addEventListener("resize", onResize);
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    canvas?.addEventListener("webglcontextlost", onContextLost);
+    canvas?.addEventListener("webglcontextrestored", onContextRestored);
+
+    onResize();
+    initGlobe();
+
+    return () => {
+      globeRef.current?.destroy();
+      globeRef.current = null;
+      window.removeEventListener("resize", onResize);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      canvas?.removeEventListener("webglcontextlost", onContextLost);
+      canvas?.removeEventListener("webglcontextrestored", onContextRestored);
+    };
+  }, [rs, config, initGlobe]);
 
   return (
     <div className={cn("relative size-full", className)}>

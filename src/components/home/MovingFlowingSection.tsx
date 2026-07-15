@@ -37,7 +37,7 @@ export default function MovingFlowingSection() {
   return (
     <section className="relative w-full overflow-hidden bg-[#121416]">
       <video
-        className="absolute inset-0 size-full object-cover object-[center_45%]"
+        className="absolute inset-0 size-full object-cover object-[center_45%] opacity-70"
         autoPlay
         muted
         loop

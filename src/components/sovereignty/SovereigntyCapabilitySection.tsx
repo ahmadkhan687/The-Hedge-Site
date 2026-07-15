@@ -20,8 +20,8 @@ export default function SovereigntyCapabilitySection() {
 
         <div className="relative aspect-[1728/868] w-full overflow-hidden">
           <Image
-            src="/images/sovereignty/map.jpg"
-            alt="Tactical map visualization of sovereign coverage regions"
+            src="/Sovereignity/two.png"
+            alt="Sovereign capability overview"
             fill
             className="object-cover object-top"
             sizes="(max-width: 1488px) 100vw, 1488px"

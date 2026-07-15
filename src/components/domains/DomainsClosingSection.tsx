@@ -4,10 +4,10 @@ export default function DomainsClosingSection() {
   return (
     <section className="relative flex flex-col items-center gap-10 overflow-hidden px-5 py-24 sm:px-8 lg:gap-[72px] lg:px-[120px] lg:py-40">
       <Image
-        src="/images/domains/closing.jpg"
+        src="/Domains/IMAGES HEDGE WEB-AI REMOVAL (1).png"
         alt=""
         fill
-        className="object-cover"
+       className="object-cover"
         sizes="100vw"
         aria-hidden
       />

@@ -17,8 +17,21 @@ const domains = [
 
 export default function DomainsSection() {
   return (
-    <section className="w-full bg-[#F4F0EA] py-10 lg:py-14">
-      <div className={`${HOME_CONTENT_SHELL} flex flex-col gap-8 sm:gap-10 lg:gap-14`}>
+    <section className="relative w-full overflow-hidden bg-[#F4F0EA] py-10 lg:py-14">
+      <div
+        className="pointer-events-none absolute inset-0 opacity-15"
+        aria-hidden="true"
+      >
+        <Image
+          src="/Home/world-map.png"
+          alt=""
+          fill
+          className="object-cover object-center"
+          sizes="100vw"
+        />
+      </div>
+
+      <div className={`${HOME_CONTENT_SHELL} relative z-10 flex flex-col gap-8 sm:gap-10 lg:gap-14`}>
         <div className="flex flex-col gap-6">
           <div className="flex items-center gap-4">
             <p className="font-eb-garamond text-lg font-bold uppercase leading-normal text-[#C6A02C] sm:text-xl">

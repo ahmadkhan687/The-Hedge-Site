@@ -68,7 +68,7 @@ export default function DarkContainerSection() {
 
         <div className="relative aspect-[1603/606] w-full overflow-hidden border border-white/20">
           <Image
-            src="/Home/HOME2.png"
+            src="/Home/varo.png"
             alt="Varro command console interface"
             fill
             className="object-cover"

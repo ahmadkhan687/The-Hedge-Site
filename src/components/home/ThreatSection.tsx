@@ -3,13 +3,13 @@ import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
 
 export default function ThreatSection() {
   return (
-    <section id="threat" className="relative overflow-hidden bg-[#FBFAF7]">
+    <section id="threat" className="relative overflow-hidden bg-[#F4F0EA]">
       <div
-        className="pointer-events-none absolute inset-0 opacity-40"
+        className="pointer-events-none absolute inset-0 opacity-15"
         aria-hidden="true"
       >
         <Image
-          src="/images/home/world-map.png"
+          src="/Home/world-map.png"
           alt=""
           fill
           className="object-cover object-center"

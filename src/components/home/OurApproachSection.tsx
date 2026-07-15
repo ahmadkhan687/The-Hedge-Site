@@ -32,9 +32,22 @@ const tiles = [
 
 export default function OurApproachSection() {
   return (
-    <section className="w-full bg-[#FBFAF7] py-12 lg:py-16">
+    <section className="relative w-full overflow-hidden bg-[#F4F0EA] py-12 lg:py-16">
       <div
-        className={`${HOME_CONTENT_SHELL} grid grid-cols-1 gap-10 lg:grid-cols-[1fr_1.35fr] lg:gap-12`}
+        className="pointer-events-none absolute inset-0 opacity-15"
+        aria-hidden="true"
+      >
+        <Image
+          src="/Home/world-map.png"
+          alt=""
+          fill
+          className="object-cover object-center"
+          sizes="100vw"
+        />
+      </div>
+
+      <div
+        className={`${HOME_CONTENT_SHELL} relative z-10 grid grid-cols-1 gap-10 lg:grid-cols-[1fr_1.35fr] lg:gap-12`}
       >
         <div className="space-y-8">
           <div className="space-y-2">
@@ -77,6 +90,7 @@ export default function OurApproachSection() {
                 </p>
               </div>
             ))}
+            <div className="h-1 w-full bg-[#111]" />
           </div>
         </div>
 
