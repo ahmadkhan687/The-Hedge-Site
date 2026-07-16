@@ -25,6 +25,8 @@ type DomainThreatSectionProps = {
   caseHeading: string;
   caseFields: CaseField[];
   bordered?: boolean;
+  hideImageOnMobile?: boolean;
+  hideCaseOnMobile?: boolean;
 };
 
 export default function DomainThreatSection({
@@ -41,6 +43,8 @@ export default function DomainThreatSection({
   caseHeading,
   caseFields,
   bordered = true,
+  hideImageOnMobile = false,
+  hideCaseOnMobile = false,
 }: DomainThreatSectionProps) {
   return (
     <section
@@ -71,7 +75,11 @@ export default function DomainThreatSection({
           ))}
         </div>
 
-        <div className={`relative w-full overflow-hidden ${imageHeight}`}>
+        <div
+          className={`relative w-full overflow-hidden ${imageHeight} ${
+            hideImageOnMobile ? "hidden lg:block" : ""
+          }`}
+        >
           <Image
             src={imageSrc}
             alt={imageAlt}
@@ -86,12 +94,14 @@ export default function DomainThreatSection({
             {quote}
           </blockquote>
 
-          <DomainsCaseFile
-            caseLabel={caseLabel}
-            verdict={verdict}
-            heading={caseHeading}
-            fields={caseFields}
-          />
+          <div className={hideCaseOnMobile ? "hidden lg:block" : undefined}>
+            <DomainsCaseFile
+              caseLabel={caseLabel}
+              verdict={verdict}
+              heading={caseHeading}
+              fields={caseFields}
+            />
+          </div>
         </div>
       </div>
     </section>

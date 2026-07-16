@@ -12,7 +12,7 @@ const approachItems = [
     number: "02",
     title: "Strategic Technology",
     description:
-      "Our technology solutions are purpose-built for the national security enterprise. We integrate advanced platforms, data architectures, and automation pipelines that enable faster, more informed operations at every echelon.",
+      "Purpose-built for national security. We integrate advanced sensing, AI-driven analysis, and sovereign infrastructure into one decisive platform.",
   },
   {
     number: "03",
@@ -22,7 +22,7 @@ const approachItems = [
   },
 ];
 
-const tiles = [
+const desktopTiles = [
   { width: 19, color: "#E83387" },
   { width: 62, color: "#F08A22" },
   { width: 19, color: "#D7A92C" },
@@ -47,54 +47,34 @@ export default function OurApproachSection() {
       </div>
 
       <div
-        className={`${HOME_CONTENT_SHELL} relative z-10 grid grid-cols-1 gap-10 lg:grid-cols-[1fr_1.35fr] lg:gap-12`}
+        className={`${HOME_CONTENT_SHELL} relative z-10 grid grid-cols-1 gap-8 lg:grid-cols-[1fr_1.35fr] lg:gap-12`}
       >
-        <div className="space-y-6 sm:space-y-8">
-          <div className="space-y-2">
-            <h2 className="font-eb-garamond text-[clamp(2.2rem,5vw,62.341px)] font-bold uppercase leading-none text-[#C6A02C]">
-              Our Approach
-            </h2>
-            <div className="flex items-center gap-[6px]" aria-hidden="true">
-              {tiles.map((tile) => (
-                <span
-                  key={`${tile.color}-${tile.width}`}
-                  className="h-[9px] shrink-0"
-                  style={{ width: tile.width, backgroundColor: tile.color }}
-                />
-              ))}
-            </div>
-          </div>
+        {/* Header — always first */}
+        <div className="space-y-3 lg:col-start-1 lg:row-start-1">
+          <h2 className="font-inter text-sm font-extrabold uppercase leading-none tracking-[0.04em] text-[#C6A02C] lg:font-eb-garamond lg:text-[clamp(2rem,5vw,62.341px)] lg:font-bold lg:tracking-normal">
+            Our Approach
+          </h2>
 
-          <div>
-            <div className="h-1 w-full bg-[#111]" />
-            {approachItems.map((item, index) => (
-              <div
-                key={item.title}
-                className={`border-[#111] py-5 sm:py-7 ${index < approachItems.length - 1 ? "border-b" : ""}`}
-              >
-                <div className="mb-3 flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-4">
-                    <span className="font-eb-garamond text-sm font-normal text-[#E8E3D9] sm:text-[15.746px]">
-                      {item.number}
-                    </span>
-                    <h3 className="font-archivo-narrow text-lg font-bold uppercase leading-none text-[#111] sm:text-[22.417px]">
-                      {item.title}
-                    </h3>
-                  </div>
-                  <span className="font-archivo-narrow text-2xl leading-none text-[#111] sm:text-3xl">
-                    +
-                  </span>
-                </div>
-                <p className="font-eb-garamond text-base font-normal leading-normal text-[#21211C] opacity-70 sm:text-[17.933px]">
-                  {item.description}
-                </p>
-              </div>
+          {/* Mobile: 4 equal bars · Desktop: existing tile widths */}
+          <div className="flex items-center gap-[5px] lg:hidden" aria-hidden="true">
+            <span className="h-[10px] w-9 bg-[#E83387]" />
+            <span className="h-[10px] w-9 bg-[#F08A22]" />
+            <span className="h-[10px] w-9 bg-[#D7A92C]" />
+            <span className="h-[10px] w-9 bg-[#23B6D2]" />
+          </div>
+          <div className="hidden items-center gap-[6px] lg:flex" aria-hidden="true">
+            {desktopTiles.map((tile) => (
+              <span
+                key={`${tile.color}-${tile.width}`}
+                className="h-[9px] shrink-0"
+                style={{ width: tile.width, backgroundColor: tile.color }}
+              />
             ))}
-            <div className="h-1 w-full bg-[#111]" />
           </div>
         </div>
 
-        <div className="relative h-[400px] w-full overflow-hidden border border-[#111] sm:h-[520px] lg:h-[760px]">
+        {/* Image — second on mobile, right column on desktop */}
+        <div className="relative aspect-square w-full overflow-hidden border border-[#111] sm:aspect-auto sm:h-[520px] lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:h-[760px]">
           <Image
             src="/Home/HOME3.png"
             alt="Our approach operations visual"
@@ -102,6 +82,43 @@ export default function OurApproachSection() {
             className="object-cover"
             sizes="(max-width: 1024px) 100vw, 50vw"
           />
+        </div>
+
+        {/* List — third on mobile, under header on desktop */}
+        <div className="lg:col-start-1 lg:row-start-2">
+          {/* Desktop: thick black rules */}
+          <div className="hidden h-1 w-full bg-[#111] lg:block" />
+
+          {approachItems.map((item, index) => (
+            <div
+              key={item.title}
+              className={`py-6 lg:py-7 ${
+                index < approachItems.length - 1
+                  ? "border-b border-[#111]/15 lg:border-[#111]"
+                  : ""
+              }`}
+            >
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <div className="flex items-baseline gap-3 sm:gap-4">
+                  <span className="font-eb-garamond text-base font-medium text-[#C6A02C] lg:text-[15.746px] lg:font-normal lg:text-[#C8C2B6]">
+                    {item.number}
+                  </span>
+                  <h3 className="font-eb-garamond text-xl font-semibold leading-tight text-[#111] lg:font-archivo-narrow lg:text-[22.417px] lg:font-bold lg:uppercase lg:leading-none">
+                    {item.title}
+                  </h3>
+                </div>
+                {/* + icon desktop only */}
+                <span className="hidden font-archivo-narrow text-3xl leading-none text-[#111] lg:inline">
+                  +
+                </span>
+              </div>
+              <p className="font-eb-garamond text-sm font-normal leading-[160%] text-[#4A4844] lg:text-[17.933px] lg:leading-normal lg:text-[#21211C] lg:opacity-70">
+                {item.description}
+              </p>
+            </div>
+          ))}
+
+          <div className="hidden h-1 w-full bg-[#111] lg:block" />
         </div>
       </div>
     </section>

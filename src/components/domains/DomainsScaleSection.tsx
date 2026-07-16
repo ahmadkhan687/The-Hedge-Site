@@ -25,7 +25,7 @@ export default function DomainsScaleSection() {
           From a single person to a whole continent.
         </h2>
 
-        <div className="relative h-[280px] w-full overflow-hidden sm:h-[400px] lg:h-[510px]">
+        <div className="relative hidden h-[280px] w-full overflow-hidden sm:h-[400px] lg:block lg:h-[510px]">
           <Image
             src="/Domains/points image.png"
             alt="Scale visualization from individual to continental threat"

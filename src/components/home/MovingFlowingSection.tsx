@@ -35,9 +35,10 @@ const cards = [
 
 export default function MovingFlowingSection() {
   return (
-    <section className="relative w-full overflow-hidden bg-[#121416]">
+    <section className="relative w-full overflow-hidden bg-black lg:bg-[#121416]">
+      {/* Desktop only: video background */}
       <video
-        className="absolute inset-0 size-full object-cover object-[center_45%] opacity-70"
+        className="absolute inset-0 hidden size-full object-cover object-[center_45%] opacity-70 lg:block"
         autoPlay
         muted
         loop
@@ -46,30 +47,48 @@ export default function MovingFlowingSection() {
         <source src="/Home/moving flowing bg video.mp4" type="video/mp4" />
       </video>
 
-      <div className="absolute inset-0 bg-[#0E121A]/50" aria-hidden="true" />
+      <div
+        className="absolute inset-0 hidden bg-[#0E121A]/50 lg:block"
+        aria-hidden="true"
+      />
 
-      <div className={`${HOME_CONTENT_SHELL} relative z-10 pt-8 sm:pt-10 lg:pt-12`}>
-        <p className="font-eb-garamond text-lg font-bold uppercase leading-normal text-[#C6A02C] sm:text-2xl">
+      <div
+        className={`${HOME_CONTENT_SHELL} relative z-10 py-10 lg:py-0 lg:pt-12`}
+      >
+        <p className="font-inter text-xs font-extrabold uppercase tracking-[0.08em] text-[#A8A8A8] lg:font-eb-garamond lg:text-2xl lg:font-bold lg:tracking-normal lg:text-[#C6A02C]">
           Capabilities
         </p>
 
-        <h2 className="mt-3 font-eb-garamond text-[clamp(1.75rem,6vw,64px)] font-medium leading-[90%] text-white sm:mt-4">
+        {/* Mobile-only color bars */}
+        <div
+          className="mt-3 flex items-center gap-[5px] lg:hidden"
+          aria-hidden="true"
+        >
+          <span className="h-[10px] w-9 bg-[#E83387]" />
+          <span className="h-[10px] w-9 bg-[#F08A22]" />
+          <span className="h-[10px] w-9 bg-[#D7A92C]" />
+          <span className="h-[10px] w-9 bg-[#23B6D2]" />
+        </div>
+
+        <h2 className="mt-5 font-eb-garamond text-[clamp(1.875rem,7vw,64px)] font-medium leading-[1.05] text-white lg:mt-4 lg:leading-[90%]">
           Precision statecraft{" "}
           <span className="font-semibold italic">at scale.</span>
         </h2>
 
-        <div className="mt-4 h-px w-full bg-white" />
+        {/* Desktop-only white rule */}
+        <div className="mt-4 hidden h-px w-full bg-white lg:block" />
 
-        <div className="mb-10 mt-10 grid grid-cols-1 gap-3 sm:mb-[3.78rem] sm:mt-[3.78rem] sm:grid-cols-2 sm:gap-4 lg:mb-[5.04rem] lg:mt-[5.04rem] lg:grid-cols-3 lg:gap-5">
+        {/* Mobile: 1-col dark cards · Desktop: 3-col white cards */}
+        <div className="mt-8 grid grid-cols-1 gap-3 lg:mb-[5.04rem] lg:mt-[5.04rem] lg:grid-cols-3 lg:gap-5">
           {cards.map((card) => (
             <article
               key={card.title}
-              className="flex flex-col items-start gap-2 bg-white p-4 sm:gap-3 sm:p-6 lg:p-7"
+              className="flex flex-col items-start gap-2 rounded-md border border-white/10 bg-[#1A1A1A] p-5 lg:gap-3 lg:rounded-none lg:border-0 lg:bg-white lg:p-7"
             >
-              <h3 className="font-eb-garamond text-2xl font-medium italic leading-[105%] text-[#111] sm:text-[28px]">
+              <h3 className="font-eb-garamond text-xl font-semibold leading-[105%] text-white lg:text-[28px] lg:font-medium lg:italic lg:text-[#111]">
                 {card.title}
               </h3>
-              <p className="font-inter text-sm font-normal leading-[160%] text-[#6B665F] sm:text-base">
+              <p className="font-inter text-sm font-normal leading-[160%] text-[#A8A8A8] lg:text-base lg:text-[#6B665F]">
                 {card.description}
               </p>
             </article>

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
 
-const tiles = [
+const desktopTiles = [
   { width: 19, color: "#E83387" },
   { width: 19, color: "#F08A22" },
   { width: 19, color: "#D7A92C" },
@@ -11,16 +11,33 @@ const tiles = [
 
 export default function PerspectiveSection() {
   return (
-    <section className="w-full bg-[#FBFAF7] py-8 sm:py-10 lg:py-14">
+    <section className="w-full bg-[#FBFAF7] py-10 lg:py-14">
       <div
-        className={`${HOME_CONTENT_SHELL} flex flex-col gap-6 sm:gap-10 lg:h-[647px] lg:gap-12 lg:py-12`}
+        className={`${HOME_CONTENT_SHELL} flex flex-col gap-6 lg:h-[647px] lg:gap-12 lg:py-12`}
       >
-        <div className="flex flex-col gap-2 sm:gap-3">
-          <p className="font-eb-garamond text-xl font-bold uppercase leading-none text-[#D7A92C] sm:text-[30px] lg:text-[36px]">
+        <div className="flex flex-col gap-3">
+          {/* Mobile: small sans-serif · Desktop: large serif */}
+          <p className="font-inter text-sm font-extrabold uppercase leading-none tracking-[0.04em] text-[#C6A02C] lg:font-eb-garamond lg:text-[36px] lg:font-bold lg:tracking-normal">
             05 - Perspective
           </p>
-          <div className="flex items-center gap-[6px] overflow-hidden" aria-hidden="true">
-            {tiles.map((tile) => (
+
+          {/* Mobile: 4 equal bars */}
+          <div
+            className="flex items-center gap-[5px] lg:hidden"
+            aria-hidden="true"
+          >
+            <span className="h-[10px] w-9 bg-[#E83387]" />
+            <span className="h-[10px] w-9 bg-[#F08A22]" />
+            <span className="h-[10px] w-9 bg-[#D7A92C]" />
+            <span className="h-[10px] w-9 bg-[#23B6D2]" />
+          </div>
+
+          {/* Desktop: existing tiles */}
+          <div
+            className="hidden items-center gap-[6px] overflow-hidden lg:flex"
+            aria-hidden="true"
+          >
+            {desktopTiles.map((tile) => (
               <span
                 key={`${tile.color}-${tile.width}`}
                 className="h-[9px] shrink-0"
@@ -30,16 +47,16 @@ export default function PerspectiveSection() {
           </div>
         </div>
 
-        <div className="h-[4px] w-full bg-[#111]" />
+        <div className="h-[3px] w-full bg-[#111] lg:h-[4px]" />
 
-        <h2 className="w-full font-eb-garamond text-[clamp(2rem,8vw,96px)] font-medium leading-[100%] text-[#111]">
+        <h2 className="w-full font-eb-garamond text-[clamp(2rem,9vw,96px)] font-medium leading-[1.05] text-[#111] lg:leading-[100%]">
           A nation that secures itself keeps its{" "}
           <span className="italic">own counsel.</span>
         </h2>
 
         <Link
           href="/request-access"
-          className="inline-flex min-h-[44px] w-full items-center justify-center border-2 border-[#111] bg-[#111] px-5 py-3 font-inter text-sm font-extrabold uppercase leading-normal text-[#FBFAF7] no-underline transition-opacity hover:opacity-80 sm:w-fit sm:px-[22px] sm:py-[15px] sm:text-base"
+          className="inline-flex min-h-[52px] w-full items-center justify-start border-2 border-[#111] bg-[#111] px-5 py-3 font-inter text-sm font-extrabold uppercase leading-normal text-[#FBFAF7] no-underline transition-opacity hover:opacity-80 lg:min-h-[44px] lg:w-fit lg:justify-center lg:px-[22px] lg:py-[15px] lg:text-base"
         >
           Request a briefing
         </Link>

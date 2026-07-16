@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
 
-const tiles = [
+const desktopTiles = [
   { width: 19, color: "#E83387" },
   { width: 62, color: "#F08A22" },
   { width: 19, color: "#D7A92C" },
@@ -31,14 +31,33 @@ export default function DomainsSection() {
         />
       </div>
 
-      <div className={`${HOME_CONTENT_SHELL} relative z-10 flex flex-col gap-6 sm:gap-10 lg:gap-14`}>
-        <div className="flex flex-col gap-4 sm:gap-6">
-          <div className="flex items-center gap-4">
-            <p className="font-eb-garamond text-lg font-bold uppercase leading-normal text-[#C6A02C] sm:text-xl">
+      <div
+        className={`${HOME_CONTENT_SHELL} relative z-10 flex flex-col gap-6 lg:gap-14`}
+      >
+        {/* Header */}
+        <div className="flex flex-col gap-4 lg:gap-6">
+          <div className="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-center lg:gap-4">
+            <p className="font-eb-garamond text-base font-bold uppercase leading-normal text-[#C6A02C] lg:text-xl">
               03 - Domains
             </p>
-            <div className="flex items-center gap-[6px]" aria-hidden="true">
-              {tiles.map((tile) => (
+
+            {/* Mobile: 4 equal bars under label */}
+            <div
+              className="flex items-center gap-[5px] lg:hidden"
+              aria-hidden="true"
+            >
+              <span className="h-[10px] w-9 bg-[#E83387]" />
+              <span className="h-[10px] w-9 bg-[#F08A22]" />
+              <span className="h-[10px] w-9 bg-[#D7A92C]" />
+              <span className="h-[10px] w-9 bg-[#23B6D2]" />
+            </div>
+
+            {/* Desktop: existing tiles inline */}
+            <div
+              className="hidden items-center gap-[6px] lg:flex"
+              aria-hidden="true"
+            >
+              {desktopTiles.map((tile) => (
                 <span
                   key={`${tile.color}-${tile.width}`}
                   className="h-[9px] shrink-0"
@@ -48,35 +67,15 @@ export default function DomainsSection() {
             </div>
           </div>
 
-          <h2 className="max-w-[1200px] font-eb-garamond text-[clamp(1.75rem,6vw,64px)] font-medium leading-[90%] text-[#111]">
+          <h2 className="max-w-[1200px] font-eb-garamond text-[clamp(1.875rem,7vw,64px)] font-medium leading-[1.05] text-[#111] lg:leading-[90%]">
             We point that mind at the{" "}
             <span className="font-semibold italic">threats</span> that move
             fastest.
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:gap-5 lg:grid-cols-3 lg:gap-0">
-          <div className="border-b border-[#111]/10 py-1 pb-4 sm:pb-1 lg:border-b-0 lg:border-r lg:border-[#111]/20 lg:pr-4">
-            <p className="mb-1 font-inter text-sm font-extrabold uppercase leading-none text-[#6B665F] sm:text-base">
-              Domain
-            </p>
-            <p className="font-eb-garamond text-2xl font-medium leading-[90%] text-[#111] sm:text-[28px]">
-              {domains[0]}
-            </p>
-          </div>
-
-          <p className="border-b border-[#111]/10 pb-4 pt-1 font-eb-garamond text-2xl font-medium leading-[90%] text-[#111] sm:pb-1 sm:pt-5 sm:text-[28px] lg:border-b-0 lg:border-r lg:border-[#111]/20 lg:px-4">
-            {domains[1]}
-          </p>
-          <p className="pb-1 pt-1 font-eb-garamond text-2xl font-medium leading-[90%] text-[#111] sm:pt-5 sm:text-[28px] lg:px-4">
-            {domains[2]}
-          </p>
-        </div>
-
-        <div
-          className="relative w-full overflow-hidden border border-[#111]"
-          style={{ aspectRatio: "537 / 302" }}
-        >
+        {/* Image — second on mobile, last on desktop */}
+        <div className="relative order-2 aspect-[16/10] w-full overflow-hidden border border-[#111] lg:order-3 lg:aspect-[537/302]">
           <Image
             src="/Home/HOME4.png"
             alt="Intelligence domains visualization"
@@ -84,6 +83,52 @@ export default function DomainsSection() {
             className="object-cover"
             sizes="(max-width: 1728px) 100vw, 1728px"
           />
+        </div>
+
+        {/* Domain list — third on mobile, middle on desktop */}
+        <div className="order-3 lg:order-2">
+          {/* Mobile: "Domain" label + thick rule, then stacked items */}
+          <div className="lg:hidden">
+            <div className="flex flex-col gap-2">
+              <p className="font-eb-garamond text-base font-medium text-[#111]">
+                Domain
+              </p>
+              <div className="h-px w-full bg-[#111]" />
+            </div>
+
+            {domains.map((domain, index) => (
+              <div
+                key={domain}
+                className={`py-5 ${
+                  index < domains.length - 1
+                    ? "border-b border-[#111]/15"
+                    : ""
+                }`}
+              >
+                <p className="font-eb-garamond text-xl font-medium leading-[1.1] text-[#111]">
+                  {domain}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop: 3-column row */}
+          <div className="hidden grid-cols-3 lg:grid">
+            <div className="border-r border-[#111]/20 py-1 pr-4">
+              <p className="mb-1 font-inter text-base font-extrabold uppercase leading-none text-[#6B665F]">
+                Domain
+              </p>
+              <p className="font-eb-garamond text-[28px] font-medium leading-[90%] text-[#111]">
+                {domains[0]}
+              </p>
+            </div>
+            <p className="border-r border-[#111]/20 px-4 py-5 font-eb-garamond text-[28px] font-medium leading-[90%] text-[#111]">
+              {domains[1]}
+            </p>
+            <p className="px-4 py-5 font-eb-garamond text-[28px] font-medium leading-[90%] text-[#111]">
+              {domains[2]}
+            </p>
+          </div>
         </div>
       </div>
     </section>

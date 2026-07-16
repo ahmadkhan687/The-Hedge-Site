@@ -1,7 +1,51 @@
 export default function DomainsPrecisionCallout() {
   return (
-    <section className="relative overflow-hidden bg-[#0A0A10] px-5 py-16 sm:px-8 lg:px-[120px] lg:py-24">
-      <div className="mx-auto flex w-full max-w-[1488px] flex-col gap-8">
+    <section className="relative overflow-hidden bg-[#0A0A10]">
+      {/* Mobile earth background */}
+      <div className="pointer-events-none absolute inset-0 lg:hidden" aria-hidden>
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 h-full w-full object-cover"
+        >
+          <source
+            src="/Domains/Earth_revolving_from_space_1080p_202607071448.mp4"
+            type="video/mp4"
+          />
+        </video>
+        <div className="absolute inset-0 bg-[#0A0A10]/70" />
+      </div>
+
+      {/* —— Mobile layout —— */}
+      <div className="relative z-10 px-5 py-14 sm:px-8 lg:hidden">
+        <div className="mx-auto flex w-full max-w-[420px] flex-col gap-10">
+          <div className="relative flex h-[72px] w-full items-center justify-center rounded-full border border-[#D7A92C]">
+            <span className="font-eb-garamond text-[40px] font-medium leading-none text-[#D7A92C]">
+              &ldquo;
+            </span>
+          </div>
+
+          <blockquote className="font-eb-garamond text-[clamp(1.75rem,7.2vw,2.125rem)] font-medium leading-[1.25] text-[#F4F0EA]">
+            Precision is not a feature.
+            <br />
+            It is the only acceptable
+            <br />
+            standard.
+          </blockquote>
+
+          <div className="flex items-center gap-3">
+            <div className="h-px w-10 shrink-0 bg-[#D7A92C]" />
+            <p className="font-barlow-condensed text-sm font-extrabold uppercase tracking-[0.04em] text-[#F4F0EA]">
+              Editorial
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* —— Desktop layout —— */}
+      <div className="relative z-10 mx-auto hidden w-full max-w-[1488px] flex-col gap-8 px-5 py-16 sm:px-8 lg:flex lg:px-[120px] lg:py-24">
         <div className="flex size-24 items-center justify-center rounded-[48px] border border-[#D7A92C] bg-[#D7A92C]/10">
           <span className="font-eb-garamond text-[56px] font-medium leading-none text-[#D7A92C]">
             &ldquo;

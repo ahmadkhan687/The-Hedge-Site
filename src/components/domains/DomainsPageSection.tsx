@@ -73,8 +73,8 @@ export default function DomainsPageSection() {
         ]}
         imageSrc="/Domains/Below varo.png"
         imageAlt="Synthetic narrative warfare intelligence diagram"
-        imageHeight="h-[400px] sm:h-[600px] lg:h-[888px]"
-        imageClassName="object-contain object-bottom"
+        imageHeight="h-[320px] sm:h-[600px] lg:h-[888px]"
+        imageClassName="object-cover object-[center_85%] lg:object-contain lg:object-bottom"
         quote="A lie answered in four hours has not yet become the truth."
         caseLabel="Case · Field"
         verdict="Verdict · Fabricated · State level"
@@ -110,6 +110,8 @@ export default function DomainsPageSection() {
         verdict="Verdict · Coordinated · Foreign run"
         caseHeading="A popular uprising against a sitting government, manufactured across three continents."
         caseFields={threatTwoFields}
+        hideImageOnMobile
+        hideCaseOnMobile
       />
 
       <DomainsPrecisionCallout />
@@ -141,6 +143,8 @@ export default function DomainsPageSection() {
         caseHeading="A banned group moving recruits from grievance to a training camp, stage by stage."
         caseFields={threatThreeFields}
         bordered={false}
+        hideImageOnMobile
+        hideCaseOnMobile
       />
 
       <DomainsScaleSection />

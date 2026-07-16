@@ -8,14 +8,21 @@ export default function SovereigntyCtaSection() {
           It&apos;s time to act.
         </h2>
 
-        <p className="font-inter text-lg font-normal leading-7 text-[#6B665F]">
-          Request a briefing to discuss your requirements and how we can we can
-          help.
+        <p className="font-inter text-base font-normal leading-[1.65] text-[#6B665F] lg:text-lg lg:leading-7">
+          Request a briefing to discuss your requirements and how we can help.
         </p>
 
         <Link
           href="/request-access"
-          className="inline-flex w-fit items-center gap-2.5 border-b border-[#111] pb-0.5 font-inter text-base font-extrabold uppercase text-[#111] transition-opacity hover:opacity-70"
+          className="flex w-full items-center gap-2.5 border border-[#111] px-5 py-4 font-inter text-sm font-extrabold uppercase text-[#111] no-underline transition-opacity hover:opacity-70 lg:hidden"
+        >
+          Request a briefing
+          <span className="font-inter text-lg font-normal">→</span>
+        </Link>
+
+        <Link
+          href="/request-access"
+          className="hidden w-fit items-center gap-2.5 border-b border-[#111] pb-0.5 font-inter text-base font-extrabold uppercase text-[#111] no-underline transition-opacity hover:opacity-70 lg:inline-flex"
         >
           Request a briefing
           <span className="font-eb-garamond text-xl font-normal">→</span>
