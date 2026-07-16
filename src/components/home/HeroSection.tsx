@@ -1,8 +1,8 @@
 import Link from "next/link";
 import ColorBars from "@/components/home/ColorBars";
+import HeroGlobe from "@/components/home/HeroGlobe";
 import ScrollDownButton from "@/components/home/ScrollDownButton";
 import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
-import { Globe } from "@/components/ui/globe";
 
 function ArrowIcon() {
   return (
@@ -57,7 +57,7 @@ export default function HeroSection() {
         <div className="flex min-w-0 max-w-full flex-col items-center lg:items-end lg:justify-self-end">
           <div className="relative aspect-square w-[min(100%,clamp(280px,82vw,400px))] shrink-0 overflow-hidden sm:w-[min(100%,clamp(320px,58vw,460px))] lg:ml-auto lg:w-[min(calc(100vw-580px),560px)] xl:w-[min(calc(100vw-680px),720px)] 2xl:w-[min(calc(100vw-918px),1092px)]">
             <div className="pointer-events-none absolute inset-[6%] rounded-full bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.92)_0%,rgba(244,240,234,0.4)_48%,transparent_70%)]" />
-            <Globe />
+            <HeroGlobe />
           </div>
 
           {/* Desktop: color bars + scroll down (right-aligned) */}

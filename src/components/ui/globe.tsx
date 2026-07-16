@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import createGlobe, { type COBEOptions } from "cobe";
 import { useMotionValue, useSpring } from "motion/react";
 
@@ -46,6 +46,8 @@ export function Globe({
     damping: 30,
     stiffness: 100,
   });
+  const rsRef = useRef(rs);
+  rsRef.current = rs;
 
   const updatePointerInteraction = (value: number | null) => {
     pointerInteracting.current = value;
@@ -62,82 +64,61 @@ export function Globe({
     }
   };
 
-  const initGlobe = useCallback(() => {
-    if (!canvasRef.current) return;
-
-    widthRef.current = canvasRef.current.offsetWidth;
-
-    try {
-      globeRef.current = createGlobe(canvasRef.current, {
-        ...config,
-        width: widthRef.current * 2,
-        height: widthRef.current * 2,
-        onRender: (state) => {
-          if (!pointerInteracting.current) phiRef.current += 0.005;
-          state.phi = phiRef.current + rs.get();
-          state.width = widthRef.current * 2;
-          state.height = widthRef.current * 2;
-        },
-      });
-
-      canvasRef.current.style.opacity = "1";
-    } catch {
-      // WebGL context unavailable, skip rendering
-    }
-  }, [config, rs]);
-
   useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    let frameId = 0;
+
     const onResize = () => {
       if (canvasRef.current) {
         widthRef.current = canvasRef.current.offsetWidth;
       }
     };
 
-    const onVisibilityChange = () => {
-      if (document.hidden) {
-        globeRef.current?.destroy();
-        globeRef.current = null;
-      } else {
-        initGlobe();
+    const initGlobe = () => {
+      if (!canvasRef.current || globeRef.current) return;
+
+      widthRef.current = canvasRef.current.offsetWidth;
+      if (widthRef.current === 0) {
+        frameId = requestAnimationFrame(initGlobe);
+        return;
+      }
+
+      try {
+        globeRef.current = createGlobe(canvasRef.current, {
+          ...config,
+          width: widthRef.current * 2,
+          height: widthRef.current * 2,
+          onRender: (state) => {
+            if (!pointerInteracting.current) phiRef.current += 0.005;
+            state.phi = phiRef.current + rsRef.current.get();
+            state.width = widthRef.current * 2;
+            state.height = widthRef.current * 2;
+          },
+        });
+
+        canvasRef.current.style.opacity = "1";
+      } catch {
+        // WebGL context unavailable
       }
     };
 
-    const onContextLost = (e: Event) => {
-      e.preventDefault();
-      globeRef.current?.destroy();
-      globeRef.current = null;
-    };
-
-    const onContextRestored = () => {
-      initGlobe();
-    };
-
-    const canvas = canvasRef.current;
-
     window.addEventListener("resize", onResize);
-    document.addEventListener("visibilitychange", onVisibilityChange);
-    canvas?.addEventListener("webglcontextlost", onContextLost);
-    canvas?.addEventListener("webglcontextrestored", onContextRestored);
-
-    onResize();
-    initGlobe();
+    frameId = requestAnimationFrame(initGlobe);
 
     return () => {
+      cancelAnimationFrame(frameId);
       globeRef.current?.destroy();
       globeRef.current = null;
       window.removeEventListener("resize", onResize);
-      document.removeEventListener("visibilitychange", onVisibilityChange);
-      canvas?.removeEventListener("webglcontextlost", onContextLost);
-      canvas?.removeEventListener("webglcontextrestored", onContextRestored);
     };
-  }, [rs, config, initGlobe]);
+  }, [config]);
 
   return (
     <div className={cn("relative size-full", className)}>
       <canvas
-        className={cn(
-          "size-full opacity-0 transition-opacity duration-500 [contain:layout_paint_size]",
-        )}
+        className="size-full cursor-grab opacity-0 transition-opacity duration-500"
         ref={canvasRef}
         onPointerDown={(e) => {
           pointerInteracting.current = e.clientX;
