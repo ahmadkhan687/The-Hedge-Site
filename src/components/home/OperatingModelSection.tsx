@@ -63,7 +63,7 @@ export default function OperatingModelSection() {
           answer - before the country has formed the question.
         </p>
 
-        <div className="mt-10 flex w-full flex-col gap-2 sm:mt-14 sm:w-auto sm:flex-row sm:flex-wrap sm:justify-end sm:self-end lg:mt-20">
+        <div className="mt-8 flex w-full flex-col gap-3 sm:mt-14 sm:w-auto sm:flex-row sm:flex-wrap sm:gap-2 sm:justify-end sm:self-end lg:mt-20">
           <SectionButton
             href="/request-access"
             label="Request a Briefing"
@@ -78,7 +78,7 @@ export default function OperatingModelSection() {
           />
         </div>
 
-        <div className="relative mt-8 w-full overflow-hidden border border-[#111] sm:mt-10">
+        <div className="relative mt-6 w-full overflow-hidden border border-[#111] sm:mt-10">
           <Image
             src="/Home/HOME1.png"
             alt="Operating model visual"

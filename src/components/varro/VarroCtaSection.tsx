@@ -24,13 +24,7 @@ export default function VarroCtaSection() {
           className="inline-flex items-center gap-2 font-schibsted-grotesk text-sm font-semibold uppercase leading-normal text-[#2C2A26] underline decoration-from-font underline-offset-4 transition-opacity hover:opacity-70"
         >
           Built to be handed over. On your terms.
-          <Image
-            src="/images/varro/arrow-right.svg"
-            alt=""
-            width={12}
-            height={12}
-            className="shrink-0"
-          />
+          <span aria-hidden="true">→</span>
         </Link>
       </div>
 

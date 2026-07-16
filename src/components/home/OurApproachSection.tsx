@@ -32,7 +32,7 @@ const tiles = [
 
 export default function OurApproachSection() {
   return (
-    <section className="relative w-full overflow-hidden bg-[#F4F0EA] py-12 lg:py-16">
+    <section className="relative w-full overflow-hidden bg-[#F4F0EA] py-10 sm:py-12 lg:py-16">
       <div
         className="pointer-events-none absolute inset-0 opacity-15"
         aria-hidden="true"
@@ -49,7 +49,7 @@ export default function OurApproachSection() {
       <div
         className={`${HOME_CONTENT_SHELL} relative z-10 grid grid-cols-1 gap-10 lg:grid-cols-[1fr_1.35fr] lg:gap-12`}
       >
-        <div className="space-y-8">
+        <div className="space-y-6 sm:space-y-8">
           <div className="space-y-2">
             <h2 className="font-eb-garamond text-[clamp(2.2rem,5vw,62.341px)] font-bold uppercase leading-none text-[#C6A02C]">
               Our Approach
@@ -70,7 +70,7 @@ export default function OurApproachSection() {
             {approachItems.map((item, index) => (
               <div
                 key={item.title}
-                className={`border-[#111] py-7 ${index < approachItems.length - 1 ? "border-b" : ""}`}
+                className={`border-[#111] py-5 sm:py-7 ${index < approachItems.length - 1 ? "border-b" : ""}`}
               >
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <div className="flex items-center gap-4">
@@ -94,7 +94,7 @@ export default function OurApproachSection() {
           </div>
         </div>
 
-        <div className="relative h-[320px] w-full overflow-hidden border border-[#111] sm:h-[520px] lg:h-[760px]">
+        <div className="relative h-[400px] w-full overflow-hidden border border-[#111] sm:h-[520px] lg:h-[760px]">
           <Image
             src="/Home/HOME3.png"
             alt="Our approach operations visual"

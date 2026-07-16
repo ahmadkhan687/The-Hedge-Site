@@ -31,8 +31,8 @@ export default function DomainsSection() {
         />
       </div>
 
-      <div className={`${HOME_CONTENT_SHELL} relative z-10 flex flex-col gap-8 sm:gap-10 lg:gap-14`}>
-        <div className="flex flex-col gap-6">
+      <div className={`${HOME_CONTENT_SHELL} relative z-10 flex flex-col gap-6 sm:gap-10 lg:gap-14`}>
+        <div className="flex flex-col gap-4 sm:gap-6">
           <div className="flex items-center gap-4">
             <p className="font-eb-garamond text-lg font-bold uppercase leading-normal text-[#C6A02C] sm:text-xl">
               03 - Domains
@@ -48,15 +48,15 @@ export default function DomainsSection() {
             </div>
           </div>
 
-          <h2 className="max-w-[1200px] font-eb-garamond text-[clamp(2rem,4.5vw,64px)] font-medium leading-[90%] text-[#111]">
+          <h2 className="max-w-[1200px] font-eb-garamond text-[clamp(1.75rem,6vw,64px)] font-medium leading-[90%] text-[#111]">
             We point that mind at the{" "}
             <span className="font-semibold italic">threats</span> that move
             fastest.
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-3 lg:gap-0">
-          <div className="py-1 lg:border-r lg:border-[#111]/20 lg:pr-4">
+        <div className="grid grid-cols-1 gap-4 sm:gap-5 lg:grid-cols-3 lg:gap-0">
+          <div className="border-b border-[#111]/10 py-1 pb-4 sm:pb-1 lg:border-b-0 lg:border-r lg:border-[#111]/20 lg:pr-4">
             <p className="mb-1 font-inter text-sm font-extrabold uppercase leading-none text-[#6B665F] sm:text-base">
               Domain
             </p>
@@ -65,10 +65,10 @@ export default function DomainsSection() {
             </p>
           </div>
 
-          <p className="pb-1 pt-2 font-eb-garamond text-2xl font-medium leading-[90%] text-[#111] sm:pt-5 sm:text-[28px] lg:border-r lg:border-[#111]/20 lg:px-4">
+          <p className="border-b border-[#111]/10 pb-4 pt-1 font-eb-garamond text-2xl font-medium leading-[90%] text-[#111] sm:pb-1 sm:pt-5 sm:text-[28px] lg:border-b-0 lg:border-r lg:border-[#111]/20 lg:px-4">
             {domains[1]}
           </p>
-          <p className="pb-1 pt-2 font-eb-garamond text-2xl font-medium leading-[90%] text-[#111] sm:pt-5 sm:text-[28px] lg:px-4">
+          <p className="pb-1 pt-1 font-eb-garamond text-2xl font-medium leading-[90%] text-[#111] sm:pt-5 sm:text-[28px] lg:px-4">
             {domains[2]}
           </p>
         </div>

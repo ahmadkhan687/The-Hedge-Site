@@ -18,13 +18,13 @@ export default function ThreatSection() {
       </div>
 
       <div
-        className={`${HOME_CONTENT_SHELL} relative z-10 flex flex-col items-start gap-8 py-12 sm:gap-10 sm:py-14 lg:gap-12 lg:py-[100px]`}
+        className={`${HOME_CONTENT_SHELL} relative z-10 flex flex-col items-start gap-6 py-10 sm:gap-10 sm:py-14 lg:gap-12 lg:py-[100px]`}
       >
         <p className="font-eb-garamond text-lg font-bold uppercase leading-normal text-[#E83387] sm:text-xl">
           01 - THE THREAT
         </p>
 
-        <h2 className="font-eb-garamond text-[clamp(2.25rem,6vw,64px)] font-medium leading-[0.9] text-[#111111]">
+        <h2 className="font-eb-garamond text-[clamp(1.75rem,7vw,64px)] font-medium leading-[0.95] text-[#111111]">
           A machine now decides what a{" "}
           <span className="bg-[#C6A02C] px-2 text-[#F3F1EA]">nation sees.</span>
         </h2>

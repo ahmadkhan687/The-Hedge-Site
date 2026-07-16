@@ -55,40 +55,40 @@ export default function VarroEditorialSection() {
           </div>
         </div>
 
-        {/* Matches Figma: body top-left, Pulse bottom-left beside lower card, card on right */}
-        <div className="flex flex-col gap-8">
-          <h2 className="max-w-[720px] font-eb-garamond text-[clamp(1.75rem,4vw,40px)] font-normal uppercase leading-normal text-[#2C2A26]">
-            Not a report. A standing capability.
-          </h2>
+        {/* Two-column editorial: 40/60 split, card aligned with paragraph */}
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[2fr_3fr] lg:gap-x-20">
+          {/* Left column */}
+          <div className="flex flex-col">
+            <h2 className="font-eb-garamond text-[clamp(1.75rem,4vw,40px)] font-normal uppercase leading-[1.15] text-[#2C2A26]">
+              Not a report. A standing capability.
+            </h2>
 
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-stretch lg:gap-x-16">
-            <div className="flex min-h-0 flex-col">
-              <p className="max-w-[560px] font-inter text-base font-normal leading-[1.8] text-[#4A4844] sm:text-lg lg:text-xl">
-                Every output, drawn from one mind, surfaces in one place. One
-                screen. Every signal. Under your command. Internal and external,
-                open and closed, speech, text, image and broadcast. Varro Fusion
-                pulls every source and every module into a single live picture.
-                One room sees the whole field. One hand moves on it.
+            <p className="mt-8 max-w-[480px] font-inter text-base font-normal leading-[1.8] text-[#4A4844] sm:text-lg lg:mt-10 lg:text-[17px]">
+              Every output, drawn from one mind, surfaces in one place. One
+              screen. Every signal. Under your command. Internal and external,
+              open and closed, speech, text, image and broadcast. Varro Fusion
+              pulls every source and every module into a single live picture.
+              One room sees the whole field. One hand moves on it.
+            </p>
+
+            <div className=" flex flex-col gap-4  lg:pt-20">
+              <p className="font-eb-garamond text-sm font-normal uppercase tracking-[3px] text-[#BF610A]">
+                03 . The daily verdict
               </p>
-
-              <div className="mt-12 flex flex-col gap-4 lg:mt-auto lg:pt-24">
-                <p className="font-eb-garamond text-sm font-normal uppercase tracking-[3px] text-[#BF610A]">
-                  03 . The daily verdict
-                </p>
-                <p className="font-eb-garamond text-[clamp(2.5rem,8vw,80px)] font-normal italic leading-[1.1] tracking-[-1px] text-[#151518]">
-                  Pulse on the realm.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-5">
-              <VarroMissionScreen className="min-h-[480px] lg:min-h-[560px]" />
-              <p className="self-end text-right font-archivo-narrow text-xs font-normal uppercase leading-relaxed tracking-[1.8px] text-[#73706E] sm:text-sm">
-                Illustrative. Real briefs carry no client mark
-                <br />
-                and name no source.
+              <p className="font-eb-garamond text-[clamp(2.5rem,8vw,80px)] font-normal italic leading-[1.1] tracking-[-1px] text-[#151518]">
+                Pulse on the realm.
               </p>
             </div>
+          </div>
+
+          {/* Right column — card offset to align with paragraph start */}
+          <div className="flex flex-col gap-6 lg:pt-[100px]">
+            <VarroMissionScreen className="min-h-[420px] shadow-[0_20px_50px_rgba(0,0,0,0.12)] lg:min-h-[480px]" />
+            <p className="self-end text-right font-archivo-narrow text-xs font-normal uppercase leading-relaxed tracking-[1.8px] text-[#73706E] sm:text-sm">
+              Illustrative. Real briefs carry no client mark
+              <br />
+              and name no source.
+            </p>
           </div>
         </div>
       </div>

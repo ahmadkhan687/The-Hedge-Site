@@ -49,22 +49,22 @@ export default function MovingFlowingSection() {
       <div className="absolute inset-0 bg-[#0E121A]/50" aria-hidden="true" />
 
       <div className={`${HOME_CONTENT_SHELL} relative z-10 pt-8 sm:pt-10 lg:pt-12`}>
-        <p className="font-eb-garamond text-xl font-bold uppercase leading-normal text-[#C6A02C] sm:text-2xl">
+        <p className="font-eb-garamond text-lg font-bold uppercase leading-normal text-[#C6A02C] sm:text-2xl">
           Capabilities
         </p>
 
-        <h2 className="mt-4 font-eb-garamond text-[clamp(2.1rem,4vw,64px)] font-medium leading-[90%] text-white">
+        <h2 className="mt-3 font-eb-garamond text-[clamp(1.75rem,6vw,64px)] font-medium leading-[90%] text-white sm:mt-4">
           Precision statecraft{" "}
           <span className="font-semibold italic">at scale.</span>
         </h2>
 
         <div className="mt-4 h-px w-full bg-white" />
 
-        <div className="mt-[3.78rem] mb-[3.78rem] grid grid-cols-1 gap-4 sm:grid-cols-2 lg:mt-[5.04rem] lg:mb-[5.04rem] lg:grid-cols-3 lg:gap-5">
+        <div className="mb-10 mt-10 grid grid-cols-1 gap-3 sm:mb-[3.78rem] sm:mt-[3.78rem] sm:grid-cols-2 sm:gap-4 lg:mb-[5.04rem] lg:mt-[5.04rem] lg:grid-cols-3 lg:gap-5">
           {cards.map((card) => (
             <article
               key={card.title}
-              className="flex flex-col items-start gap-3 bg-white p-5 sm:p-6 lg:p-7"
+              className="flex flex-col items-start gap-2 bg-white p-4 sm:gap-3 sm:p-6 lg:p-7"
             >
               <h3 className="font-eb-garamond text-2xl font-medium italic leading-[105%] text-[#111] sm:text-[28px]">
                 {card.title}

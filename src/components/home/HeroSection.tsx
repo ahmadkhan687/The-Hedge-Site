@@ -5,9 +5,9 @@ import { Globe } from "@/components/ui/globe";
 
 export default function HeroSection() {
   return (
-    <section className="overflow-hidden bg-[#F4F0EA] pb-12 pt-10 sm:pb-14 lg:pb-16 lg:pt-[84px] xl:pb-20 2xl:pb-24">
+    <section className="overflow-hidden bg-[#F4F0EA] pb-8 pt-8 sm:pb-14 sm:pt-10 lg:pb-16 lg:pt-[84px] xl:pb-20 2xl:pb-24">
       <div
-        className={`${HOME_CONTENT_SHELL} grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start lg:gap-8 xl:gap-10 2xl:grid-cols-[730px_auto] 2xl:gap-12`}
+        className={`${HOME_CONTENT_SHELL} grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start lg:gap-8 xl:gap-10 2xl:grid-cols-[730px_auto] 2xl:gap-12`}
       >
         <div className="relative z-10 max-w-[580px] lg:max-w-[480px] lg:pt-6 xl:max-w-[560px] 2xl:max-w-[730px] 2xl:pt-[126px]">
           <p className="font-archivo-narrow text-sm font-semibold uppercase leading-normal text-[#6B665F] sm:text-base">
@@ -32,13 +32,13 @@ export default function HeroSection() {
           </p>
         </div>
 
-        <div className="flex min-w-0 max-w-full flex-col items-end justify-self-end">
-          <div className="relative ml-auto aspect-square w-[min(100%,clamp(280px,72vw,400px))] shrink-0 overflow-hidden sm:w-[min(100%,clamp(320px,58vw,460px))] lg:w-[min(calc(100vw-580px),560px)] xl:w-[min(calc(100vw-680px),720px)] 2xl:w-[min(calc(100vw-918px),1092px)]">
+        <div className="flex min-w-0 max-w-full flex-col items-center justify-self-center sm:items-end sm:justify-self-end">
+          <div className="relative mx-auto aspect-square w-[min(100%,clamp(300px,80vw,420px))] shrink-0 overflow-hidden sm:ml-auto sm:mr-0 sm:w-[min(100%,clamp(320px,58vw,460px))] lg:w-[min(calc(100vw-580px),560px)] xl:w-[min(calc(100vw-680px),720px)] 2xl:w-[min(calc(100vw-918px),1092px)]">
             <div className="pointer-events-none absolute inset-[6%] rounded-full bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.92)_0%,rgba(244,240,234,0.4)_48%,transparent_70%)]" />
             <Globe />
           </div>
 
-          <div className="mt-4 flex w-full max-w-[240px] flex-col items-end gap-5 sm:gap-6 2xl:mt-[42px] 2xl:gap-7">
+          <div className="mt-4 flex w-full max-w-[240px] flex-col items-end gap-5 self-end sm:gap-6 2xl:mt-[42px] 2xl:gap-7">
             <ColorBars />
             <ScrollDownButton />
           </div>
