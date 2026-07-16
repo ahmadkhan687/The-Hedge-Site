@@ -34,8 +34,8 @@ export default function SovereigntyJurisdictionSection() {
           />
         </div>
 
-        <div className="flex flex-col gap-6 border border-[#111] bg-white p-6">
-          <div className="flex flex-col gap-3">
+        <div className="flex flex-col border border-[#111] bg-white p-6">
+          <div className="flex flex-col gap-3 pb-6">
             <p className="font-eb-garamond text-[28px] font-medium text-[#111]">
               Our Approach
             </p>
@@ -44,42 +44,47 @@ export default function SovereigntyJurisdictionSection() {
             </p>
           </div>
 
-          <div className="h-px w-full bg-[#111]/[0.08]" />
+          <div className="h-px w-full bg-[#111]/10" />
 
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 py-6">
             <div className="flex items-center gap-2.5">
               <span className="size-1.5 shrink-0 rounded-sm bg-[#C6A02C]" />
-              <p className="font-inter text-base font-extrabold uppercase tracking-[0.96px] text-[#C6A02C]">
+              <p className="font-inter text-xs font-extrabold uppercase tracking-[0.08em] text-[#C6A02C]">
                 Your command
               </p>
             </div>
-            <p className="font-eb-garamond text-2xl font-medium leading-[30px] text-[#111]">
+            <p className="font-eb-garamond text-2xl font-medium leading-[1.2] text-[#111]">
               Full ownership. No dependency.
             </p>
             <p className="font-inter text-base font-normal leading-6 text-[#6B665F]">
-              Your infrastructure, your data, your people, built to outlast any
-              vendor and any platform.
+              Built to outlast any vendor. Sovereignty is the architecture.
             </p>
           </div>
 
-          <div className="h-px w-full bg-[#111]/[0.08]" />
+          <div className="h-px w-full bg-[#111]/10" />
 
-          <div className="flex flex-col gap-3">
-            {features.map((feature) => (
-              <div key={feature} className="flex items-start gap-2.5">
-                <span className="mt-2 size-1.5 shrink-0 rounded-sm bg-[#C6A02C]" />
-                <p className="font-inter text-base font-normal leading-6 text-[#111]">
-                  {feature}
-                </p>
-              </div>
-            ))}
+          <div className="flex flex-col gap-4 py-6">
+            <div className="flex items-center gap-2.5">
+              <span className="size-1.5 shrink-0 rounded-sm bg-[#C6A02C]" />
+              <p className="font-inter text-base font-normal leading-6 text-[#111]">
+                Model-agnostic by design.
+              </p>
+            </div>
+
+            <div className="flex gap-4">
+              <span className="w-1 shrink-0 bg-[#C6A02C]" aria-hidden="true" />
+              <p className="font-inter text-base font-normal leading-6 text-[#111]">
+                No vendor lock-in. As better tools emerge, adopt them on your
+                terms.
+              </p>
+            </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5 border-b border-[#111] pb-5">
-            <p className="font-inter text-base font-extrabold uppercase tracking-[0.96px] text-[#C6A02C]">
+          <div className="flex flex-col gap-2 border border-[#111] p-5">
+            <p className="font-inter text-xs font-extrabold uppercase tracking-[0.08em] text-[#C6A02C]">
               No lock-in
             </p>
-            <p className="font-eb-garamond text-lg font-normal leading-[26px] text-[#111]">
+            <p className="font-eb-garamond text-lg font-normal leading-[1.4] text-[#111]">
               When we leave, the capability stays.
             </p>
           </div>

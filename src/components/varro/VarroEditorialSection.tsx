@@ -21,11 +21,13 @@ export default function VarroEditorialSection() {
         {/* —— Mobile layout —— */}
         <div className="flex flex-col gap-6 lg:hidden">
           <div className="-mx-5 w-[calc(100%+2.5rem)]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/Domains/Rectangle.png"
-              alt="Source narrative synthesis, media fabrication, audio manipulation, and amplification vectors"
+            <Image
+              src="/Varro/Home3.png"
+              alt="Intelligence documents and briefing materials"
+              width={1200}
+              height={700}
               className="block h-auto w-full"
+              sizes="100vw"
             />
           </div>
 

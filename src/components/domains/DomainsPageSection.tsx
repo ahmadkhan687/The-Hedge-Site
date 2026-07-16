@@ -80,6 +80,7 @@ export default function DomainsPageSection() {
         verdict="Verdict · Fabricated · State level"
         caseHeading="A deepfaked address by a head of state conceding a rigged vote, seeded 36 hours before polls."
         caseFields={threatOneFields}
+        mobileCaseFollowImage="/Domains/Rectangle.png"
       />
 
       <DomainsEditorialBreak />

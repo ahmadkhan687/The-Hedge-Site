@@ -8,6 +8,7 @@ type DomainsCaseFileProps = {
   verdict: string;
   heading: string;
   fields: CaseField[];
+  className?: string;
 };
 
 export default function DomainsCaseFile({
@@ -15,6 +16,7 @@ export default function DomainsCaseFile({
   verdict,
   heading,
   fields,
+  className,
 }: DomainsCaseFileProps) {
   const rows: CaseField[][] = [];
   for (let i = 0; i < fields.length; i += 3) {
@@ -22,7 +24,9 @@ export default function DomainsCaseFile({
   }
 
   return (
-    <div className="flex w-full flex-col gap-6 border border-[#2A2520] bg-[#EAE5DE] p-8 sm:p-12">
+    <div
+      className={`flex w-full flex-col gap-6 border border-[#2A2520] bg-[#EAE5DE] p-8 sm:p-12 ${className ?? ""}`}
+    >
       <div className="flex items-center justify-between font-barlow-condensed text-xs font-extrabold uppercase text-[#6B665F]">
         <span>{caseLabel}</span>
         <span>Eyes only</span>

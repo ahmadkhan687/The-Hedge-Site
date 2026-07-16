@@ -27,6 +27,7 @@ type DomainThreatSectionProps = {
   bordered?: boolean;
   hideImageOnMobile?: boolean;
   hideCaseOnMobile?: boolean;
+  mobileCaseFollowImage?: string;
 };
 
 export default function DomainThreatSection({
@@ -45,11 +46,12 @@ export default function DomainThreatSection({
   bordered = true,
   hideImageOnMobile = false,
   hideCaseOnMobile = false,
+  mobileCaseFollowImage,
 }: DomainThreatSectionProps) {
   return (
     <section
       className={`px-5 py-16 sm:px-8 lg:px-[120px] lg:py-40 ${
-        bordered ? "border-t border-[#111]" : ""
+        bordered ? "lg:border-t lg:border-[#111]" : ""
       }`}
     >
       <div className="mx-auto flex w-full max-w-[1488px] flex-col gap-12 lg:gap-20">
@@ -101,6 +103,19 @@ export default function DomainThreatSection({
               heading={caseHeading}
               fields={caseFields}
             />
+
+            {mobileCaseFollowImage ? (
+              <div className="relative mt-6 -mx-5 w-[calc(100%+2.5rem)] overflow-hidden sm:-mx-8 sm:w-[calc(100%+4rem)] lg:hidden">
+                <Image
+                  src={mobileCaseFollowImage}
+                  alt="Source narrative synthesis, media fabrication, audio manipulation, and amplification vectors"
+                  width={1200}
+                  height={700}
+                  className="block h-auto w-full"
+                  sizes="100vw"
+                />
+              </div>
+            ) : null}
           </div>
         </div>
       </div>

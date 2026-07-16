@@ -13,13 +13,61 @@ const bars = [
 export default function DarkContainerSection() {
   return (
     <section className="w-full overflow-hidden bg-[#121416] text-white">
+      {/* —— Mobile layout —— */}
+      <div className={`${HOME_CONTENT_SHELL} flex flex-col gap-6 pt-10 pb-12 lg:hidden`}>
+        <div className="flex flex-col gap-3">
+          <p className="font-eb-garamond text-base font-bold uppercase leading-normal text-[#E83387]">
+            02 - THE ANSWER
+          </p>
+          <div className="flex items-center gap-[5px]" aria-hidden="true">
+            <span className="h-[10px] w-9 bg-[#E83387]" />
+            <span className="h-[10px] w-9 bg-[#F08A22]" />
+            <span className="h-[10px] w-9 bg-[#D7A92C]" />
+            <span className="h-[10px] w-9 bg-[#23B6D2]" />
+          </div>
+        </div>
+
+        <div className="relative -mx-5 aspect-[4/3] w-[calc(100%+2.5rem)] overflow-hidden rounded-sm sm:-mx-6 sm:w-[calc(100%+3rem)]">
+          <Image
+            src="/Home/varo.png"
+            alt="Varro command console interface"
+            fill
+            className="object-cover"
+            sizes="100vw"
+            priority
+          />
+        </div>
+
+        <p className="font-eb-garamond text-base font-normal leading-[1.7] text-[#B8B8B8]">
+          One mind that never sleeps. Agents watch every source — networks,
+          narratives, signals — in real time, at national scale.
+        </p>
+
+        <h2 className="font-eb-garamond text-[clamp(3.5rem,14vw,5rem)] font-bold leading-none tracking-[-2px] text-[#F4F0EA]">
+          VARRO
+        </h2>
+
+        <p className="font-inter text-sm font-extrabold uppercase leading-normal tracking-[0.04em] text-[#C6A02C]">
+          The system a state{" "}
+          <span className="italic">sees with.</span>
+        </p>
+
+        <Link
+          href="/varro"
+          className="mt-2 flex min-h-[52px] w-full items-center justify-center border border-white bg-transparent font-inter text-sm font-extrabold uppercase leading-normal tracking-[0.04em] text-white no-underline transition-opacity hover:opacity-80"
+        >
+          More About Us
+        </Link>
+      </div>
+
+      {/* —— Desktop layout —— */}
       <div
-        className={`${HOME_CONTENT_SHELL} flex flex-col gap-8 pt-10 pb-[3.9rem] sm:gap-10 sm:pt-10 sm:pb-[3.9rem] lg:gap-12 lg:pb-[3.9rem] lg:pt-[76px]`}
+        className={`${HOME_CONTENT_SHELL} hidden flex-col gap-8 pb-[3.9rem] pt-[76px] lg:flex lg:gap-12`}
       >
-        <div className="grid grid-cols-1 gap-8 sm:gap-10 lg:grid-cols-2 lg:gap-14">
-          <div className="flex flex-col gap-5 sm:gap-7">
+        <div className="grid grid-cols-2 gap-14">
+          <div className="flex flex-col gap-7">
             <div className="flex items-center gap-4">
-              <p className="font-eb-garamond text-lg font-bold uppercase leading-normal text-[#C6A02C] sm:text-xl">
+              <p className="font-eb-garamond text-xl font-bold uppercase leading-normal text-[#C6A02C]">
                 02 - THE ANSWER
               </p>
               <div className="flex items-center gap-[6px]" aria-hidden="true">
@@ -33,18 +81,18 @@ export default function DarkContainerSection() {
               </div>
             </div>
 
-            <h2 className="font-eb-garamond text-[clamp(2.75rem,10vw,7.875rem)] font-bold leading-[100%] tracking-[-2px] text-white sm:tracking-[-3.5px]">
+            <h2 className="font-eb-garamond text-[clamp(2.75rem,10vw,7.875rem)] font-bold leading-[100%] tracking-[-3.5px] text-white">
               VARRO
             </h2>
 
-            <p className="font-eb-garamond text-[clamp(1.45rem,5vw,2.5rem)] font-medium leading-[95%] text-[#FBFAF7] sm:leading-[90%]">
+            <p className="font-eb-garamond text-[clamp(1.45rem,5vw,2.5rem)] font-medium leading-[90%] text-[#FBFAF7]">
               The system a state{" "}
               <span className="font-semibold italic text-[#C6A02C]">sees with.</span>
             </p>
           </div>
 
-          <div className="flex flex-col items-start gap-8 sm:gap-10 lg:pt-5">
-            <div className="font-eb-garamond text-base font-normal leading-[180%] text-white sm:text-lg sm:leading-[190%] lg:text-xl lg:leading-[200%]">
+          <div className="flex flex-col items-start gap-10 pt-5">
+            <div className="font-eb-garamond text-xl font-normal leading-[200%] text-white">
               <p>
                 At its core, one mind that never sleeps. Agents watch every
                 source. Networks, narratives, signals, movements. Each one
@@ -59,14 +107,14 @@ export default function DarkContainerSection() {
 
             <Link
               href="/varro"
-              className="inline-flex min-h-[42px] items-center gap-3 rounded-sm bg-black/20 px-5 py-3 font-eb-garamond text-sm font-normal leading-[14px] text-white transition-opacity hover:opacity-80 sm:text-base"
+              className="inline-flex min-h-[42px] items-center gap-3 rounded-sm bg-black/20 px-5 py-3 font-eb-garamond text-base font-normal leading-[14px] text-white transition-opacity hover:opacity-80"
             >
               More about us <span aria-hidden="true">→</span>
             </Link>
           </div>
         </div>
 
-        <div className="relative aspect-[4/3] w-full overflow-hidden border border-white/20 sm:aspect-[1603/606]">
+        <div className="relative aspect-[1603/606] w-full overflow-hidden border border-white/20">
           <Image
             src="/Home/varo.png"
             alt="Varro command console interface"

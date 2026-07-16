@@ -4,33 +4,84 @@ const cards = [
   {
     title: "No Outside Switch",
     body: "No single-vendor dependency. As better tools emerge, you adopt them, always on your own terms.",
+    bodyMobile:
+      "No vendor lock-in. As better tools emerge, adopt them on your terms.",
   },
   {
     title: "Sovereign Architecture",
     body: "Designed for jurisdictions where data privacy isn't a policy, it's the physical reality.",
+    bodyMobile: "Designed for jurisdictions where data privacy is the law.",
   },
   {
     title: "Deep Capability",
     body: "We don't just ship software. We train the teams that will maintain your digital borders for the next decade.",
+    bodyMobile:
+      "We train the teams that maintain your capability after we leave.",
   },
 ];
 
 export default function SovereigntyNoLockInSection() {
   return (
     <section className="bg-[#F4F0EA] px-5 py-14 sm:px-8 lg:px-[120px] lg:py-[140px]">
-      {/* —— Mobile layout: quote + headline —— */}
-      <div className="mx-auto flex w-full max-w-[1488px] flex-col items-center gap-10 lg:hidden">
-        <blockquote className="w-full border border-[#B8B4AC] bg-white px-6 py-8 text-center font-inter text-base font-normal italic leading-[1.6] text-[#808080]">
-          &ldquo;We build toward our exit. You keep everything.&rdquo;
-        </blockquote>
+      {/* —— Mobile layout —— */}
+      <div className="mx-auto flex w-full max-w-[1488px] flex-col gap-8 lg:hidden">
+        <div className="flex flex-col gap-4">
+          <p className="font-inter text-xs font-extrabold uppercase tracking-[0.06em] text-[#C6A02C]">
+            No lock in
+          </p>
+          <h2 className="font-eb-garamond text-[clamp(1.75rem,7vw,2.25rem)] font-medium leading-[1.15] text-[#111]">
+            When we leave, the sight stays.
+          </h2>
+          <p className="font-inter text-base font-normal leading-[1.65] text-[#6B665F]">
+            Your infrastructure, your people — built to outlast any vendor or
+            platform.
+          </p>
+        </div>
 
-        <h2 className="text-center font-eb-garamond text-[clamp(2.25rem,9vw,2.75rem)] font-medium leading-[1.12] text-[#111]">
-          Sovereignty is not a
-          <br />
-          feature. It is the
-          <br />
-          <span className="bg-[#D7A92C] px-2 text-[#F4F0EA]">design.</span>
-        </h2>
+        <div className="relative h-[240px] w-full overflow-hidden sm:h-[300px]">
+          <Image
+            src="/Sovereignity/three.png"
+            alt="Sovereign capability equipment and tools"
+            fill
+            className="object-cover"
+            sizes="100vw"
+          />
+        </div>
+
+        <div className="flex flex-col gap-4">
+          {cards.map((card) => (
+            <div
+              key={card.title}
+              className="flex flex-col gap-3 border border-[#111]/10 bg-[#F4F0EA] px-5 py-5"
+            >
+              <div className="flex items-center gap-3">
+                <span className="size-2 shrink-0 rounded-full bg-[#C6A02C]" />
+                <p className="font-eb-garamond text-xl font-medium text-[#111]">
+                  {card.title}
+                </p>
+              </div>
+              <p className="font-inter text-sm font-normal leading-[1.6] text-[#6B665F]">
+                {card.bodyMobile}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex flex-col items-center gap-10 pt-4">
+          <blockquote className="w-full border border-[#B8B4AC] bg-white px-6 py-8 text-center font-inter text-base font-normal italic leading-[1.6] text-[#808080]">
+            &ldquo;We build toward our exit. You keep everything.&rdquo;
+          </blockquote>
+
+          <h2 className="text-center font-eb-garamond text-[clamp(2.25rem,9vw,2.75rem)] font-medium leading-[1.12] text-[#111]">
+            Sovereignty is not a
+            <br />
+            feature. It is the
+            <br />
+            <span className="inline-block bg-[#D7A92C] px-2 text-[#F4F0EA]">
+              design.
+            </span>
+          </h2>
+        </div>
       </div>
 
       {/* —— Desktop content —— */}
@@ -52,7 +103,7 @@ export default function SovereigntyNoLockInSection() {
             </p>
           </div>
 
-          <div className="relative h-[280px] w-full overflow-hidden sm:h-[360px] lg:h-[400px]">
+          <div className="relative h-[400px] w-full overflow-hidden">
             <Image
               src="/Sovereignity/three.png"
               alt="Sovereign capability equipment and tools"
@@ -63,7 +114,7 @@ export default function SovereigntyNoLockInSection() {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col gap-6 lg:mt-0">
+        <div className="flex flex-col gap-6">
           {cards.map((card) => (
             <div
               key={card.title}
@@ -81,14 +132,14 @@ export default function SovereigntyNoLockInSection() {
             </div>
           ))}
 
-          <blockquote className="hidden border border-[#808080] p-6 font-inter text-base font-normal italic uppercase leading-[23px] tracking-[0.96px] text-[#808080] lg:block">
+          <blockquote className="border border-[#808080] p-6 font-inter text-base font-normal italic uppercase leading-[23px] tracking-[0.96px] text-[#808080]">
             &ldquo;We build toward our exit. When engagement ends, you keep the
             system, data, methods, and trained people.&rdquo;
           </blockquote>
         </div>
       </div>
 
-      <div className="mx-auto mt-20 hidden w-full max-w-[1488px] justify-center px-5 sm:px-8 lg:mt-24 lg:flex lg:px-0">
+      <div className="mx-auto mt-20 hidden w-full max-w-[1488px] justify-center lg:mt-24 lg:flex">
         <p className="text-center font-eb-garamond text-[clamp(2rem,5vw,68px)] font-medium leading-[1.1] text-[#111]">
           Sovereignty is not a feature. It is the{" "}
           <span className="bg-[#D7A92C] px-2 text-[#F4F0EA]">design.</span>

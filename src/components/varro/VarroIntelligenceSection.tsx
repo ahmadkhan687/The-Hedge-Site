@@ -26,8 +26,8 @@ export default function VarroIntelligenceSection() {
     <section className="bg-[#F5F0E8] pb-8 lg:pb-12">
       <div className="px-5 sm:px-8 lg:px-20">
         <div className="mx-auto flex w-full max-w-[1568px] flex-col gap-8 lg:flex-row lg:items-start lg:justify-center lg:gap-12">
-          {/* Faculty card */}
-          <div className="flex h-[100px] w-[187px] shrink-0 flex-col gap-2 rounded-sm border border-[#2C2A26] bg-[#F5F0E8] p-3">
+          {/* Faculty card — desktop only (mobile lives in hero) */}
+          <div className="hidden h-[100px] w-[187px] shrink-0 flex-col gap-2 rounded-sm border border-[#2C2A26] bg-[#F5F0E8] p-3 lg:flex">
             <p className="font-eb-garamond text-xs font-bold uppercase leading-normal text-[#4A4844]">
               Faculty
             </p>
@@ -88,7 +88,19 @@ export default function VarroIntelligenceSection() {
         </blockquote>
       </div>
 
-      <div className="relative mt-6 h-[280px] w-full overflow-hidden sm:mt-16 sm:h-[420px] lg:mt-20 lg:h-[600px]">
+      {/* Mobile banner */}
+      <div className="relative mt-6 h-[280px] w-full overflow-hidden sm:mt-16 sm:h-[420px] lg:hidden">
+        <Image
+          src="/Varro/bannermobile.png"
+          alt="Varro intelligence banner visual"
+          fill
+          className="object-cover object-center"
+          sizes="100vw"
+        />
+      </div>
+
+      {/* Desktop banner */}
+      <div className="relative mt-20 hidden h-[600px] w-full overflow-hidden lg:block">
         <Image
           src="/Varro/banner.png"
           alt="Varro intelligence banner visual"

@@ -5,8 +5,9 @@ import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
 export default function ThreatSection() {
   return (
     <section id="threat" className="relative overflow-hidden bg-[#F4F0EA]">
+      {/* Desktop: faded map background */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-15"
+        className="pointer-events-none absolute inset-0 hidden opacity-15 lg:block"
         aria-hidden="true"
       >
         <Image
@@ -26,7 +27,6 @@ export default function ThreatSection() {
             01 - THE THREAT
           </p>
 
-          {/* Mobile-only color bars */}
           <div className="flex items-center gap-[5px] lg:hidden" aria-hidden="true">
             <span className="h-[10px] w-9 bg-[#E83387]" />
             <span className="h-[10px] w-9 bg-[#F08A22]" />
@@ -37,7 +37,6 @@ export default function ThreatSection() {
 
         <h2 className="font-eb-garamond text-[clamp(1.875rem,7.5vw,64px)] font-medium leading-[1.05] text-[#111111]">
           A machine now decides what a{" "}
-          {/* Mobile: italic · Desktop: gold highlight */}
           <span className="italic lg:not-italic lg:bg-[#C6A02C] lg:px-2 lg:text-[#F3F1EA]">
             nation sees.
           </span>
@@ -49,13 +48,11 @@ export default function ThreatSection() {
           places at once, and leave no prints.
         </p>
 
-        {/* Desktop-only closing line */}
         <p className="hidden font-eb-garamond text-[clamp(1.375rem,3vw,28.488px)] font-medium leading-[0.9] text-[#111111] lg:block">
           So we built the means to{" "}
           <span className="italic">see through it.</span>
         </p>
 
-        {/* Mobile-only CTA */}
         <Link
           href="/request-access"
           className="mt-2 flex min-h-[52px] w-full items-center justify-center border-2 border-[#111] bg-transparent font-inter text-sm font-extrabold uppercase leading-normal text-[#111] no-underline transition-opacity hover:opacity-80 lg:hidden"

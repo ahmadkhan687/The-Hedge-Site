@@ -3,10 +3,43 @@ import Image from "next/image";
 export default function VarroHeroSection() {
   return (
     <>
-      {/* Intro: Chapter / Varro / subtitle */}
-      <section className="flex flex-col items-center bg-[#F5F0E8] px-5 pt-16 sm:px-8 sm:pt-24 lg:gap-[56px] lg:px-20 lg:pt-[140px]">
-        <div className="flex w-full max-w-[647px] flex-col items-center gap-3 text-center sm:gap-4">
-          <p className="font-schibsted-grotesk text-xs font-semibold uppercase leading-normal text-[#A38F75] sm:text-base">
+      {/* —— Mobile: chapter + image —— */}
+      <section className="bg-[#F5F0E8] lg:hidden">
+        <div className="flex flex-col px-5 pb-8 pt-16 sm:px-8 sm:pt-20">
+          <p className="font-schibsted-grotesk text-xs font-semibold uppercase leading-normal tracking-[0.06em] text-[#A38F75]">
+            Chapter
+          </p>
+
+          <div className="mt-3 flex w-full flex-col items-center text-center">
+            <h1 className="font-eb-garamond text-[clamp(4.5rem,22vw,6.5rem)] font-normal leading-[0.85] text-[#2C2A26]">
+              Varro
+            </h1>
+
+            <p className="mt-4 max-w-[320px] font-inter text-base font-normal leading-[1.5] text-[#4A4844]/80">
+              A passage through the unrecorded tides of the northern straits.
+            </p>
+          </div>
+        </div>
+
+        <div className="h-8 w-full bg-[#F5F0E8]" aria-hidden="true" />
+        <div className="h-px w-full bg-[#D9D7D2]" />
+
+        <div className="relative aspect-[4/3] w-full overflow-hidden">
+          <Image
+            src="/Varro/Hero1.png"
+            alt="Varro command console with multi-screen intelligence displays"
+            fill
+            className="object-cover object-[center_42%]"
+            priority
+            sizes="100vw"
+          />
+        </div>
+      </section>
+
+      {/* —— Desktop: intro —— */}
+      <section className="hidden flex-col items-center bg-[#F5F0E8] px-20 pt-[140px] lg:flex lg:gap-[56px]">
+        <div className="flex w-full max-w-[647px] flex-col items-center gap-4 text-center">
+          <p className="font-schibsted-grotesk text-base font-semibold uppercase leading-normal text-[#A38F75]">
             Chapter
           </p>
 
@@ -14,20 +47,47 @@ export default function VarroHeroSection() {
             Varro
           </h1>
 
-          <p className="max-w-[320px] font-inter text-base font-normal leading-[150%] text-[#4A4844]/80 sm:max-w-none sm:text-[clamp(1.125rem,2.5vw,24px)] sm:leading-normal">
+          <p className="font-inter text-[clamp(1.125rem,2.5vw,24px)] font-normal leading-normal text-[#4A4844]/80">
             A passage through the unrecorded tides of the northern straits.
           </p>
         </div>
-
-        {/* Mobile-only divider under intro */}
-        <div className="mt-10 h-px w-16 bg-[#D9D7D2] sm:mt-14 lg:hidden" />
       </section>
 
-      {/* Hero image + mission copy */}
-      <section className="flex flex-col items-center bg-[#F5F0E8] pb-10 pt-8 sm:gap-12 sm:px-8 sm:pb-5 sm:pt-12 lg:gap-16 lg:px-20 lg:pb-[19px] lg:pt-[53px]">
-        <div className="flex w-full max-w-[1568px] flex-col items-center gap-8 sm:gap-12 lg:gap-[62px]">
-          {/* Full-bleed on mobile, padded + rounded on desktop */}
-          <div className="relative aspect-[4/3] w-full overflow-hidden sm:aspect-[1568/470] sm:rounded-xl lg:px-0">
+      {/* —— Mobile: mission + faculty box —— */}
+      <section className="bg-[#F5F0E8] px-5 pb-10 pt-10 sm:px-8 lg:hidden">
+        <div className="mx-auto flex w-full max-w-[900px] flex-col items-center gap-5 text-center">
+          <p className="font-schibsted-grotesk text-[10px] font-semibold uppercase leading-normal tracking-[0.08em] text-[#A38F75]">
+            Mission designation: Varro Collection
+          </p>
+
+          <h2 className="font-eb-garamond text-[clamp(2.5rem,12vw,3.5rem)] font-normal leading-[0.9] text-[#2C2A26]">
+            A NATION&apos;S
+            <br />
+            OWN EYES.
+          </h2>
+
+          <p className="font-inter text-base font-normal leading-normal text-[#4A4844]/80">
+            Awake when the country sleeps.
+          </p>
+
+          <div className="mt-4 h-px w-16 bg-[#D9D7D2]" />
+        </div>
+
+        <div className="mx-auto mt-8 flex w-full max-w-[900px] flex-col gap-3 border border-[#2C2A26] p-5">
+          <p className="font-eb-garamond text-sm font-bold uppercase leading-normal text-[#2C2A26]">
+            Faculty
+          </p>
+          <div className="h-px w-8 bg-[#2C2A26]/25" />
+          <p className="font-eb-garamond text-base font-normal leading-[1.35] text-[#4A4844]">
+            Sovereign intelligence
+          </p>
+        </div>
+      </section>
+
+      {/* —— Desktop: mission copy —— */}
+      <section className="hidden flex-col items-center bg-[#F5F0E8] pb-[19px] pt-[53px] lg:flex lg:gap-16 lg:px-20">
+        <div className="flex w-full max-w-[1568px] flex-col items-center gap-[62px]">
+          <div className="relative aspect-[1568/470] w-full overflow-hidden rounded-xl">
             <Image
               src="/Varro/Hero1.png"
               alt="Varro command console with multi-screen intelligence displays"
@@ -38,23 +98,22 @@ export default function VarroHeroSection() {
             />
           </div>
 
-          <div className="flex max-w-[900px] flex-col items-center gap-4 px-5 text-center sm:gap-6 sm:px-0 lg:gap-[35px]">
-            <p className="font-schibsted-grotesk text-[10px] font-semibold uppercase leading-normal tracking-[0.04em] text-[#A38F75] sm:text-xs">
+          <div className="flex max-w-[900px] flex-col items-center gap-[35px] text-center">
+            <p className="font-schibsted-grotesk text-xs font-semibold uppercase leading-normal tracking-[0.04em] text-[#A38F75]">
               Mission designation: Varro Collection
             </p>
 
             <h2 className="font-eb-garamond text-[clamp(2.25rem,11vw,113px)] font-normal leading-[85%] text-[#2C2A26]">
-              A NATION&apos;S
-              <br className="lg:hidden" /> OWN EYES.
+              A NATION&apos;S OWN EYES.
             </h2>
 
-            <p className="max-w-[280px] font-inter text-base font-normal leading-normal text-[#4A4844]/80 sm:max-w-[322px] sm:text-lg lg:text-xl">
+            <p className="max-w-[322px] font-inter text-xl font-normal leading-normal text-[#4A4844]/80">
               Awake when the country sleeps.
             </p>
           </div>
         </div>
 
-        <div className="mt-8 h-px w-16 bg-[#D9D7D2] sm:mt-0 sm:w-full sm:max-w-[405px]" />
+        <div className="mt-8 h-px w-full max-w-[405px] bg-[#D9D7D2]" />
       </section>
     </>
   );
