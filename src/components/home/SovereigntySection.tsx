@@ -41,7 +41,7 @@ export default function SovereigntySection() {
               alt="Sovereign intelligence visual"
               fill
               className="object-cover"
-              sizes="100vw"
+              sizes="(max-width: 639px) calc(100vw - 40px), (max-width: 1023px) calc(100vw - 48px), 0px"
             />
           </div>
 
@@ -106,7 +106,7 @@ export default function SovereigntySection() {
               alt="Sovereign intelligence visual"
               fill
               className="object-cover"
-              sizes="(max-width: 1728px) 100vw, 1728px"
+              sizes="(max-width: 1023px) 0px, (max-width: 1728px) calc(100vw - 140px), 1588px"
             />
             <div className="absolute inset-0 bg-black/25" />
 

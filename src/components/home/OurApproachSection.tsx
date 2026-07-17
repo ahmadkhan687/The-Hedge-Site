@@ -33,22 +33,14 @@ const desktopTiles = [
 export default function OurApproachSection() {
   return (
     <section className="relative w-full overflow-hidden bg-[#F4F0EA] py-10 sm:py-12 lg:py-16">
-      <div
-        className="pointer-events-none absolute inset-0 bg-[#F4F0EA]"
+      <Image
+        src="/Home/world-map.png"
+        alt=""
+        fill
         aria-hidden="true"
+        sizes="100vw"
+        className="pointer-events-none object-cover object-center opacity-20 invert mix-blend-multiply"
       />
-      <div
-        className="pointer-events-none absolute inset-0 opacity-15"
-        aria-hidden="true"
-      >
-        <Image
-          src="/Home/world-map.png"
-          alt=""
-          fill
-          className="object-cover object-center mix-blend-screen"
-          sizes="100vw"
-        />
-      </div>
 
       <div
         className={`${HOME_CONTENT_SHELL} relative z-10 grid grid-cols-1 gap-8 lg:grid-cols-[1fr_1.35fr] lg:gap-12`}

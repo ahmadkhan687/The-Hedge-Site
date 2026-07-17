@@ -5,19 +5,14 @@ import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
 export default function ThreatSection() {
   return (
     <section id="threat" className="relative overflow-hidden bg-[#F4F0EA]">
-      {/* Desktop: faded map background */}
-      <div
-        className="pointer-events-none absolute inset-0 hidden opacity-15 lg:block"
+      <Image
+        src="/Home/world-map.png"
+        alt=""
+        fill
         aria-hidden="true"
-      >
-        <Image
-          src="/Home/world-map.png"
-          alt=""
-          fill
-          className="object-cover object-center"
-          sizes="100vw"
-        />
-      </div>
+        sizes="100vw"
+        className="pointer-events-none hidden object-cover object-center opacity-20 invert mix-blend-multiply lg:block"
+      />
 
       <div
         className={`${HOME_CONTENT_SHELL} relative z-10 flex flex-col items-start gap-5 py-10 sm:gap-8 sm:py-14 lg:gap-12 lg:py-[100px]`}

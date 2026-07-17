@@ -33,7 +33,7 @@ export default function DarkContainerSection() {
             alt="Varro command console interface"
             fill
             className="object-cover"
-            sizes="100vw"
+            sizes="(max-width: 1023px) 100vw, 0px"
             priority
           />
         </div>
@@ -120,7 +120,7 @@ export default function DarkContainerSection() {
             alt="Varro command console interface"
             fill
             className="object-cover"
-            sizes="(max-width: 1728px) 100vw, 1728px"
+            sizes="(max-width: 1023px) 0px, (max-width: 1728px) calc(100vw - 140px), 1588px"
           />
         </div>
       </div>
