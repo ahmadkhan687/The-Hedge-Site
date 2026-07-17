@@ -369,12 +369,12 @@ export default function DottedGlobe({ className }: { className?: string }) {
           // Warm taupe — matches site cream palette, still readable on #F4F0EA.
           // Mobile: lighter base color and softer alpha.
           const lightness = key * 0.22 + fill * 0.12;
-          const alpha = depthFade * ((isMobile ? 0.58 : 0.72) - lightness * 0.15);
+          const alpha = depthFade * ((isMobile ? 0.42 : 0.72) - lightness * 0.15);
           if (alpha < 0.02) continue;
-          const dr = 1.1 + depthT * 0.7;
+          const dr = (1.1 + depthT * 0.7) * (isMobile ? 0.75 : 1);
           ctx.beginPath();
           ctx.arc(sx, sy, dr, 0, Math.PI * 2);
-          const base = isMobile ? 172 : 139;
+          const base = isMobile ? 200 : 139;
           const r = Math.round(base + (1 - depthFade) * 42);
           const g = Math.round(base - 9 + (1 - depthFade) * 45);
           const b = Math.round(base - 21 + (1 - depthFade) * 45);
