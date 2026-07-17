@@ -6,7 +6,7 @@ export default function AboutStrategicIntentSection() {
       <div className="absolute inset-0 bg-[#121416]" />
       <div className="absolute inset-0 opacity-20" aria-hidden="true">
         <Image
-          src="/About/image%20632_2.png"
+          src="/About/image%20632_2.webp"
           alt=""
           fill
           className="object-cover object-top blur-[2px]"

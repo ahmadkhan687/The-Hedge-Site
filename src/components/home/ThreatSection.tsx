@@ -6,7 +6,7 @@ export default function ThreatSection() {
   return (
     <section id="threat" className="relative overflow-hidden bg-[#F4F0EA]">
       <Image
-        src="/Home/world-map.png"
+        src="/Home/world-map.webp"
         alt=""
         fill
         aria-hidden="true"

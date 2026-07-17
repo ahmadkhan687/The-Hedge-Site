@@ -35,7 +35,7 @@ export default function OurApproachSection() {
   return (
     <section className="relative w-full overflow-hidden bg-[#F4F0EA] py-10 sm:py-12 lg:py-16">
       <Image
-        src="/Home/world-map.png"
+        src="/Home/world-map.webp"
         alt=""
         fill
         aria-hidden="true"
@@ -75,7 +75,7 @@ export default function OurApproachSection() {
         {/* Image — second on mobile, right column on desktop */}
         <div className="relative aspect-square w-full overflow-hidden border border-[#111] sm:aspect-auto sm:h-[520px] lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:h-[760px]">
           <Image
-            src="/Home/HOME3.png"
+            src="/Home/HOME3.webp"
             alt="Our approach operations visual"
             fill
             className="object-cover"

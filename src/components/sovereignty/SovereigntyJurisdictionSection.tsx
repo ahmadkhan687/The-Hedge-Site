@@ -26,7 +26,7 @@ export default function SovereigntyJurisdictionSection() {
 
         <div className="relative h-[360px] w-full overflow-hidden sm:h-[420px]">
           <Image
-            src="/Sovereignity/split.png"
+            src="/Sovereignity/split.webp"
             alt="Sovereign infrastructure hardware in a minimalist setting"
             fill
             className="object-cover"
@@ -96,7 +96,7 @@ export default function SovereigntyJurisdictionSection() {
         <div className="flex flex-col gap-8">
           <div className="relative h-[594px] w-full max-w-[642px] overflow-hidden">
             <Image
-              src="/Sovereignity/split.png"
+              src="/Sovereignity/split.webp"
               alt="Sovereign infrastructure hardware in a minimalist setting"
               fill
               className="object-cover"

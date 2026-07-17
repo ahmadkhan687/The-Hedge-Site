@@ -27,7 +27,7 @@ export default function DomainsScaleSection() {
 
         <div className="relative hidden h-[280px] w-full overflow-hidden sm:h-[400px] lg:block lg:h-[510px]">
           <Image
-            src="/Domains/points image.png"
+            src="/Domains/points image.webp"
             alt="Scale visualization from individual to continental threat"
             fill
             className="object-cover object-top"

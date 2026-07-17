@@ -5,7 +5,7 @@ export default function RequestAccessHeroSection() {
   return (
     <section className="relative w-full overflow-hidden">
       <Image
-        src="/Request%20a%20briefing/Hero.png"
+        src="/Request%20a%20briefing/Hero.webp"
         alt=""
         width={1873}
         height={922}

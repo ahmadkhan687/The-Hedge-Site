@@ -34,7 +34,7 @@ export default function VarroHeroSection() {
 
         <div className="relative aspect-[4/3] w-full overflow-hidden">
           <Image
-            src="/Varro/Hero1.png"
+            src="/Varro/Hero1.webp"
             alt="Varro command console with multi-screen intelligence displays"
             fill
             className="object-cover object-[center_42%]"
@@ -109,7 +109,7 @@ export default function VarroHeroSection() {
         <div className="flex w-full max-w-[1568px] flex-col items-center gap-[62px]">
           <div className="relative aspect-[1568/470] w-full overflow-hidden rounded-xl">
             <Image
-              src="/Varro/Hero1.png"
+              src="/Varro/Hero1.webp"
               alt="Varro command console with multi-screen intelligence displays"
               fill
               className="object-cover object-[center_42%]"

@@ -4,7 +4,7 @@ export default function AboutDiagramImage() {
   return (
     <section className="relative aspect-[1728/902] w-full overflow-hidden">
       <Image
-        src="/About/about2.png"
+        src="/About/about2.webp"
         alt="Strategic technology and intelligence architecture diagram"
         fill
         className="object-cover object-center"

@@ -89,7 +89,7 @@ export default function OperatingModelSection() {
 
         <div className="relative -mx-5 mt-0 w-[calc(100%+2.5rem)] overflow-hidden sm:-mx-8 sm:w-[calc(100%+4rem)] lg:mx-0 lg:mt-10 lg:w-full lg:border lg:border-[#111]">
           <Image
-            src="/Home/HOME1.png"
+            src="/Home/HOME1.webp"
             alt="Operating model visual"
             width={1540}
             height={760}

@@ -38,7 +38,7 @@ export default function SovereigntySection() {
 
           <div className="relative aspect-[16/10] w-full overflow-hidden">
             <Image
-              src="/Home/HOME5.png"
+              src="/Home/HOME5.webp"
               alt="Sovereign intelligence visual"
               fill
               className="object-cover"
@@ -114,7 +114,7 @@ export default function SovereigntySection() {
 
           <div className="relative aspect-[1527/642] w-full overflow-hidden border-[3px] border-[#111]">
             <Image
-              src="/Home/HOME5.png"
+              src="/Home/HOME5.webp"
               alt="Sovereign intelligence visual"
               fill
               className="object-cover"

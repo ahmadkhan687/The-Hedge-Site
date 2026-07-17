@@ -30,7 +30,7 @@ export default function AboutDisciplineSection() {
 
         <div className="relative h-[400px] w-full overflow-hidden sm:h-[520px] lg:h-[640px] lg:max-w-[704px]">
           <Image
-            src="/About/Secondary-Image-v2.png"
+            src="/About/Secondary-Image-v2.webp"
             alt="Aerial view of sovereign infrastructure facility"
             fill
             className="object-cover object-center"

@@ -20,7 +20,7 @@ export default function DomainsSection() {
   return (
     <section className="relative w-full overflow-hidden bg-[#F4F0EA] py-10 lg:py-14">
       <Image
-        src="/Home/world-map.png"
+        src="/Home/world-map.webp"
         alt=""
         fill
         aria-hidden="true"
@@ -78,7 +78,7 @@ export default function DomainsSection() {
         {/* Image — second on mobile, last on desktop */}
         <div className="relative order-2 aspect-[16/10] w-full overflow-hidden border border-[#111] lg:order-3 lg:aspect-[537/302]">
           <Image
-            src="/Home/HOME4.png"
+            src="/Home/HOME4.webp"
             alt="Intelligence domains visualization"
             fill
             className="object-cover"

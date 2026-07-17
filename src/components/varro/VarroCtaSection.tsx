@@ -7,7 +7,7 @@ export default function VarroCtaSection() {
     <section className="relative flex min-h-[400px] flex-col items-center justify-center gap-8 overflow-hidden px-5 py-24 sm:px-8 lg:gap-10 lg:px-20 lg:pb-[100px] lg:pt-[147px]">
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <Image
-          src="/Varro/before footer.png"
+          src="/Varro/before footer.webp"
           alt=""
           fill
           className="object-cover object-center opacity-45"

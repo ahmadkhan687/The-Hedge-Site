@@ -27,7 +27,7 @@ export default function SovereigntyCapabilitySection() {
 
         <div className="relative aspect-[1728/868] w-full overflow-hidden">
           <Image
-            src="/Sovereignity/two.png"
+            src="/Sovereignity/two.webp"
             alt="Sovereign capability overview"
             fill
             className="object-cover object-top"

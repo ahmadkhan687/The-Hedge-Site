@@ -30,7 +30,7 @@ export default function DarkContainerSection() {
 
         <div className="relative -mx-5 aspect-[4/3] w-[calc(100%+2.5rem)] overflow-hidden rounded-sm sm:-mx-6 sm:w-[calc(100%+3rem)]">
           <Image
-            src="/Home/varo.png"
+            src="/Home/varo.webp"
             alt="Varro command console interface"
             fill
             className="object-cover"
@@ -130,7 +130,7 @@ export default function DarkContainerSection() {
 
         <div className="relative aspect-[1603/606] w-full overflow-hidden border border-white/20">
           <Image
-            src="/Home/varo.png"
+            src="/Home/varo.webp"
             alt="Varro command console interface"
             fill
             className="object-cover"

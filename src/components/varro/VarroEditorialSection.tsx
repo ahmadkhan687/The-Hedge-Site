@@ -23,7 +23,7 @@ export default function VarroEditorialSection() {
         <div className="flex flex-col gap-6 lg:hidden">
           <div className="-mx-5 w-[calc(100%+2.5rem)]">
             <Image
-              src="/Varro/Home3.png"
+              src="/Varro/Home3.webp"
               alt="Intelligence documents and briefing materials"
               width={1200}
               height={700}
@@ -66,7 +66,7 @@ export default function VarroEditorialSection() {
         <div className="hidden grid-cols-2 items-start gap-12 lg:grid">
           <div className="relative min-h-[500px] w-full overflow-hidden">
             <Image
-              src="/Varro/Home3.png"
+              src="/Varro/Home3.webp"
               alt="Intelligence documents and briefing materials"
               fill
               className="object-cover"

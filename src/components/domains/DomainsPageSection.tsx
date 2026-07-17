@@ -71,7 +71,7 @@ export default function DomainsPageSection() {
             text: "True or false. Who built it. Where it came from. What to say back, and when.",
           },
         ]}
-        imageSrc="/Domains/Below varo.png"
+        imageSrc="/Domains/Below varo.webp"
         imageAlt="Synthetic narrative warfare intelligence diagram"
         imageHeight="h-[320px] sm:h-[600px] lg:h-[888px]"
         imageClassName="object-cover object-[center_85%] lg:object-contain lg:object-bottom"
@@ -102,7 +102,7 @@ export default function DomainsPageSection() {
             text: "Who is real. Who is paid. Who runs it. What the crowd was built to force.",
           },
         ]}
-        imageSrc="/Domains/IMAGES HEDGE WEB-AI REMOVAL (1).png"
+        imageSrc="/Domains/IMAGES HEDGE WEB-AI REMOVAL (1).webp"
         imageAlt="Satellite dish array in mountainous terrain"
         imageHeight="h-[300px] sm:h-[450px] lg:h-[574px]"
         imageClassName="object-cover object-top"
@@ -134,7 +134,7 @@ export default function DomainsPageSection() {
             text: "Who is on the road. Who is closest to the act. Where the facilitation chain breaks.",
           },
         ]}
-        imageSrc="/Domains/engineered.png"
+        imageSrc="/Domains/engineered.webp"
         imageAlt="Monitoring station collage with news and social interfaces"
         imageHeight="h-[280px] sm:h-[350px] lg:h-[400px]"
         imageClassName="object-cover object-center"

@@ -5,7 +5,7 @@ export default function PerspectivesFullBleedImage() {
     <>
       <section className="w-full lg:hidden">
         <Image
-          src="/perspectives/full_bleed_imagemobile.png"
+          src="/perspectives/full_bleed_imagemobile.webp"
           alt="Abstract doctrine architecture diagram"
           width={390}
           height={240}
@@ -17,7 +17,7 @@ export default function PerspectivesFullBleedImage() {
 
       <section className="relative hidden h-[656px] w-full overflow-hidden lg:block">
         <Image
-          src="/perspectives/Full-bleed%20image.png"
+          src="/perspectives/Full-bleed%20image.webp"
           alt="Abstract doctrine architecture diagram"
           fill
           className="object-cover object-center"

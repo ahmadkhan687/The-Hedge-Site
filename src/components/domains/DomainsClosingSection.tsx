@@ -52,7 +52,7 @@ export default function DomainsClosingSection() {
       {/* —— Desktop layout —— */}
       <div className="relative hidden flex-col items-center gap-10 overflow-hidden px-5 py-24 sm:px-8 lg:flex lg:gap-[72px] lg:px-[120px] lg:py-40">
         <Image
-          src="/Domains/IMAGES HEDGE WEB-AI REMOVAL (1).png"
+          src="/Domains/IMAGES HEDGE WEB-AI REMOVAL (1).webp"
           alt=""
           fill
           className="object-cover"

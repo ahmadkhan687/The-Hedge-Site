@@ -91,7 +91,7 @@ export default function VarroIntelligenceSection() {
       {/* Mobile banner */}
       <div className="relative mt-6 h-[280px] w-full overflow-hidden sm:mt-16 sm:h-[420px] lg:hidden">
         <Image
-          src="/Varro/bannermobile.png"
+          src="/Varro/bannermobile.webp"
           alt="Varro intelligence banner visual"
           fill
           className="object-cover object-center"
@@ -102,7 +102,7 @@ export default function VarroIntelligenceSection() {
       {/* Desktop banner */}
       <div className="relative mt-20 hidden h-[600px] w-full overflow-hidden lg:block">
         <Image
-          src="/Varro/banner.png"
+          src="/Varro/banner.webp"
           alt="Varro intelligence banner visual"
           fill
           className="object-cover object-center"
