@@ -56,7 +56,7 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${barlowCondensed.variable} ${ebGaramond.variable} ${archivoNarrow.variable} ${schibstedGrotesk.variable} h-full antialiased`}
     >
-      <body className="min-h-full overflow-x-hidden flex flex-col bg-[#F4F0EA] text-black">
+      <body className="min-h-full overflow-x-clip flex flex-col bg-[#F4F0EA] text-black">
         <Navbar />
         {children}
         <Footer />

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Globe } from "@/components/ui/globe";
+import DottedGlobe from "@/components/ui/dotted-globe";
 
 export default function HeroGlobe() {
   const [mounted, setMounted] = useState(false);
@@ -14,5 +14,5 @@ export default function HeroGlobe() {
     return <div className="absolute inset-0" aria-hidden="true" />;
   }
 
-  return <Globe className="absolute inset-0" />;
+  return <DottedGlobe className="absolute inset-0" />;
 }
