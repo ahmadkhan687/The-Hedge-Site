@@ -288,7 +288,7 @@ export default function DottedGlobe({ className }: { className?: string }) {
       ctx.clearRect(0, 0, lw, lh);
 
       const cx = lw / 2, cy = lh / 2;
-      const baseR = Math.min(lw, lh) * 0.48;
+      const baseR = Math.min(lw, lh) * 0.35;
 
       const R = baseR;
 
@@ -422,7 +422,7 @@ export default function DottedGlobe({ className }: { className?: string }) {
 
   const getR = () =>
     canvasRef.current
-      ? Math.min(canvasRef.current.clientWidth, canvasRef.current.clientHeight) * 0.48
+      ? Math.min(canvasRef.current.clientWidth, canvasRef.current.clientHeight) * 0.35
       : 200;
 
   const applyDrag = (dx: number, dy: number) => {

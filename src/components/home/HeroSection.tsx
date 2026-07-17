@@ -27,7 +27,7 @@ function ArrowIcon() {
 
 export default function HeroSection() {
   return (
-    <section className="overflow-hidden bg-[#F4F0EA] pb-10 pt-8 sm:pb-14 sm:pt-10 lg:pb-8 lg:pt-8 xl:pb-10 2xl:pb-12">
+    <section className="overflow-hidden bg-[#F4F0EA] pb-10 pt-8 sm:pb-14 sm:pt-10 lg:pb-16 lg:pt-0 xl:pb-20 2xl:pb-10">
       <div
         className={`${HOME_CONTENT_SHELL} grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start lg:gap-8 xl:gap-10 2xl:grid-cols-[730px_auto] 2xl:gap-12`}
       >
@@ -57,12 +57,12 @@ export default function HeroSection() {
         </div>
 
         <div className="flex min-w-0 max-w-full flex-col items-center lg:items-end lg:justify-self-end">
-          <div className="relative aspect-square w-[min(100%,clamp(280px,82vw,400px))] shrink-0 overflow-hidden sm:w-[min(100%,clamp(320px,58vw,460px))] lg:ml-auto lg:w-[min(calc((100vw-580px)*0.72),340px)] xl:w-[min(calc((100vw-680px)*0.72),430px)] 2xl:w-[min(calc((100vw-918px)*0.72),650px)]">
+          <div className="relative aspect-square w-[min(100%,clamp(280px,82vw,400px))] shrink-0 overflow-hidden sm:w-[min(100%,clamp(320px,58vw,460px))] lg:ml-auto lg:w-[min(calc(100vw-580px),560px)] xl:w-[min(calc(100vw-680px),720px)] 2xl:w-[min(calc(100vw-918px),1092px)]">
             <HeroGlobe />
           </div>
 
           {/* Desktop: color bars + scroll down (right-aligned) */}
-          <div className="mt-0 hidden w-full max-w-[240px] flex-col items-end gap-5 self-end sm:gap-6 lg:flex 2xl:gap-7">
+          <div className="mt-4 hidden w-full max-w-[240px] flex-col items-end gap-5 self-end sm:gap-6 lg:flex 2xl:mt-[42px] 2xl:gap-7">
             <ColorBars />
             <ScrollDownButton />
           </div>
