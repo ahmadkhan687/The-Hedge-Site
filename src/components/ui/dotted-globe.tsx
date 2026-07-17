@@ -365,21 +365,24 @@ export default function DottedGlobe({ className }: { className?: string }) {
         const depthFade = depthT * depthT * (3 - 2 * depthT);          // smoothstep
 
         if (land) {
+          // Warm taupe — matches site cream palette, still readable on #F4F0EA
           const lightness = key * 0.22 + fill * 0.12;
-          const alpha = depthFade * (0.82 - lightness * 0.18);
-          if (alpha < 0.015) continue;
+          const alpha = depthFade * (0.72 - lightness * 0.15);
+          if (alpha < 0.02) continue;
           const dr = 1.1 + depthT * 0.7;
           ctx.beginPath();
           ctx.arc(sx, sy, dr, 0, Math.PI * 2);
-          const shade = Math.round(18 + (1 - depthFade) * 80);
-          ctx.fillStyle = `rgba(${shade},${shade + 4},${shade + 20},${alpha.toFixed(3)})`;
+          const r = Math.round(139 + (1 - depthFade) * 42);
+          const g = Math.round(130 + (1 - depthFade) * 45);
+          const b = Math.round(118 + (1 - depthFade) * 45);
+          ctx.fillStyle = `rgba(${r},${g},${b},${alpha.toFixed(3)})`;
           ctx.fill();
         } else {
-          const alpha = depthFade * (rz * 0.055 + key * 0.025);
-          if (alpha < 0.006) continue;
+          const alpha = depthFade * (rz * 0.08 + key * 0.03);
+          if (alpha < 0.01) continue;
           ctx.beginPath();
           ctx.arc(sx, sy, 0.58, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(30,35,60,${alpha.toFixed(3)})`;
+          ctx.fillStyle = `rgba(180,172,158,${alpha.toFixed(3)})`;
           ctx.fill();
         }
       }
