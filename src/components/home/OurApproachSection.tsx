@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
-import { CharReveal } from "@/components/ui/text-reveal";
+import { CharReveal, HoverShrink } from "@/components/ui/text-reveal";
 
 const approachItems = [
   {
@@ -50,6 +50,7 @@ export default function OurApproachSection() {
         <div className="space-y-3 lg:col-start-1 lg:row-start-1">
           <CharReveal
             as="h2"
+            blur
             className="font-inter text-sm font-extrabold uppercase leading-none tracking-[0.04em] text-[#C6A02C] lg:font-eb-garamond lg:text-[clamp(2rem,5vw,62.341px)] lg:font-bold lg:tracking-normal"
             segments={[{ text: "Our Approach" }]}
           />
@@ -91,29 +92,31 @@ export default function OurApproachSection() {
           {approachItems.map((item, index) => (
             <div
               key={item.title}
-              className={`py-6 lg:py-7 ${
+              className={
                 index < approachItems.length - 1
                   ? "border-b border-[#111]/15 lg:border-[#111]"
                   : ""
-              }`}
+              }
             >
-              <div className="mb-3 flex items-center justify-between gap-3">
-                <div className="flex items-baseline gap-3 sm:gap-4">
-                  <span className="font-eb-garamond text-base font-medium text-[#C6A02C] lg:text-[15.746px] lg:font-normal lg:text-[#C8C2B6]">
-                    {item.number}
+              <HoverShrink className="py-6 lg:py-7">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <div className="flex items-baseline gap-3 sm:gap-4">
+                    <span className="font-eb-garamond text-base font-medium text-[#C6A02C] lg:text-[15.746px] lg:font-normal lg:text-[#C8C2B6]">
+                      {item.number}
+                    </span>
+                    <h3 className="font-eb-garamond text-xl font-semibold leading-tight text-[#111] lg:font-archivo-narrow lg:text-[22.417px] lg:font-bold lg:uppercase lg:leading-none">
+                      {item.title}
+                    </h3>
+                  </div>
+                  {/* + icon desktop only */}
+                  <span className="hidden font-archivo-narrow text-3xl leading-none text-[#111] lg:inline">
+                    +
                   </span>
-                  <h3 className="font-eb-garamond text-xl font-semibold leading-tight text-[#111] lg:font-archivo-narrow lg:text-[22.417px] lg:font-bold lg:uppercase lg:leading-none">
-                    {item.title}
-                  </h3>
                 </div>
-                {/* + icon desktop only */}
-                <span className="hidden font-archivo-narrow text-3xl leading-none text-[#111] lg:inline">
-                  +
-                </span>
-              </div>
-              <p className="font-eb-garamond text-sm font-normal leading-[160%] text-[#4A4844] lg:text-[17.933px] lg:leading-normal lg:text-[#21211C] lg:opacity-70">
-                {item.description}
-              </p>
+                <p className="font-eb-garamond text-sm font-normal leading-[160%] text-[#4A4844] lg:text-[17.933px] lg:leading-normal lg:text-[#21211C] lg:opacity-70">
+                  {item.description}
+                </p>
+              </HoverShrink>
             </div>
           ))}
 

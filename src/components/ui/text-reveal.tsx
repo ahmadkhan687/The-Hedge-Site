@@ -241,28 +241,48 @@ export function FadeUp({
   className,
   children,
   delay = 0,
+  y = 24,
+  once = true,
+  amount = 0.3,
+  spring = false,
 }: {
-  as?: "div" | "p" | "span";
+  as?: "div" | "p" | "span" | "article";
   className?: string;
   children: ReactNode;
   delay?: number;
+  /** Starting Y offset in px (default 24; capability cards use 150). */
+  y?: number;
+  /** If false, animation replays each time the element enters view. */
+  once?: boolean;
+  amount?: number;
+  /** Use spring (bounce ~0.2) instead of ease curve. */
+  spring?: boolean;
 }) {
   const reduceMotion = useReducedMotion();
 
   if (reduceMotion) {
-    const Plain = as;
+    const Plain = as === "article" ? "div" : as;
     return <Plain className={className}>{children}</Plain>;
   }
 
-  const Comp = { div: motion.div, p: motion.p, span: motion.span }[as];
+  const Comp = {
+    div: motion.div,
+    p: motion.p,
+    span: motion.span,
+    article: motion.article,
+  }[as];
 
   return (
     <Comp
       className={className}
-      initial={{ opacity: 0, y: 24 }}
+      initial={{ opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.7, ease: EASE, delay }}
-      viewport={VIEWPORT}
+      transition={
+        spring
+          ? { type: "spring", duration: 0.4, bounce: 0.2, delay }
+          : { duration: 0.7, ease: EASE, delay }
+      }
+      viewport={{ once, amount }}
     >
       {children}
     </Comp>
@@ -285,6 +305,25 @@ export function HoverScale({
     >
       {children}
     </motion.span>
+  );
+}
+
+/** Shrinks its content slightly on hover (frame/card items). */
+export function HoverShrink({
+  className,
+  children,
+}: {
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <motion.div
+      className={className}
+      whileHover={{ scale: 0.9 }}
+      transition={{ type: "spring", stiffness: 400, damping: 17 }}
+    >
+      {children}
+    </motion.div>
   );
 }
 
