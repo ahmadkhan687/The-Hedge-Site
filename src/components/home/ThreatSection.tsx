@@ -1,6 +1,6 @@
 import Image from "next/image";
-import Link from "next/link";
 import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
+import { FadeUp, MotionCTA, WordReveal } from "@/components/ui/text-reveal";
 
 export default function ThreatSection() {
   return (
@@ -30,30 +30,44 @@ export default function ThreatSection() {
           </div>
         </div>
 
-        <h2 className="font-eb-garamond text-[clamp(1.875rem,7.5vw,64px)] font-medium leading-[1.05] text-[#111111]">
-          A machine now decides what a{" "}
-          <span className="italic lg:not-italic lg:bg-[#C6A02C] lg:px-2 lg:text-[#F3F1EA]">
-            nation sees.
-          </span>
-        </h2>
+        <WordReveal
+          as="h2"
+          className="font-eb-garamond text-[clamp(1.875rem,7.5vw,64px)] font-medium leading-[1.05] text-[#111111]"
+          segments={[
+            { text: "A machine now decides what a " },
+            {
+              text: "nation sees.",
+              className:
+                "italic lg:not-italic lg:bg-[#C6A02C] lg:px-2 lg:text-[#F3F1EA]",
+            },
+          ]}
+        />
 
-        <p className="max-w-[720px] font-eb-garamond text-base font-normal leading-[160%] text-[#111] lg:font-inter lg:text-xl lg:text-[#6B665F]">
+        <FadeUp
+          as="p"
+          className="max-w-[720px] font-eb-garamond text-base font-normal leading-[160%] text-[#111] lg:font-inter lg:text-xl lg:text-[#6B665F]"
+        >
           It writes faster than a country can read. It can fake a face, a voice,
           a government&apos;s own signature. It can place a lie in a million
           places at once, and leave no prints.
-        </p>
+        </FadeUp>
 
-        <p className="hidden font-eb-garamond text-[clamp(1.375rem,3vw,28.488px)] font-medium leading-[0.9] text-[#111111] lg:block">
+        <FadeUp
+          as="p"
+          className="hidden font-eb-garamond text-[clamp(1.375rem,3vw,28.488px)] font-medium leading-[0.9] text-[#111111] lg:block"
+          delay={0.15}
+        >
           So we built the means to{" "}
           <span className="italic">see through it.</span>
-        </p>
+        </FadeUp>
 
-        <Link
+        <MotionCTA
           href="/request-access"
+          tapScale={0.95}
           className="mt-2 flex min-h-[52px] w-full items-center justify-center border-2 border-[#111] bg-transparent font-inter text-sm font-extrabold uppercase leading-normal text-[#111] no-underline transition-opacity hover:opacity-80 lg:hidden"
         >
           Request Briefing
-        </Link>
+        </MotionCTA>
       </div>
     </section>
   );

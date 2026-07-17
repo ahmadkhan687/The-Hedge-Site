@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { CharReveal, FadeUp } from "@/components/ui/text-reveal";
 
 export default function DomainsHeroSection() {
   return (
@@ -19,15 +20,22 @@ export default function DomainsHeroSection() {
           Live today across continents
         </p>
 
-        <h1 className="font-eb-garamond text-[clamp(3rem,10vw,144px)] font-medium leading-[0.9] text-[#111]">
-          Three threats. Every scale.
-        </h1>
+        <CharReveal
+          as="h1"
+          blur
+          className="font-eb-garamond text-[clamp(3rem,10vw,144px)] font-medium leading-[0.9] text-[#111]"
+          segments={[{ text: "Three threats. Every scale." }]}
+        />
 
-        <p className="font-inter text-lg font-normal leading-[1.6] text-[#6B665F] sm:text-[22px]">
+        <FadeUp
+          as="p"
+          className="font-inter text-lg font-normal leading-[1.6] text-[#6B665F] sm:text-[22px]"
+          delay={0.3}
+        >
           From a single actor to a hostile state running a continent. The same
           mind catches both, names the hand behind it, and gives you the move. A
           redacted case sits with each.
-        </p>
+        </FadeUp>
       </div>
     </section>
   );

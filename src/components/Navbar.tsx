@@ -4,7 +4,7 @@ import NavLinks from "@/components/NavLinks";
 
 export default function Navbar() {
   return (
-    <header className="relative border-b border-[#1E2124] bg-[#F4F0EA]">
+    <header className="sticky top-0 z-50 border-b border-[#1E2124] bg-[#F4F0EA]">
       <nav className="mx-auto flex items-center justify-between px-5 py-5 sm:px-8 lg:px-16">
         <Link href="/" className="flex flex-col text-black no-underline">
           <span className="font-barlow-condensed text-base font-extrabold uppercase leading-normal">

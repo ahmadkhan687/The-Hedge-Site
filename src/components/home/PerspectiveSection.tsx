@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
+import { MotionCTA, WordReveal } from "@/components/ui/text-reveal";
 
 const desktopTiles = [
   { width: 19, color: "#E83387" },
@@ -49,17 +49,22 @@ export default function PerspectiveSection() {
 
         <div className="h-[3px] w-full bg-[#111] lg:h-[4px]" />
 
-        <h2 className="w-full font-eb-garamond text-[clamp(2rem,9vw,96px)] font-medium leading-[1.05] text-[#111] lg:leading-[100%]">
-          A nation that secures itself keeps its{" "}
-          <span className="italic">own counsel.</span>
-        </h2>
+        <WordReveal
+          as="h2"
+          className="w-full font-eb-garamond text-[clamp(2rem,9vw,96px)] font-medium leading-[1.05] text-[#111] lg:leading-[100%]"
+          segments={[
+            { text: "A nation that secures itself keeps its " },
+            { text: "own counsel.", className: "italic" },
+          ]}
+        />
 
-        <Link
+        <MotionCTA
           href="/request-access"
+          tapScale={0.95}
           className="inline-flex min-h-[52px] w-full items-center justify-start border-2 border-[#111] bg-[#111] px-5 py-3 font-inter text-sm font-extrabold uppercase leading-normal text-[#FBFAF7] no-underline transition-opacity hover:opacity-80 lg:min-h-[44px] lg:w-fit lg:justify-center lg:px-[22px] lg:py-[15px] lg:text-base"
         >
           Request a briefing
-        </Link>
+        </MotionCTA>
       </div>
     </section>
   );

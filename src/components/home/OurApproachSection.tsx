@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
+import { CharReveal } from "@/components/ui/text-reveal";
 
 const approachItems = [
   {
@@ -47,9 +48,11 @@ export default function OurApproachSection() {
       >
         {/* Header — always first */}
         <div className="space-y-3 lg:col-start-1 lg:row-start-1">
-          <h2 className="font-inter text-sm font-extrabold uppercase leading-none tracking-[0.04em] text-[#C6A02C] lg:font-eb-garamond lg:text-[clamp(2rem,5vw,62.341px)] lg:font-bold lg:tracking-normal">
-            Our Approach
-          </h2>
+          <CharReveal
+            as="h2"
+            className="font-inter text-sm font-extrabold uppercase leading-none tracking-[0.04em] text-[#C6A02C] lg:font-eb-garamond lg:text-[clamp(2rem,5vw,62.341px)] lg:font-bold lg:tracking-normal"
+            segments={[{ text: "Our Approach" }]}
+          />
 
           {/* Mobile: 4 equal bars · Desktop: existing tile widths */}
           <div className="flex items-center gap-[5px] lg:hidden" aria-hidden="true">

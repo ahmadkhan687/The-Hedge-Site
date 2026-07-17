@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
+import { WordReveal } from "@/components/ui/text-reveal";
 
 const desktopTiles = [
   { width: 19, color: "#E83387" },
@@ -45,10 +46,14 @@ export default function SovereigntySection() {
             />
           </div>
 
-          <h2 className="font-eb-garamond text-[clamp(1.875rem,7vw,2.5rem)] font-medium leading-[1.1] text-white">
-            Foreign eyes are{" "}
-            <span className="font-semibold italic">foreign government.</span>
-          </h2>
+          <WordReveal
+            as="h2"
+            className="font-eb-garamond text-[clamp(1.875rem,7vw,2.5rem)] font-medium leading-[1.1] text-white"
+            segments={[
+              { text: "Foreign eyes are " },
+              { text: "foreign government.", className: "font-semibold italic" },
+            ]}
+          />
 
           <p className="font-inter text-sm font-normal leading-[170%] text-[#A0A0A0]">
             Nations relying on foreign intelligence surrender a veto. Varro
@@ -86,10 +91,17 @@ export default function SovereigntySection() {
               </div>
             </div>
 
-            <h2 className="max-w-[1200px] font-eb-garamond text-[clamp(2rem,4.5vw,64px)] font-medium leading-[90%] text-[#111]">
-              Foreign eyes are{" "}
-              <span className="font-semibold italic">foreign government.</span>
-            </h2>
+            <WordReveal
+              as="h2"
+              className="max-w-[1200px] font-eb-garamond text-[clamp(2rem,4.5vw,64px)] font-medium leading-[90%] text-[#111]"
+              segments={[
+                { text: "Foreign eyes are " },
+                {
+                  text: "foreign government.",
+                  className: "font-semibold italic",
+                },
+              ]}
+            />
 
             <p className="max-w-[1220px] font-inter text-[20px] font-normal leading-[160%] text-[#111]">
               Governments that rely on foreign intelligence have handed that

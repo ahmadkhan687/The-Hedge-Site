@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { FadeUp, WordReveal } from "@/components/ui/text-reveal";
 
 export default function SovereigntyCapabilitySection() {
   return (
@@ -8,14 +9,20 @@ export default function SovereigntyCapabilitySection() {
           <p className="font-inter text-base font-extrabold uppercase text-[#C6A02C]">
             Our approach
           </p>
-          <h2 className="font-eb-garamond text-[clamp(2rem,4vw,56px)] font-medium leading-[1.2] text-[#111]">
-            Capability you own. Not capability you rent.
-          </h2>
-          <p className="max-w-[800px] font-inter text-lg font-normal leading-[1.6] text-[#6B665F] sm:text-[22px]">
+          <WordReveal
+            as="h2"
+            className="font-eb-garamond text-[clamp(2rem,4vw,56px)] font-medium leading-[1.2] text-[#111]"
+            segments={[{ text: "Capability you own. Not capability you rent." }]}
+          />
+          <FadeUp
+            as="p"
+            className="max-w-[800px] font-inter text-lg font-normal leading-[1.6] text-[#6B665F] sm:text-[22px]"
+            delay={0.2}
+          >
             Model-agnostic by design. We build toward our own exit. When the
             engagement ends, you walk away with the system, the data, the
             methods, and the people trained to run it.
-          </p>
+          </FadeUp>
         </div>
 
         <div className="relative aspect-[1728/868] w-full overflow-hidden">

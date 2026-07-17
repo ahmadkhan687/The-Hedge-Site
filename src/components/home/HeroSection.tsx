@@ -1,8 +1,8 @@
-import Link from "next/link";
 import ColorBars from "@/components/home/ColorBars";
 import HeroGlobe from "@/components/home/HeroGlobe";
 import ScrollDownButton from "@/components/home/ScrollDownButton";
 import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
+import { CharReveal, FadeUp, MotionCTA } from "@/components/ui/text-reveal";
 
 function ArrowIcon() {
   return (
@@ -36,22 +36,24 @@ export default function HeroSection() {
             STRATEGIC PRODUCTS / INTELLIGENCE / DELIVERY
           </p>
 
-          <h1 className="mt-3 font-eb-garamond text-[clamp(2.75rem,12vw,7.5rem)] font-normal leading-[0.9] text-[#111] sm:mt-5 lg:text-[clamp(2.25rem,4vw,3.5rem)] xl:text-[clamp(2.75rem,4.5vw,4.5rem)] 2xl:text-[clamp(4rem,6vw,7.5rem)]">
-            Systems for
-            <br />
-            serious
-            <br />
-            outcomes.
-          </h1>
+          <CharReveal
+            as="h1"
+            className="mt-3 font-eb-garamond text-[clamp(2.75rem,12vw,7.5rem)] font-normal leading-[0.9] text-[#111] sm:mt-5 lg:text-[clamp(2.25rem,4vw,3.5rem)] xl:text-[clamp(2.75rem,4.5vw,4.5rem)] 2xl:text-[clamp(4rem,6vw,7.5rem)]"
+            segments={[{ text: "Systems for\nserious\noutcomes." }]}
+          />
 
-          <p className="mt-5 max-w-[620px] font-eb-garamond text-[clamp(1.0625rem,3.2vw,1.625rem)] font-normal leading-[155%] text-[#272521] sm:mt-[30px] lg:text-lg xl:text-xl 2xl:text-[clamp(1.0625rem,3vw,1.625rem)]">
+          <FadeUp
+            as="p"
+            className="mt-5 max-w-[620px] font-eb-garamond text-[clamp(1.0625rem,3.2vw,1.625rem)] font-normal leading-[155%] text-[#272521] sm:mt-[30px] lg:text-lg xl:text-xl 2xl:text-[clamp(1.0625rem,3vw,1.625rem)]"
+            delay={0.35}
+          >
             We monitor the entire field to deliver answers before the country
             forms the question.
             <br />
             <span className="font-semibold italic">
               Sovereign intelligence, operated by a sovereign state.
             </span>
-          </p>
+          </FadeUp>
         </div>
 
         <div className="flex min-w-0 max-w-full flex-col items-center lg:items-end lg:justify-self-end">
@@ -83,21 +85,21 @@ export default function HeroSection() {
         </p>
 
         <div className="flex flex-col items-start gap-4">
-          <Link
+          <MotionCTA
             href="/request-access"
-            className="inline-flex items-center gap-2 font-inter text-sm font-extrabold uppercase leading-normal text-[#111] no-underline transition-opacity hover:opacity-70"
+            className="inline-flex w-fit items-center gap-2 font-inter text-sm font-extrabold uppercase leading-normal text-[#111] no-underline transition-opacity hover:opacity-70"
           >
             Request a <span className="text-[#E83387]">Briefing</span>
             <ArrowIcon />
-          </Link>
+          </MotionCTA>
 
-          <Link
+          <MotionCTA
             href="/domains"
-            className="inline-flex items-center gap-2 font-inter text-sm font-extrabold uppercase leading-normal text-[#111] no-underline transition-opacity hover:opacity-70"
+            className="inline-flex w-fit items-center gap-2 font-inter text-sm font-extrabold uppercase leading-normal text-[#111] no-underline transition-opacity hover:opacity-70"
           >
             Read <span className="text-[#D7A92C]">Technical Thesis</span>
             <ArrowIcon />
-          </Link>
+          </MotionCTA>
         </div>
       </div>
     </section>

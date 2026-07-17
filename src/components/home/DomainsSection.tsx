@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
+import { HoverScale, WordReveal } from "@/components/ui/text-reveal";
 
 const desktopTiles = [
   { width: 19, color: "#E83387" },
@@ -63,11 +64,15 @@ export default function DomainsSection() {
             </div>
           </div>
 
-          <h2 className="max-w-[1200px] font-eb-garamond text-[clamp(1.875rem,7vw,64px)] font-medium leading-[1.05] text-[#111] lg:leading-[90%]">
-            We point that mind at the{" "}
-            <span className="font-semibold italic">threats</span> that move
-            fastest.
-          </h2>
+          <WordReveal
+            as="h2"
+            className="max-w-[1200px] font-eb-garamond text-[clamp(1.875rem,7vw,64px)] font-medium leading-[1.05] text-[#111] lg:leading-[90%]"
+            segments={[
+              { text: "We point that mind at the " },
+              { text: "threats", className: "font-semibold italic" },
+              { text: " that move fastest." },
+            ]}
+          />
         </div>
 
         {/* Image — second on mobile, last on desktop */}
@@ -102,7 +107,7 @@ export default function DomainsSection() {
                 }`}
               >
                 <p className="font-eb-garamond text-xl font-medium leading-[1.1] text-[#111]">
-                  {domain}
+                  <HoverScale>{domain}</HoverScale>
                 </p>
               </div>
             ))}
@@ -115,14 +120,14 @@ export default function DomainsSection() {
                 Domain
               </p>
               <p className="font-eb-garamond text-[28px] font-medium leading-[90%] text-[#111]">
-                {domains[0]}
+                <HoverScale>{domains[0]}</HoverScale>
               </p>
             </div>
             <p className="border-r border-[#111]/20 px-4 py-5 font-eb-garamond text-[28px] font-medium leading-[90%] text-[#111]">
-              {domains[1]}
+              <HoverScale>{domains[1]}</HoverScale>
             </p>
             <p className="px-4 py-5 font-eb-garamond text-[28px] font-medium leading-[90%] text-[#111]">
-              {domains[2]}
+              <HoverScale>{domains[2]}</HoverScale>
             </p>
           </div>
         </div>

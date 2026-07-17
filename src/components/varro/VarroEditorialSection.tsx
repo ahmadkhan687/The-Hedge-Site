@@ -1,5 +1,6 @@
 import Image from "next/image";
 import VarroMissionScreen from "@/components/varro/VarroMissionScreen";
+import { SlideInLeft, WordReveal } from "@/components/ui/text-reveal";
 
 const metrics = [
   {
@@ -31,9 +32,11 @@ export default function VarroEditorialSection() {
             />
           </div>
 
-          <h2 className="font-eb-garamond text-[clamp(1.75rem,7vw,2.25rem)] font-normal uppercase leading-[1.15] text-[#2C2A26]">
-            Not a report. A standing capability.
-          </h2>
+          <SlideInLeft as="div">
+            <h2 className="font-eb-garamond text-[clamp(1.75rem,7vw,2.25rem)] font-normal uppercase leading-[1.15] text-[#2C2A26]">
+              Not a report. A standing capability.
+            </h2>
+          </SlideInLeft>
 
           <p className="font-inter text-base font-normal leading-[1.7] text-[#6B665F]">
             Every output surfaces in one place. One screen. Every signal. Under
@@ -100,9 +103,11 @@ export default function VarroEditorialSection() {
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-[2fr_3fr] lg:gap-x-20">
           <div className="flex flex-col">
             {/* Headline + body only on desktop here (already shown on mobile above) */}
-            <h2 className="hidden font-eb-garamond text-[clamp(1.75rem,4vw,40px)] font-normal uppercase leading-[1.15] text-[#2C2A26] lg:block">
-              Not a report. A standing capability.
-            </h2>
+            <SlideInLeft as="div" className="hidden lg:block">
+              <h2 className="font-eb-garamond text-[clamp(1.75rem,4vw,40px)] font-normal uppercase leading-[1.15] text-[#2C2A26]">
+                Not a report. A standing capability.
+              </h2>
+            </SlideInLeft>
 
             <p className="mt-0 hidden max-w-[480px] font-inter text-[17px] font-normal leading-[1.8] text-[#4A4844] lg:mt-10 lg:block">
               Every output, drawn from one mind, surfaces in one place. One
@@ -116,9 +121,11 @@ export default function VarroEditorialSection() {
               <p className="font-eb-garamond text-sm font-normal uppercase tracking-[3px] text-[#BF610A]">
                 03 . The daily verdict
               </p>
-              <p className="font-eb-garamond text-[clamp(2.5rem,8vw,80px)] font-normal italic leading-[1.1] tracking-[-1px] text-[#151518]">
-                Pulse on the realm.
-              </p>
+              <WordReveal
+                as="p"
+                className="font-eb-garamond text-[clamp(2.5rem,8vw,80px)] font-normal italic leading-[1.1] tracking-[-1px] text-[#151518]"
+                segments={[{ text: "Pulse on the realm." }]}
+              />
             </div>
           </div>
 

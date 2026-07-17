@@ -13,6 +13,13 @@
   --font-eb-garamond: var(--font-eb-garamond), serif;
   --font-archivo-narrow: var(--font-archivo-narrow), sans-serif;
   --font-schibsted-grotesk: var(--font-schibsted-grotesk), sans-serif;
+
+  /* Desktop typography scale (mobile sizes TBD) */
+  --text-hero: 120px;
+  --text-h1: 64px;
+  --text-h3: 28px;
+  --text-body-lg: 20px;
+  --text-body: 16px;
 }
 
 html,

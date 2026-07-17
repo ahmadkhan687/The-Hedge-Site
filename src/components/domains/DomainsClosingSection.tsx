@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import { Char3DReveal, MotionCTA } from "@/components/ui/text-reveal";
 
 export default function DomainsClosingSection() {
   return (
@@ -27,9 +27,11 @@ export default function DomainsClosingSection() {
             Domain
           </p>
 
-          <h2 className="text-center font-eb-garamond text-[clamp(2.25rem,9vw,2.75rem)] font-medium leading-[1.12] text-[#F4F0EA]">
-            A nation that sees for itself, governs itself.
-          </h2>
+          <Char3DReveal
+            as="h2"
+            className="text-center font-eb-garamond text-[clamp(2.25rem,9vw,2.75rem)] font-medium leading-[1.12] text-[#F4F0EA]"
+            segments={[{ text: "A nation that sees for itself, governs itself." }]}
+          />
 
           <div className="h-px w-full bg-[#F4F0EA]/15" />
 
@@ -37,12 +39,13 @@ export default function DomainsClosingSection() {
             Varro · The Hedge Collective
           </p>
 
-          <Link
+          <MotionCTA
             href="/request-access"
+            tapScale={0.95}
             className="flex min-h-[52px] w-full items-center justify-center bg-[#C6A02C] font-inter text-sm font-extrabold uppercase leading-normal tracking-[0.06em] text-white no-underline transition-opacity hover:opacity-85"
           >
             Request Briefing
-          </Link>
+          </MotionCTA>
         </div>
       </div>
 
@@ -63,9 +66,11 @@ export default function DomainsClosingSection() {
           Domain
         </p>
 
-        <h2 className="relative z-10 max-w-[1233px] text-center font-eb-garamond text-[clamp(2.5rem,7vw,96px)] font-medium leading-[1.1] text-[#F4F0EA]">
-          A nation that sees for itself, governs itself.
-        </h2>
+        <Char3DReveal
+          as="h2"
+          className="relative z-10 max-w-[1233px] text-center font-eb-garamond text-[clamp(2.5rem,7vw,96px)] font-medium leading-[1.1] text-[#F4F0EA]"
+          segments={[{ text: "A nation that sees for itself, governs itself." }]}
+        />
 
         <div className="relative z-10 h-px w-full max-w-[480px] bg-[#F4F0EA]/20" />
 

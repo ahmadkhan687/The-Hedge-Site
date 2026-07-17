@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { FadeIn, MotionButton, WordReveal } from "@/components/ui/text-reveal";
 
 type FormData = {
   name: string;
@@ -71,17 +72,70 @@ function FormField({
   );
 }
 
+type Status = "idle" | "sending" | "success" | "error";
+
 export default function RequestAccessFormSection() {
   const [form, setForm] = useState<FormData>(initialForm);
+  const [status, setStatus] = useState<Status>("idle");
+  const [errorMessage, setErrorMessage] = useState("");
 
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    if (status === "error") setStatus("idle");
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    if (!form.name.trim() || !form.contact.trim()) {
+      setStatus("error");
+      setErrorMessage("Please fill in at least your name and a way to reach you.");
+      return;
+    }
+
+    const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
+    if (!accessKey) {
+      setStatus("error");
+      setErrorMessage(
+        "Form is not configured yet: missing NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY.",
+      );
+      return;
+    }
+
+    setStatus("sending");
+    setErrorMessage("");
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          access_key: accessKey,
+          subject: `Briefing request from ${form.name}`,
+          from_name: "The Hedge Collective — Request Access",
+          name: form.name,
+          institution: form.institution,
+          role: form.role,
+          contact: form.contact,
+          problem: form.problem,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setStatus("success");
+        setForm(initialForm);
+      } else {
+        setStatus("error");
+        setErrorMessage(result.message || "Something went wrong. Please try again.");
+      }
+    } catch {
+      setStatus("error");
+      setErrorMessage("Network error. Please check your connection and try again.");
+    }
   }
 
   return (
@@ -94,11 +148,11 @@ export default function RequestAccessFormSection() {
             What happens
           </p>
 
-          <h2 className="font-eb-garamond text-[clamp(2rem,4vw,56px)] font-semibold italic leading-[1.1] text-[#111]">
-            Request a briefing.
-            <br />
-            We come to you.
-          </h2>
+          <WordReveal
+            as="h2"
+            className="font-eb-garamond text-[clamp(2rem,4vw,56px)] font-semibold italic leading-[1.1] text-[#111]"
+            segments={[{ text: "Request a briefing.\nWe come to you." }]}
+          />
 
           <div className="flex flex-col gap-3">
             <p className="font-inter text-base font-normal leading-[1.6] text-[#111]">
@@ -108,6 +162,7 @@ export default function RequestAccessFormSection() {
           </div>
         </div>
 
+        <FadeIn as="div">
         <form onSubmit={handleSubmit} className="flex flex-col gap-8">
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-10">
             <FormField
@@ -152,13 +207,36 @@ export default function RequestAccessFormSection() {
             multiline
           />
 
-          <button
+          {status === "success" && (
+            <p
+              role="status"
+              className="border border-[#111]/15 bg-[#FBFAF7] px-5 py-4 font-inter text-base text-[#111]"
+            >
+              Request received. Held in confidence — we will reach you through
+              the contact you provided.
+            </p>
+          )}
+
+          {status === "error" && errorMessage && (
+            <p
+              role="alert"
+              className="border border-[#B3261E]/30 bg-[#B3261E]/5 px-5 py-4 font-inter text-base text-[#B3261E]"
+            >
+              {errorMessage}
+            </p>
+          )}
+
+          <MotionButton
             type="submit"
-            className="mt-4 flex h-14 w-full items-center justify-center bg-[#C6A02C] font-inter text-sm font-semibold uppercase tracking-[2px] text-white transition-opacity hover:opacity-85"
+            disabled={status === "sending"}
+            hoverScale={1.02}
+            tapScale={0.9}
+            className="mt-4 flex h-14 w-full items-center justify-center bg-[#C6A02C] font-inter text-sm font-semibold uppercase tracking-[2px] text-white transition-opacity hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Send request
-          </button>
+            {status === "sending" ? "Sending…" : "Send request"}
+          </MotionButton>
         </form>
+        </FadeIn>
       </div>
     </section>
   );

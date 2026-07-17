@@ -1,7 +1,7 @@
-import Link from "next/link";
 import Image from "next/image";
 import OperatingModelColorBars from "@/components/home/OperatingModelColorBars";
 import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
+import { FadeUp, MotionCTA } from "@/components/ui/text-reveal";
 
 type SectionButtonProps = {
   href: string;
@@ -17,8 +17,9 @@ function SectionButton({
   paddingClass,
 }: SectionButtonProps) {
   return (
-    <Link
+    <MotionCTA
       href={href}
+      tapScale={0.95}
       className={`flex min-h-[44px] w-full items-center justify-center gap-2 border-2 border-[#111] font-inter text-xs font-extrabold uppercase leading-normal transition-opacity hover:opacity-80 sm:w-auto sm:justify-end sm:text-sm lg:text-base ${paddingClass} ${
         variant === "filled"
           ? "bg-[#111] text-white"
@@ -42,7 +43,7 @@ function SectionButton({
           strokeLinecap="round"
         />
       </svg>
-    </Link>
+    </MotionCTA>
   );
 }
 
@@ -62,10 +63,13 @@ export default function OperatingModelSection() {
             <OperatingModelColorBars />
           </div>
 
-          <p className="mt-6 max-w-full font-eb-garamond text-[clamp(1.2rem,4vw,2.07rem)] font-medium leading-[120%] text-[#111111] sm:mt-8">
+          <FadeUp
+            as="p"
+            className="mt-6 max-w-full font-eb-garamond text-[clamp(1.2rem,4vw,2.07rem)] font-medium leading-[120%] text-[#111111] sm:mt-8"
+          >
             One mind reads the whole field. The analysis, the attribution, the
             answer - before the country has formed the question.
-          </p>
+          </FadeUp>
 
           <div className="mt-8 flex w-full flex-col gap-3 sm:mt-14 sm:w-auto sm:flex-row sm:flex-wrap sm:justify-end sm:gap-2 sm:self-end lg:mt-20">
             <SectionButton

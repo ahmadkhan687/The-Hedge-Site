@@ -1,4 +1,5 @@
 import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
+import { CharReveal } from "@/components/ui/text-reveal";
 
 const cards = [
   {
@@ -70,10 +71,14 @@ export default function MovingFlowingSection() {
           <span className="h-[10px] w-9 bg-[#23B6D2]" />
         </div>
 
-        <h2 className="mt-5 font-eb-garamond text-[clamp(1.875rem,7vw,64px)] font-medium leading-[1.05] text-white lg:mt-4 lg:leading-[90%]">
-          Precision statecraft{" "}
-          <span className="font-semibold italic">at scale.</span>
-        </h2>
+        <CharReveal
+          as="h2"
+          className="mt-5 font-eb-garamond text-[clamp(1.875rem,7vw,64px)] font-medium leading-[1.05] text-white lg:mt-4 lg:leading-[90%]"
+          segments={[
+            { text: "Precision statecraft " },
+            { text: "at scale.", className: "font-semibold italic" },
+          ]}
+        />
 
         {/* Desktop-only white rule */}
         <div className="mt-4 hidden h-px w-full bg-white lg:block" />

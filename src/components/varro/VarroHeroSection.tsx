@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { CharReveal, FadeUp } from "@/components/ui/text-reveal";
 
 export default function VarroHeroSection() {
   return (
@@ -11,13 +12,20 @@ export default function VarroHeroSection() {
           </p>
 
           <div className="mt-3 flex w-full flex-col items-center text-center">
-            <h1 className="font-eb-garamond text-[clamp(4.5rem,22vw,6.5rem)] font-normal leading-[0.85] text-[#2C2A26]">
-              Varro
-            </h1>
+            <CharReveal
+              as="h1"
+              blur
+              className="font-eb-garamond text-[clamp(4.5rem,22vw,6.5rem)] font-normal leading-[0.85] text-[#2C2A26]"
+              segments={[{ text: "Varro" }]}
+            />
 
-            <p className="mt-4 max-w-[320px] font-inter text-base font-normal leading-[1.5] text-[#4A4844]/80">
+            <FadeUp
+              as="p"
+              className="mt-4 max-w-[320px] font-inter text-base font-normal leading-[1.5] text-[#4A4844]/80"
+              delay={0.3}
+            >
               A passage through the unrecorded tides of the northern straits.
-            </p>
+            </FadeUp>
           </div>
         </div>
 
@@ -43,13 +51,20 @@ export default function VarroHeroSection() {
             Chapter
           </p>
 
-          <h1 className="w-full font-eb-garamond text-[clamp(4.5rem,22vw,220px)] font-normal leading-[80%] text-[#2C2A26]">
-            Varro
-          </h1>
+          <CharReveal
+            as="h1"
+            blur
+            className="w-full font-eb-garamond text-[clamp(4.5rem,22vw,220px)] font-normal leading-[80%] text-[#2C2A26]"
+            segments={[{ text: "Varro" }]}
+          />
 
-          <p className="font-inter text-[clamp(1.125rem,2.5vw,24px)] font-normal leading-normal text-[#4A4844]/80">
+          <FadeUp
+            as="p"
+            className="font-inter text-[clamp(1.125rem,2.5vw,24px)] font-normal leading-normal text-[#4A4844]/80"
+            delay={0.3}
+          >
             A passage through the unrecorded tides of the northern straits.
-          </p>
+          </FadeUp>
         </div>
       </section>
 
@@ -60,15 +75,20 @@ export default function VarroHeroSection() {
             Mission designation: Varro Collection
           </p>
 
-          <h2 className="font-eb-garamond text-[clamp(2.5rem,12vw,3.5rem)] font-normal leading-[0.9] text-[#2C2A26]">
-            A NATION&apos;S
-            <br />
-            OWN EYES.
-          </h2>
+          <CharReveal
+            as="h2"
+            blur
+            className="font-eb-garamond text-[clamp(2.5rem,12vw,3.5rem)] font-normal leading-[0.9] text-[#2C2A26]"
+            segments={[{ text: "A NATION'S\nOWN EYES." }]}
+          />
 
-          <p className="font-inter text-base font-normal leading-normal text-[#4A4844]/80">
+          <FadeUp
+            as="p"
+            className="font-inter text-base font-normal leading-normal text-[#4A4844]/80"
+            delay={0.2}
+          >
             Awake when the country sleeps.
-          </p>
+          </FadeUp>
 
           <div className="mt-4 h-px w-16 bg-[#D9D7D2]" />
         </div>
@@ -103,13 +123,20 @@ export default function VarroHeroSection() {
               Mission designation: Varro Collection
             </p>
 
-            <h2 className="font-eb-garamond text-[clamp(2.25rem,11vw,113px)] font-normal leading-[85%] text-[#2C2A26]">
-              A NATION&apos;S OWN EYES.
-            </h2>
+            <CharReveal
+              as="h2"
+              blur
+              className="font-eb-garamond text-[clamp(2.25rem,11vw,113px)] font-normal leading-[85%] text-[#2C2A26]"
+              segments={[{ text: "A NATION'S OWN EYES." }]}
+            />
 
-            <p className="max-w-[322px] font-inter text-xl font-normal leading-normal text-[#4A4844]/80">
+            <FadeUp
+              as="p"
+              className="max-w-[322px] font-inter text-xl font-normal leading-normal text-[#4A4844]/80"
+              delay={0.2}
+            >
               Awake when the country sleeps.
-            </p>
+            </FadeUp>
           </div>
         </div>
 

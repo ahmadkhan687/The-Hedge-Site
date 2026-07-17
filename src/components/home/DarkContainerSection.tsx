@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
+import { CharReveal } from "@/components/ui/text-reveal";
 
 const bars = [
   { width: 65, color: "#E83387" },
@@ -47,10 +48,15 @@ export default function DarkContainerSection() {
           VARRO
         </h2>
 
-        <p className="font-inter text-sm font-extrabold uppercase leading-normal tracking-[0.04em] text-[#C6A02C]">
-          The system a state{" "}
-          <span className="italic">sees with.</span>
-        </p>
+        <CharReveal
+          as="p"
+          blur
+          className="font-inter text-sm font-extrabold uppercase leading-normal tracking-[0.04em] text-[#C6A02C]"
+          segments={[
+            { text: "The system a state " },
+            { text: "sees with.", className: "italic" },
+          ]}
+        />
 
         <Link
           href="/varro"
@@ -85,10 +91,18 @@ export default function DarkContainerSection() {
               VARRO
             </h2>
 
-            <p className="font-eb-garamond text-[clamp(1.45rem,5vw,2.5rem)] font-medium leading-[90%] text-[#FBFAF7]">
-              The system a state{" "}
-              <span className="font-semibold italic text-[#C6A02C]">sees with.</span>
-            </p>
+            <CharReveal
+              as="p"
+              blur
+              className="font-eb-garamond text-[clamp(1.45rem,5vw,2.5rem)] font-medium leading-[90%] text-[#FBFAF7]"
+              segments={[
+                { text: "The system a state " },
+                {
+                  text: "sees with.",
+                  className: "font-semibold italic text-[#C6A02C]",
+                },
+              ]}
+            />
           </div>
 
           <div className="flex flex-col items-start gap-10 pt-5">

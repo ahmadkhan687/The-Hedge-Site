@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { MotionCTA, WordReveal } from "@/components/ui/text-reveal";
 
 export default function VarroCtaSection() {
   return (
@@ -15,9 +16,11 @@ export default function VarroCtaSection() {
       </div>
 
       <div className="relative z-10 flex flex-col items-center gap-8 text-center">
-        <h2 className="font-eb-garamond text-[clamp(2.25rem,6vw,64px)] font-normal leading-[0.9] text-[#111]">
-          The Machine Never Makes the Call.
-        </h2>
+        <WordReveal
+          as="h2"
+          className="font-eb-garamond text-[clamp(2.25rem,6vw,64px)] font-normal leading-[0.9] text-[#111]"
+          segments={[{ text: "The Machine Never Makes the Call." }]}
+        />
 
         <Link
           href="/request-access"
@@ -28,12 +31,14 @@ export default function VarroCtaSection() {
         </Link>
       </div>
 
-      <Link
+      <MotionCTA
         href="/request-access"
+        hoverScale={1.1}
+        tapScale={0.9}
         className="relative z-10 inline-flex h-[49px] w-[212px] items-center justify-center border-2 border-[#111] bg-[#111] font-inter text-base font-extrabold uppercase leading-normal text-[#FBFAF7] transition-opacity hover:opacity-85"
       >
         Request a briefing
-      </Link>
+      </MotionCTA>
     </section>
   );
 }
