@@ -289,6 +289,7 @@ export default function DottedGlobe({ className }: { className?: string }) {
 
       const cx = lw / 2, cy = lh / 2;
       const baseR = Math.min(lw, lh) * 0.35;
+      const isMobile = window.innerWidth < 1024;
 
       const R = baseR;
 
@@ -365,24 +366,26 @@ export default function DottedGlobe({ className }: { className?: string }) {
         const depthFade = depthT * depthT * (3 - 2 * depthT);          // smoothstep
 
         if (land) {
-          // Warm taupe — matches site cream palette, still readable on #F4F0EA
+          // Warm taupe — matches site cream palette, still readable on #F4F0EA.
+          // Mobile: lighter base color and softer alpha.
           const lightness = key * 0.22 + fill * 0.12;
-          const alpha = depthFade * (0.72 - lightness * 0.15);
+          const alpha = depthFade * ((isMobile ? 0.58 : 0.72) - lightness * 0.15);
           if (alpha < 0.02) continue;
           const dr = 1.1 + depthT * 0.7;
           ctx.beginPath();
           ctx.arc(sx, sy, dr, 0, Math.PI * 2);
-          const r = Math.round(139 + (1 - depthFade) * 42);
-          const g = Math.round(130 + (1 - depthFade) * 45);
-          const b = Math.round(118 + (1 - depthFade) * 45);
+          const base = isMobile ? 172 : 139;
+          const r = Math.round(base + (1 - depthFade) * 42);
+          const g = Math.round(base - 9 + (1 - depthFade) * 45);
+          const b = Math.round(base - 21 + (1 - depthFade) * 45);
           ctx.fillStyle = `rgba(${r},${g},${b},${alpha.toFixed(3)})`;
           ctx.fill();
         } else {
-          const alpha = depthFade * (rz * 0.08 + key * 0.03);
+          const alpha = depthFade * (rz * 0.08 + key * 0.03) * (isMobile ? 0.7 : 1);
           if (alpha < 0.01) continue;
           ctx.beginPath();
           ctx.arc(sx, sy, 0.58, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(180,172,158,${alpha.toFixed(3)})`;
+          ctx.fillStyle = `rgba(${isMobile ? "200,193,180" : "180,172,158"},${alpha.toFixed(3)})`;
           ctx.fill();
         }
       }
