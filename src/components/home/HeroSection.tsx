@@ -92,7 +92,7 @@ export default function HeroSection() {
           </Link>
 
           <Link
-            href="/about"
+            href="/domains"
             className="inline-flex items-center gap-2 font-inter text-sm font-extrabold uppercase leading-normal text-[#111] no-underline transition-opacity hover:opacity-70"
           >
             Read <span className="text-[#D7A92C]">Technical Thesis</span>

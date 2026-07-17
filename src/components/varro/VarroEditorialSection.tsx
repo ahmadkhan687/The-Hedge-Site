@@ -112,7 +112,7 @@ export default function VarroEditorialSection() {
               One room sees the whole field. One hand moves on it.
             </p>
 
-            <div className="mt-4 flex flex-col gap-4 lg:mt-auto lg:pt-20">
+            <div className="mt-4 flex flex-col gap-4 lg:pt-20">
               <p className="font-eb-garamond text-sm font-normal uppercase tracking-[3px] text-[#BF610A]">
                 03 . The daily verdict
               </p>
