@@ -1,8 +1,8 @@
 export default function DomainsPrecisionCallout() {
   return (
     <section className="relative overflow-hidden bg-[#0A0A10]">
-      {/* Mobile earth background */}
-      <div className="pointer-events-none absolute inset-0 lg:hidden" aria-hidden>
+      {/* Earth background video — loops while section is on screen */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden>
         <video
           autoPlay
           muted
