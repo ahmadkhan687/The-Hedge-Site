@@ -27,14 +27,14 @@ function unitVariants(blur: boolean): Variants {
   return {
     hidden: {
       opacity: 0,
-      y: "0.35em",
-      ...(blur ? { filter: "blur(8px)" } : {}),
+      y: "0.28em",
+      ...(blur ? { filter: "blur(6px)" } : {}),
     },
     visible: {
       opacity: 1,
       y: 0,
       ...(blur ? { filter: "blur(0px)" } : {}),
-      transition: { duration: 0.6, ease: EASE },
+      transition: { duration: 0.7, ease: EASE },
     },
   };
 }
@@ -279,10 +279,10 @@ export function FadeUp({
       whileInView={{ opacity: 1, y: 0 }}
       transition={
         spring
-          ? { type: "spring", duration: 0.4, bounce: 0.2, delay }
-          : { duration: 0.7, ease: EASE, delay }
+          ? { type: "spring", duration: 0.7, bounce: 0.08, delay }
+          : { duration: 0.85, ease: EASE, delay }
       }
-      viewport={{ once, amount }}
+      viewport={{ once, amount, margin: "0px 0px -8% 0px" }}
     >
       {children}
     </Comp>
@@ -308,7 +308,7 @@ export function HoverScale({
   );
 }
 
-/** Shrinks its content slightly on hover (frame/card items). */
+/** Softly shrinks content on hover (frame/card items). */
 export function HoverShrink({
   className,
   children,
@@ -316,11 +316,18 @@ export function HoverShrink({
   className?: string;
   children: ReactNode;
 }) {
+  const reduceMotion = useReducedMotion();
+
+  if (reduceMotion) {
+    return <div className={className}>{children}</div>;
+  }
+
   return (
     <motion.div
       className={className}
-      whileHover={{ scale: 0.9 }}
-      transition={{ type: "spring", stiffness: 400, damping: 17 }}
+      whileHover={{ scale: 0.985 }}
+      transition={{ duration: 0.45, ease: EASE }}
+      style={{ transformOrigin: "center top" }}
     >
       {children}
     </motion.div>

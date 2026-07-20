@@ -85,15 +85,15 @@ export default function MovingFlowingSection() {
 
         {/* Mobile: 1-col dark cards · Desktop: 3-col white cards */}
         <div className="mt-8 grid grid-cols-1 gap-3 lg:mb-[5.04rem] lg:mt-[5.04rem] lg:grid-cols-3 lg:gap-5">
-          {cards.map((card) => (
+          {cards.map((card, index) => (
             <FadeUp
               key={card.title}
               as="article"
-              y={150}
-              once={false}
-              amount={0.5}
-              spring
-              className="flex flex-col items-start gap-2 rounded-md border border-white/10 bg-[#1A1A1A] p-5 lg:gap-3 lg:rounded-none lg:border-0 lg:bg-white lg:p-7"
+              y={40}
+              once
+              amount={0.2}
+              delay={index * 0.08}
+              className="flex flex-col items-start gap-2 rounded-md border border-white/10 bg-[#1A1A1A] p-5 will-change-transform lg:gap-3 lg:rounded-none lg:border-0 lg:bg-white lg:p-7"
             >
               <h3 className="font-eb-garamond text-xl font-semibold leading-[105%] text-white lg:text-[28px] lg:font-medium lg:italic lg:text-[#111]">
                 {card.title}

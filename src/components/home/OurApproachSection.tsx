@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
-import { CharReveal, HoverShrink } from "@/components/ui/text-reveal";
+import { CharReveal, FadeUp, HoverShrink } from "@/components/ui/text-reveal";
 
 const approachItems = [
   {
@@ -74,7 +74,12 @@ export default function OurApproachSection() {
         </div>
 
         {/* Image — second on mobile, right column on desktop */}
-        <div className="relative aspect-square w-full overflow-hidden border border-[#111] sm:aspect-auto sm:h-[520px] lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:h-[760px]">
+        <FadeUp
+          as="div"
+          y={36}
+          amount={0.2}
+          className="relative aspect-square w-full overflow-hidden border border-[#111] sm:aspect-auto sm:h-[520px] lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:h-[760px]"
+        >
           <Image
             src="/Home/HOME3.webp"
             alt="Our approach operations visual"
@@ -82,7 +87,7 @@ export default function OurApproachSection() {
             className="object-cover"
             sizes="(max-width: 1024px) 100vw, 50vw"
           />
-        </div>
+        </FadeUp>
 
         {/* List — third on mobile, under header on desktop */}
         <div className="lg:col-start-1 lg:row-start-2">
@@ -90,8 +95,12 @@ export default function OurApproachSection() {
           <div className="hidden h-1 w-full bg-[#111] lg:block" />
 
           {approachItems.map((item, index) => (
-            <div
+            <FadeUp
               key={item.title}
+              as="div"
+              y={28}
+              amount={0.25}
+              delay={index * 0.1}
               className={
                 index < approachItems.length - 1
                   ? "border-b border-[#111]/15 lg:border-[#111]"
@@ -117,7 +126,7 @@ export default function OurApproachSection() {
                   {item.description}
                 </p>
               </HoverShrink>
-            </div>
+            </FadeUp>
           ))}
 
           <div className="hidden h-1 w-full bg-[#111] lg:block" />
