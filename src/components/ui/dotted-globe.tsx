@@ -269,7 +269,7 @@ export default function DottedGlobe({ className }: { className?: string }) {
     const ctx = canvas.getContext("2d")!;
     let raf = 0;
 
-    const AUTO_V = 0.0035;
+    const AUTO_V = 0.007;
     const DAMP = 0.905;
 
     function frame() {

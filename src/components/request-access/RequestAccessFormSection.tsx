@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { FadeIn, MotionButton, WordReveal } from "@/components/ui/text-reveal";
 
-type FormData = {
+type ContactFormFields = {
   name: string;
   institution: string;
   role: string;
@@ -11,13 +11,16 @@ type FormData = {
   problem: string;
 };
 
-const initialForm: FormData = {
+const initialForm: ContactFormFields = {
   name: "",
   institution: "",
   role: "",
   contact: "",
   problem: "",
 };
+
+const FORMSUBMIT_ENDPOINT =
+  "https://formsubmit.co/ajax/innovate@thehedgecollective.com";
 
 function FormField({
   label,
@@ -28,7 +31,7 @@ function FormField({
   multiline = false,
 }: {
   label: string;
-  name: keyof FormData;
+  name: keyof ContactFormFields;
   placeholder: string;
   value: string;
   onChange: (
@@ -75,7 +78,7 @@ function FormField({
 type Status = "idle" | "sending" | "success" | "error";
 
 export default function RequestAccessFormSection() {
-  const [form, setForm] = useState<FormData>(initialForm);
+  const [form, setForm] = useState<ContactFormFields>(initialForm);
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -95,42 +98,39 @@ export default function RequestAccessFormSection() {
       return;
     }
 
-    const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
-    if (!accessKey) {
-      setStatus("error");
-      setErrorMessage(
-        "Form is not configured yet: missing NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY.",
-      );
-      return;
-    }
-
     setStatus("sending");
     setErrorMessage("");
 
+    const payload = new FormData();
+    payload.append("name", form.name.trim());
+    payload.append("institution", form.institution.trim());
+    payload.append("role", form.role.trim());
+    payload.append("contact", form.contact.trim());
+    payload.append("problem", form.problem.trim());
+    payload.append("_subject", "New Website Contact Form Submission");
+    payload.append("_captcha", "false");
+    payload.append("_template", "table");
+
     try {
-      const response = await fetch("https://api.web3forms.com/submit", {
+      const response = await fetch(FORMSUBMIT_ENDPOINT, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          access_key: accessKey,
-          subject: `Briefing request from ${form.name}`,
-          from_name: "The Hedge Collective — Request Access",
-          name: form.name,
-          institution: form.institution,
-          role: form.role,
-          contact: form.contact,
-          problem: form.problem,
-        }),
+        body: payload,
+        headers: { Accept: "application/json" },
       });
 
-      const result = await response.json();
+      const result = (await response.json().catch(() => null)) as {
+        success?: string | boolean;
+        message?: string;
+      } | null;
 
-      if (result.success) {
+      if (response.ok && result && result.success !== false) {
         setStatus("success");
         setForm(initialForm);
       } else {
         setStatus("error");
-        setErrorMessage(result.message || "Something went wrong. Please try again.");
+        setErrorMessage(
+          result?.message || "Something went wrong. Please try again.",
+        );
       }
     } catch {
       setStatus("error");
