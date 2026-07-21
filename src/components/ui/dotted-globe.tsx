@@ -7,6 +7,8 @@ import { useRef, useEffect, useCallback, useState } from "react";
 type Vec3 = [number, number, number];
 type Mat3 = [number, number, number, number, number, number, number, number, number];
 
+const identity = (): Mat3 => [1, 0, 0, 0, 1, 0, 0, 0, 1];
+
 const rotY = (a: number): Mat3 => {
   const c = Math.cos(a), s = Math.sin(a);
   return [c, 0, s, 0, 1, 0, -s, 0, c];
@@ -189,8 +191,7 @@ function buildMask(): Uint8Array {
     poly.forEach(([lon, lat], i) => {
       const px = ((lon + 180) / 360) * MW;
       const py = ((90 - lat) / 180) * MH;
-      if (i === 0) c.moveTo(px, py);
-      else c.lineTo(px, py);
+      i === 0 ? c.moveTo(px, py) : c.lineTo(px, py);
     });
     c.closePath();
     c.fill();
@@ -212,6 +213,7 @@ function isLand(lat: number, lon: number, mask: Uint8Array): boolean {
 interface Dot {
   x: number; y: number; z: number;
   land: boolean;
+  phase: number; // pre-computed spatial wave phase, fixed in globe space
 }
 
 function makeDots(n: number, mask: Uint8Array): Dot[] {
@@ -225,10 +227,171 @@ function makeDots(n: number, mask: Uint8Array): Dot[] {
     const z = Math.sin(t) * r;
     const lat = Math.asin(Math.max(-1, Math.min(1, y))) * (180 / Math.PI);
     const lon = Math.atan2(z, x) * (180 / Math.PI);
-    dots.push({ x, y, z, land: isLand(lat, lon, mask) });
+    // Spatial phase: weighted dot-product with an irrational direction vector
+    // creates ~60° wavelength clusters anchored to the globe surface
+    const phase = x * 3.2 + y * 2.8 + z * 4.0;
+    dots.push({ x, y, z, land: isLand(lat, lon, mask), phase });
   }
   return dots;
 }
+
+// ── Pulse markers ─────────────────────────────────────────────────────────────
+
+function latLonToVec3(lat: number, lon: number): Vec3 {
+  const phi = (90 - lat) * (Math.PI / 180);
+  const theta = lon * (Math.PI / 180);
+  return [Math.sin(phi) * Math.cos(theta), Math.cos(phi), Math.sin(phi) * Math.sin(theta)];
+}
+
+function northTangent(p: Vec3): Vec3 {
+  const [x, y, z] = p;
+  let nx = -y * x, ny = 1 - y * y, nz = -y * z;
+  const len = Math.sqrt(nx * nx + ny * ny + nz * nz);
+  return len < 1e-6 ? [1, 0, 0] : [nx / len, ny / len, nz / len];
+}
+
+function eastTangent(p: Vec3): Vec3 {
+  // cross([0,1,0], p) gives east
+  const [px, _py, pz] = p;
+  const ex = pz, ey = 0, ez = -px;
+  const len = Math.sqrt(ex * ex + ey * ey + ez * ez);
+  return len < 1e-6 ? [0, 0, 1] : [ex / len, ey / len, ez / len];
+}
+
+function sphereOffset(p: Vec3, tangent: Vec3, dist: number): Vec3 {
+  const ox = p[0] + tangent[0] * dist;
+  const oy = p[1] + tangent[1] * dist;
+  const oz = p[2] + tangent[2] * dist;
+  const len = Math.sqrt(ox * ox + oy * oy + oz * oz);
+  return [ox / len, oy / len, oz / len];
+}
+
+type RingStyle = "staggered" | "thick_thin" | "triple" | "double" | "gradient" | "dashed" | "dotted" | "solid";
+
+interface MarkerData {
+  pos: Vec3;
+  lineEnd: Vec3 | null;
+  level: 1 | 2 | 3 | 4 | 5;
+  ringStyle: RingStyle;
+  period: number;
+  offset: number;
+}
+
+// Per-level display config
+const LVL = {
+  1: { size: 7.2, numRings: 5, pMin: 4.5, pMax: 6.0, expand: 4.5, alpha: 0.93, lw: 1.0, glowBlur: 14 },
+  2: { size: 5.5, numRings: 3, pMin: 3.0, pMax: 4.5, expand: 3.5, alpha: 0.88, lw: 0.9, glowBlur: 7  },
+  3: { size: 4.2, numRings: 2, pMin: 2.5, pMax: 3.5, expand: 2.8, alpha: 0.82, lw: 0.85,glowBlur: 3  },
+  4: { size: 2.9, numRings: 1, pMin: 2.0, pMax: 3.0, expand: 2.2, alpha: 0.76, lw: 0.8, glowBlur: 0  },
+  5: { size: 1.9, numRings: 1, pMin: 1.5, pMax: 2.5, expand: 1.8, alpha: 0.52, lw: 0.7, glowBlur: 0  },
+} as const;
+
+// Level → rgb string
+const LVL_RGB: Record<number, string> = {
+  1: "17,17,17",
+  2: "17,17,17",
+  3: "17,17,17",
+  4: "17,17,17",
+  5: "17,17,17",
+};
+
+// [lat, lon, level, ringStyle, hasLine, lineAngleDeg]
+const RAW_MARKERS: [number, number, 1|2|3|4|5, RingStyle, boolean, number][] = [
+  // ── Level 1 · Critical ─────────────────────────────────────────────────────
+  [ 40.7,  -74.0, 1, "staggered",  true,  135],  // New York
+  [ 51.5,   -0.1, 1, "staggered",  true,  125],  // London
+  [ 25.2,   55.3, 1, "staggered",  true,   30],  // Dubai
+  [  1.4,  103.8, 1, "staggered",  true,   60],  // Singapore
+  [ 35.7,  139.7, 2, "triple",     true,   55],  // Tokyo
+  // ── Level 2 · High ─────────────────────────────────────────────────────────
+  [ 19.1,   72.9, 2, "triple",     true,   75],  // Mumbai
+  [-33.9,  151.2, 2, "thick_thin", true,  115],  // Sydney
+  [-23.5,  -46.6, 2, "thick_thin", true,   65],  // São Paulo
+  // ── Level 3 · Medium ───────────────────────────────────────────────────────
+  [-26.2,   28.0, 3, "double",     false,   0],  // Johannesburg
+  // ── Level 4 · Low ──────────────────────────────────────────────────────────
+  [ 30.0,   31.2, 4, "solid",      false,   0],  // Cairo
+];
+
+function buildMarkers(): MarkerData[] {
+  return RAW_MARKERS.map(([lat, lon, level, ringStyle, hasLine, lineAngleDeg], i) => {
+    const pos = latLonToVec3(lat, lon);
+    let lineEnd: Vec3 | null = null;
+    if (hasLine) {
+      const nT = northTangent(pos);
+      const eT = eastTangent(pos);
+      const a = lineAngleDeg * (Math.PI / 180);
+      const tangent: Vec3 = [
+        Math.cos(a) * nT[0] + Math.sin(a) * eT[0],
+        Math.cos(a) * nT[1] + Math.sin(a) * eT[1],
+        Math.cos(a) * nT[2] + Math.sin(a) * eT[2],
+      ];
+      lineEnd = sphereOffset(pos, tangent, 0.088);
+    }
+    const cfg = LVL[level];
+    const period = cfg.pMin + (Math.sin(i * 1.618) * 0.5 + 0.5) * (cfg.pMax - cfg.pMin);
+    const offset = (i * 0.731 * period) % period;
+    return { pos, lineEnd, level, ringStyle, period, offset };
+  });
+}
+
+// ── Marker tooltip data ────────────────────────────────────────────────────────
+
+// Names ordered to match RAW_MARKERS indices (0–9)
+const MARKER_NAMES: string[] = [
+  "NEW YORK", "LONDON", "DUBAI", "SINGAPORE", "TOKYO",
+  "MUMBAI", "SYDNEY", "SÃO PAULO", "JOHANNESBURG", "CAIRO",
+];
+
+const MARKER_CATEGORIES: string[] = [
+  "Financial Networks", "Cyber Intelligence", "Maritime Activity",
+  "Economic Signals", "Communications",
+  "Supply Chain", "Satellite Monitoring", "Network Analysis",
+  "Maritime Activity", "Communications",
+];
+
+const TOOLTIP_META: Record<number, { label: string; dot: string; color: string }> = {
+  1: { label: "Priority", dot: "#111111", color: "#111111" },
+  2: { label: "Active",   dot: "#111111", color: "#111111" },
+  3: { label: "Active",   dot: "#111111", color: "#111111" },
+  4: { label: "Active",   dot: "#111111", color: "#111111" },
+  5: { label: "Active",   dot: "#111111", color: "#111111" },
+};
+
+// ── Global connectivity ────────────────────────────────────────────────────────
+
+const PAKISTAN_VEC3: Vec3 = latLonToVec3(30, 70);
+
+function slerp(a: Vec3, b: Vec3, t: number): Vec3 {
+  const dot = Math.max(-1, Math.min(1, a[0]*b[0] + a[1]*b[1] + a[2]*b[2]));
+  const omega = Math.acos(dot);
+  if (omega < 1e-5) {
+    return [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t];
+  }
+  const so = Math.sin(omega);
+  const ka = Math.sin((1-t)*omega)/so, kb = Math.sin(t*omega)/so;
+  return [ka*a[0]+kb*b[0], ka*a[1]+kb*b[1], ka*a[2]+kb*b[2]];
+}
+
+interface ConnDatum { vec: Vec3; pPhase: number; pSpeed: number; oPhase: number; oSpeed: number; nParts: number }
+
+const CONN_LL: [number, number][] = [
+  [ 51.51,  -0.13],  // London
+  [ 40.71, -74.01],  // New York
+  [-23.55, -46.63],  // São Paulo
+  [-26.20,  28.04],  // Johannesburg
+  [ 35.69, 139.69],  // Tokyo
+  [-33.87, 151.21],  // Sydney
+];
+
+const CONN_DATA: ConnDatum[] = CONN_LL.map(([lat, lon], i) => ({
+  vec:    latLonToVec3(lat, lon),
+  pPhase: i * 0.6173,
+  pSpeed: 0.07 + (i * 17 % 8) * 0.008,  // slow: ~7–12s per trip
+  oPhase: i * 2.3941,
+  oSpeed: 0.12 + (i * 11 % 5) * 0.03,   // slow pulse cycle
+  nParts: 1,
+}));
 
 // ── Globe component ────────────────────────────────────────────────────────────
 
@@ -236,25 +399,41 @@ interface GlobeState {
   rot: Mat3;
   vel: [number, number];
   dragging: boolean;
+  hovered: boolean;
   lastXY: [number, number];
   recentD: [number, number, number][];
   dots: Dot[];
+  markers: MarkerData[];
+  scale: number;
+  glowA: number;
   autoFade: number;
 }
 
 export default function DottedGlobe({ className }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [cursor, setCursor] = useState<"grab" | "grabbing" | "default">("default");
-  // Desktop only: drag to rotate. Mobile stays auto-rotate (page scroll works).
   const [interactive, setInteractive] = useState(false);
+
+  // Hover tooltip state
+  const mouseCanvasRef = useRef<[number, number] | null>(null);
+  const hoveredMarkerIdxRef = useRef<number | null>(null);
+  const tooltipElRef = useRef<HTMLDivElement>(null);
+  const tooltipPosRef = useRef({ x: 0, y: 0 });
+  interface TooltipData { idx: number; name: string; level: number; category: string }
+  const [tooltip, setTooltip] = useState<TooltipData | null>(null);
+  const [tooltipVisible, setTooltipVisible] = useState(false);
 
   const S = useRef<GlobeState>({
     rot: mulM(rotX(-0.18), rotY(-0.35)),
     vel: [0, 0],
     dragging: false,
+    hovered: false,
     lastXY: [0, 0],
     recentD: [],
     dots: [],
+    markers: [],
+    scale: 1,
+    glowA: 0,
     autoFade: 1,
   });
 
@@ -264,17 +443,22 @@ export default function DottedGlobe({ className }: { className?: string }) {
       const on = mq.matches;
       setInteractive(on);
       setCursor(on ? "grab" : "default");
-      if (!on) S.current.dragging = false;
+      if (!on) {
+        S.current.dragging = false;
+        S.current.hovered = false;
+        mouseCanvasRef.current = null;
+      }
     };
     sync();
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
   }, []);
 
-  // Build dots after mount
+  // Build dots and markers after mount
   useEffect(() => {
     const mask = buildMask();
-    S.current.dots = makeDots(30000, mask);
+    S.current.dots = makeDots(24000, mask);
+    S.current.markers = buildMarkers();
   }, []);
 
   // Render loop
@@ -284,12 +468,13 @@ export default function DottedGlobe({ className }: { className?: string }) {
     const ctx = canvas.getContext("2d")!;
     let raf = 0;
 
-    const AUTO_V = 0.007;
+    const AUTO_V = 0.0055;
     const DAMP = 0.905;
 
     function frame() {
       const st = S.current;
       if (!canvas || !st.dots.length) { raf = requestAnimationFrame(frame); return; }
+      const now = performance.now() / 1000; // seconds
 
       const dpr = window.devicePixelRatio || 1;
       const lw = canvas.clientWidth, lh = canvas.clientHeight;
@@ -300,13 +485,19 @@ export default function DottedGlobe({ className }: { className?: string }) {
       }
 
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.clearRect(0, 0, lw, lh);
+      ctx.fillStyle = "#F4F0EA";
+      ctx.fillRect(0, 0, lw, lh);
 
       const cx = lw / 2, cy = lh / 2;
-      const baseR = Math.min(lw, lh) * 0.35;
-      const isMobile = window.innerWidth < 1024;
+      const baseR = Math.min(lw, lh) * 0.42;
 
-      const R = baseR;
+      // Lerp scale
+      const tScale = st.hovered ? 1.022 : 1;
+      st.scale += (tScale - st.scale) * 0.07;
+      const R = baseR * st.scale;
+
+      // Lerp glow
+      st.glowA += ((st.hovered ? 1 : 0) - st.glowA) * 0.07;
 
       // Lerp auto-rotation fade
       st.autoFade += ((st.dragging ? 0 : 1) - st.autoFade) * 0.025;
@@ -325,21 +516,22 @@ export default function DottedGlobe({ className }: { className?: string }) {
         if (av > 5e-5) st.rot = mulM(rotY(av), st.rot);
       }
 
-      // ── Beige globe base (matches site background family) ──
+      // ── Beige globe base (matches site background) ──
       ctx.beginPath();
       ctx.arc(cx, cy, R, 0, Math.PI * 2);
       ctx.fillStyle = "#F4F0EA";
       ctx.fill();
 
       // ── Inner glow — warm diffused light from just inside center ──
+      // Creates the sense of an illuminated sphere with volume
       const innerGlow = ctx.createRadialGradient(
         cx - R * 0.18, cy - R * 0.22, 0,
         cx, cy, R * 0.92
       );
-      innerGlow.addColorStop(0,   "rgba(253, 250, 243, 0.85)");
-      innerGlow.addColorStop(0.3, "rgba(250, 246, 238, 0.35)");
-      innerGlow.addColorStop(0.7, "rgba(240, 234, 222, 0.10)");
-      innerGlow.addColorStop(1,   "rgba(232, 224, 208, 0.0)");
+      innerGlow.addColorStop(0,   "rgba(253, 250, 243, 0.55)");
+      innerGlow.addColorStop(0.3, "rgba(250, 246, 238, 0.22)");
+      innerGlow.addColorStop(0.7, "rgba(240, 234, 222, 0.08)");
+      innerGlow.addColorStop(1,   "rgba(244, 240, 234, 0.0)");
       ctx.beginPath();
       ctx.arc(cx, cy, R, 0, Math.PI * 2);
       ctx.fillStyle = innerGlow;
@@ -348,9 +540,9 @@ export default function DottedGlobe({ className }: { className?: string }) {
       // ── Limb darkening — edge of sphere falls into shadow ──
       const limb = ctx.createRadialGradient(cx, cy, R * 0.58, cx, cy, R);
       limb.addColorStop(0,   "rgba(120, 108, 85, 0.0)");
-      limb.addColorStop(0.75,"rgba(120, 108, 85, 0.04)");
-      limb.addColorStop(0.9, "rgba(105, 93, 70, 0.12)");
-      limb.addColorStop(1,   "rgba(90, 78, 56, 0.24)");
+      limb.addColorStop(0.75,"rgba(120, 108, 85, 0.03)");
+      limb.addColorStop(0.9, "rgba(105, 93, 70, 0.08)");
+      limb.addColorStop(1,   "rgba(90, 78, 56, 0.14)");
       ctx.beginPath();
       ctx.arc(cx, cy, R, 0, Math.PI * 2);
       ctx.fillStyle = limb;
@@ -362,9 +554,10 @@ export default function DottedGlobe({ className }: { className?: string }) {
       const lx = -0.40, ly = -0.50, lz = 0.76;
       const fx =  0.55, fy =  0.10, fz = 0.60; // fill/bounce light
 
-      // Keep a thin band of the back hemisphere so dots fade past the silhouette
-      const FADE_BAND = 0.18;
-      const visible: { sx: number; sy: number; rz: number; land: boolean; key: number; fill: number }[] = [];
+      // Project all dots; keep a thin band of the back hemisphere
+      // so dots fade gracefully past the silhouette rather than popping
+      const FADE_BAND = 0.18; // how far past horizon still renders (0 = hard clip)
+      const visible: { sx: number; sy: number; rz: number; land: boolean; key: number; fill: number; phase: number }[] = [];
       for (const d of st.dots) {
         const [rx, ry, rz] = applyM(m, [d.x, d.y, d.z]);
         if (rz < -FADE_BAND) continue;
@@ -372,47 +565,315 @@ export default function DottedGlobe({ className }: { className?: string }) {
         const sy = cy - ry * R;
         const key  = Math.max(0, rx * lx + ry * ly + rz * lz);
         const fill = Math.max(0, rx * fx + ry * fy + rz * fz) * 0.28;
-        visible.push({ sx, sy, rz, land: d.land, key, fill });
+        visible.push({ sx, sy, rz, land: d.land, key, fill, phase: d.phase });
       }
       visible.sort((a, b) => a.rz - b.rz);
 
-      for (const { sx, sy, rz, land, key, fill } of visible) {
+      for (const { sx, sy, rz, land, key, fill, phase } of visible) {
+        // Smooth depth fade: rz=1 (centre-front) → 1.0, rz=0 (horizon) → 0, rz<0 → fades to 0
+        // Using a soft cosine-like curve for a more organic falloff
         const depthT = Math.max(0, rz + FADE_BAND) / (1 + FADE_BAND); // 0..1
         const depthFade = depthT * depthT * (3 - 2 * depthT);          // smoothstep
 
         if (land) {
-          // Warm taupe — matches site cream palette, still readable on #F4F0EA.
-          // Mobile: lighter base color and softer alpha.
+          // ── Wave modulation: three overlapping sine waves in globe space ──
+          // Each wave has a distinct spatial frequency and drift speed.
+          // Speeds chosen so fades at any given dot take ~1.5–3 s.
+          // Coefficients sum to 0.30 → waveMod range: 0.40 – 1.00 exactly.
+          const s1 = Math.sin(phase        + now * 0.35);          // primary   ~3 s cycle
+          const s2 = Math.sin(phase * 1.31 + now * 0.27 + 1.8);   // secondary ~3.7 s cycle
+          const s3 = Math.sin(phase * 0.73 + now * 0.18 + 4.0);   // slow drift ~5.5 s cycle
+          const waveMod = 0.70 + 0.10 * s1 + 0.12 * s2 + 0.08 * s3;
+
           const lightness = key * 0.22 + fill * 0.12;
-          const alpha = depthFade * ((isMobile ? 0.42 : 0.72) - lightness * 0.15);
-          if (alpha < 0.02) continue;
-          const dr = (1.1 + depthT * 0.7) * (isMobile ? 0.75 : 1);
+          const alpha = depthFade * (0.72 - lightness * 0.15) * waveMod;
+          if (alpha < 0.015) continue;
+          const dr = (0.82 + depthT * 0.52) * st.scale;
           ctx.beginPath();
           ctx.arc(sx, sy, dr, 0, Math.PI * 2);
-          const base = isMobile ? 200 : 139;
+          const base = 139;
           const r = Math.round(base + (1 - depthFade) * 42);
           const g = Math.round(base - 9 + (1 - depthFade) * 45);
           const b = Math.round(base - 21 + (1 - depthFade) * 45);
           ctx.fillStyle = `rgba(${r},${g},${b},${alpha.toFixed(3)})`;
           ctx.fill();
         } else {
-          const alpha = depthFade * (rz * 0.08 + key * 0.03) * (isMobile ? 0.7 : 1);
-          if (alpha < 0.01) continue;
+          const alpha = depthFade * (rz * 0.055 + key * 0.025);
+          if (alpha < 0.006) continue;
           ctx.beginPath();
-          ctx.arc(sx, sy, 0.58, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(${isMobile ? "200,193,180" : "180,172,158"},${alpha.toFixed(3)})`;
+          ctx.arc(sx, sy, 0.44 * st.scale, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(180,172,158,${alpha.toFixed(3)})`;
           ctx.fill();
         }
       }
+
+      // ── Pulse markers + connectivity ──
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx, cy, R, 0, Math.PI * 2);
+      ctx.clip();
+
+      // ── Global connectivity lines (rendered before markers so they sit beneath) ──
+      {
+        const N_ARC = 30;
+        let pkArrival = 0;
+        ctx.lineCap = "round";
+
+        for (const cd of CONN_DATA) {
+          // Independent opacity pulse per line
+          const opW = 0.5 + 0.5 * Math.sin(now * cd.oSpeed * Math.PI * 2 + cd.oPhase);
+          const lineAlpha = 0.08 + opW * 0.18; // 0.08–0.26
+
+          // Arc segments — drawn as individual short strokes for depth-based fading
+          ctx.setLineDash([2, 3.5]);
+          ctx.lineWidth = 0.85;
+          let px = 0, py = 0, pz = 0, hp = false;
+          for (let i = 0; i <= N_ARC; i++) {
+            const t = i / N_ARC;
+            const pt = slerp(cd.vec, PAKISTAN_VEC3, t);
+            const [rx, ry, rz] = applyM(m, pt);
+            const sx = cx + rx * R, sy = cy - ry * R;
+            if (hp) {
+              const sz = Math.min(rz, pz);
+              if (sz > -0.03) {
+                const df = Math.max(0, Math.min(1, (sz + 0.08) / 0.20));
+                const a  = df * lineAlpha;
+                if (a > 0.008) {
+                  ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(sx, sy);
+                  ctx.strokeStyle = `rgba(28,33,52,${a.toFixed(3)})`;
+                  ctx.stroke();
+                }
+              }
+            }
+            px = sx; py = sy; pz = rz; hp = true;
+          }
+          ctx.setLineDash([]);
+
+          // Travelling particles
+          for (let p = 0; p < cd.nParts; p++) {
+            const tv = (now * cd.pSpeed + cd.pPhase + p / cd.nParts) % 1;
+            const pp = slerp(cd.vec, PAKISTAN_VEC3, tv);
+            const [prx, pry, prz] = applyM(m, pp);
+            if (prz < 0.02) continue;
+            const df2 = Math.max(0, Math.min(1, (prz + 0.08) / 0.20));
+            // Accumulate arrival glow boost for Pakistan
+            pkArrival += Math.max(0, (tv - 0.85) / 0.15) * df2;
+            ctx.save();
+            ctx.shadowColor = "rgba(28,33,52,0.45)";
+            ctx.shadowBlur  = 3 * st.scale;
+            ctx.beginPath();
+            ctx.arc(cx + prx * R, cy - pry * R, 1.3 * st.scale, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(28,33,52,${(0.50 * df2).toFixed(3)})`;
+            ctx.fill();
+            ctx.restore();
+          }
+        }
+
+        // Pakistan hub marker — slightly larger and more prominent than existing L1
+        const [pkrx, pkry, pkrz] = applyM(m, PAKISTAN_VEC3);
+        if (pkrz > 0.02) {
+          const pksx  = cx + pkrx * R, pksy = cy - pkry * R;
+          const pkD   = 0.55 + pkrz * 0.45;
+          const pkF   = Math.max(0, Math.min(1, pkrz * 5));
+          const pkBR  = 8.8 * pkD * st.scale;
+          const pkTp  = (now * 0.52) % 1;
+          const pkPop = Math.sin(pkTp * Math.PI);
+          const pkPulse  = 1 + 0.42 * pkPop * pkPop;
+          const glowBoost = Math.min(2.4, 1 + Math.min(pkArrival, 4) * 0.45);
+          const pkRgb = "17,17,17";
+          // Four staggered rings
+          for (let i = 0; i < 4; i++) {
+            const rt = (pkTp + i / 4) % 1;
+            ctx.beginPath();
+            ctx.arc(pksx, pksy, pkBR * (1 + rt * 5.5), 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(${pkRgb},${(pkF * (1 - rt) * (i === 3 ? 0.58 : 0.36)).toFixed(3)})`;
+            ctx.lineWidth   = (i === 3 ? 2.0 : 0.9) * pkD * st.scale;
+            ctx.setLineDash([]);
+            ctx.stroke();
+          }
+          // Core dot with arrival glow boost
+          ctx.save();
+          ctx.shadowColor = `rgba(${pkRgb},${(pkF * 0.72 * glowBoost).toFixed(3)})`;
+          ctx.shadowBlur  = 20 * pkD * st.scale * glowBoost;
+          ctx.beginPath();
+          ctx.arc(pksx, pksy, pkBR * pkPulse, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${pkRgb},${(pkF * 0.94).toFixed(3)})`;
+          ctx.fill();
+          ctx.restore();
+        }
+
+        ctx.lineCap = "butt"; // restore default for marker loop
+      }
+
+      for (let _mi = 0; _mi < st.markers.length; _mi++) {
+        const mk = st.markers[_mi];
+        const [rx, ry, rz] = applyM(m, mk.pos);
+        if (rz < -0.05) continue;
+
+        const sx = cx + rx * R;
+        const sy = cy - ry * R;
+
+        const FADE_BAND = 0.18;
+        const depthT = Math.max(0, rz + FADE_BAND) / (1 + FADE_BAND);
+        const fade   = depthT * depthT * (3 - 2 * depthT);
+        if (fade < 0.04) continue;
+
+        const isHovMk   = hoveredMarkerIdxRef.current === _mi;
+        const cfg        = LVL[mk.level];
+        const rgb        = LVL_RGB[mk.level];
+        const depthScale = 0.55 + rz * 0.45;
+        const baseR      = cfg.size * depthScale * st.scale * (isHovMk ? 1.12 : 1);
+
+        // Pulse: sine-squared pop (slightly more dramatic on hover)
+        const t          = ((now - mk.offset) % mk.period) / mk.period;
+        const pop        = Math.sin(t * Math.PI);
+        const pulseFactor = 1 + (isHovMk ? 0.42 : 0.28) * pop * pop;
+
+        // ── Ring helper ────────────────────────────────────────────────────
+        const ring = (radius: number, alpha: number, lw: number, dash?: number[]) => {
+          if (alpha < 0.005 || radius < 0.5) return;
+          ctx.beginPath();
+          ctx.arc(sx, sy, radius, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(${rgb},${alpha.toFixed(3)})`;
+          ctx.lineWidth   = lw * st.scale;
+          ctx.setLineDash(dash ? dash.map(d => d * st.scale) : []);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        };
+
+        // ── Ring styles ─────────────────────────────────────────────────────
+        switch (mk.ringStyle) {
+
+          case "staggered": {
+            // 5 rings, evenly staggered — outer ring is thicker and brighter
+            const n = cfg.numRings;
+            for (let i = 0; i < n; i++) {
+              const rt = (t + i / n) % 1;
+              const isOuter = i === n - 1;
+              ring(
+                baseR * (1 + rt * cfg.expand),
+                fade * (1 - rt) * (isOuter ? 0.60 : 0.40),
+                isOuter ? 2.0 * depthScale : 0.8
+              );
+            }
+            break;
+          }
+
+          case "thick_thin": {
+            // Thick outer wave + thinner trailing wave
+            const rt1 = t;
+            ring(baseR * (1 + rt1 * cfg.expand), fade * (1 - rt1) * 0.58, 2.0 * depthScale);
+            const rt2 = (t + 0.22) % 1;
+            ring(baseR * (1 + rt2 * cfg.expand * 0.72), fade * (1 - rt2) * 0.38, 0.8);
+            break;
+          }
+
+          case "triple": {
+            // 3 evenly staggered rings, decreasing weight
+            const weights = [1.5, 1.1, 0.75] as const;
+            for (let i = 0; i < 3; i++) {
+              const rt = (t + i / 3) % 1;
+              ring(baseR * (1 + rt * cfg.expand), fade * (1 - rt) * 0.55, weights[i]);
+            }
+            break;
+          }
+
+          case "double": {
+            for (let i = 0; i < 2; i++) {
+              const rt = (t + i * 0.42) % 1;
+              ring(baseR * (1 + rt * cfg.expand), fade * (1 - rt) * 0.58, i === 0 ? 1.3 : 0.85);
+            }
+            break;
+          }
+
+          case "gradient": {
+            // Soft glow ring — three strokes at ±offset simulate a Gaussian falloff
+            const rt = t;
+            const rr = baseR * (1 + rt * cfg.expand);
+            const peak = fade * (1 - rt) * 0.58;
+            const blur = Math.max(1.0, baseR * 0.38);
+            ring(rr - blur * 0.6, peak * 0.30, 1.0);
+            ring(rr,               peak,         1.2);
+            ring(rr + blur * 0.6, peak * 0.30, 1.0);
+            // Second softer echo ring
+            const rt2 = (t + 0.38) % 1;
+            ring(baseR * (1 + rt2 * cfg.expand * 0.78), fade * (1 - rt2) * 0.35, 0.85);
+            break;
+          }
+
+          case "dashed": {
+            const rt = t;
+            ring(baseR * (1 + rt * cfg.expand), fade * (1 - rt) * 0.65, 1.1, [5, 4]);
+            break;
+          }
+
+          case "dotted": {
+            const rt = t;
+            ring(baseR * (1 + rt * cfg.expand), fade * (1 - rt) * 0.65, 1.05, [1.5, 5]);
+            break;
+          }
+
+          case "solid":
+          default: {
+            const rt = t;
+            ring(baseR * (1 + rt * cfg.expand), fade * (1 - rt) * 0.62, cfg.lw);
+            break;
+          }
+        }
+
+        // ── Core dot (with optional glow for levels 1–3, always on hover) ──
+        const coreA = (fade * cfg.alpha).toFixed(3);
+        const effectiveGlow = isHovMk ? Math.max(6, cfg.glowBlur) : cfg.glowBlur;
+        if (effectiveGlow > 0) {
+          ctx.save();
+          ctx.shadowColor = `rgba(${rgb},${(fade * (isHovMk ? 0.82 : 0.65)).toFixed(3)})`;
+          ctx.shadowBlur  = effectiveGlow * depthScale * st.scale * (isHovMk ? 1.45 : 1);
+          ctx.beginPath();
+          ctx.arc(sx, sy, baseR * pulseFactor, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${rgb},${coreA})`;
+          ctx.fill();
+          ctx.restore();
+        } else {
+          ctx.beginPath();
+          ctx.arc(sx, sy, baseR * pulseFactor, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${rgb},${coreA})`;
+          ctx.fill();
+        }
+
+        // ── Leader line ────────────────────────────────────────────────────
+        if (mk.lineEnd) {
+          const [lrx, lry, lrz] = applyM(m, mk.lineEnd);
+          if (lrz > -0.05) {
+            const lsx = cx + lrx * R;
+            const lsy = cy - lry * R;
+            const breathe = 0.45 + 0.55 * Math.sin(now * 0.38 + mk.offset * 1.7);
+            const lineA   = fade * breathe * 0.50;
+            if (lineA > 0.01) {
+              ctx.beginPath();
+              ctx.moveTo(sx, sy);
+              ctx.lineTo(lsx, lsy);
+              ctx.strokeStyle = `rgba(${rgb},${lineA.toFixed(3)})`;
+              ctx.lineWidth   = (0.7 + depthScale * 0.25) * st.scale;
+              ctx.setLineDash([]);
+              ctx.stroke();
+              ctx.beginPath();
+              ctx.arc(lsx, lsy, (1.5 + depthScale * 0.5) * st.scale, 0, Math.PI * 2);
+              ctx.fillStyle = `rgba(${rgb},${Math.min(1, lineA * 1.4).toFixed(3)})`;
+              ctx.fill();
+            }
+          }
+        }
+      }
+      ctx.restore();
 
       // ── Specular highlight — crisp catch-light upper-left ──
       const spec = ctx.createRadialGradient(
         cx - R * 0.34, cy - R * 0.36, 0,
         cx - R * 0.22, cy - R * 0.24, R * 0.52
       );
-      spec.addColorStop(0,   "rgba(255,252,244,0.40)");
-      spec.addColorStop(0.35,"rgba(255,252,244,0.12)");
-      spec.addColorStop(0.7, "rgba(255,252,244,0.03)");
+      spec.addColorStop(0,   "rgba(255,252,244,0.22)");
+      spec.addColorStop(0.35,"rgba(255,252,244,0.06)");
+      spec.addColorStop(0.7, "rgba(255,252,244,0.02)");
       spec.addColorStop(1,   "rgba(255,252,244,0.0)");
       ctx.beginPath();
       ctx.arc(cx, cy, R, 0, Math.PI * 2);
@@ -425,7 +886,7 @@ export default function DottedGlobe({ className }: { className?: string }) {
         cx + R * 0.55, cy + R * 0.45, R * 1.05
       );
       rim.addColorStop(0,   "rgba(235,225,205,0.0)");
-      rim.addColorStop(0.55,"rgba(235,225,205,0.07)");
+      rim.addColorStop(0.55,"rgba(235,225,205,0.04)");
       rim.addColorStop(1,   "rgba(235,225,205,0.0)");
       ctx.beginPath();
       ctx.arc(cx, cy, R, 0, Math.PI * 2);
@@ -439,11 +900,101 @@ export default function DottedGlobe({ className }: { className?: string }) {
     return () => cancelAnimationFrame(raf);
   }, []);
 
+  // Tooltip hover detection + position tracking RAF
+  useEffect(() => {
+    let rafId: number;
+    let prevHovered: number | null = null;
+    let hideTimer: ReturnType<typeof setTimeout> | null = null;
+
+    function tick() {
+      const canvas = canvasRef.current;
+      if (!canvas) { rafId = requestAnimationFrame(tick); return; }
+
+      const lw = canvas.clientWidth, lh = canvas.clientHeight;
+      const cx = lw / 2, cy = lh / 2;
+      const R = Math.min(lw, lh) * 0.42 * S.current.scale;
+      const m = S.current.rot;
+
+      // ── Hover detection ──────────────────────────────────────────────────
+      const mp = mouseCanvasRef.current;
+      let newHovered: number | null = null;
+      if (mp && !S.current.dragging) {
+        let minDist = 22; // hover radius px
+        for (let i = 0; i < S.current.markers.length; i++) {
+          const [rx, ry, rz] = applyM(m, S.current.markers[i].pos);
+          if (rz < 0.05) continue;
+          const sx = cx + rx * R, sy = cy - ry * R;
+          const d = Math.sqrt((mp[0] - sx) ** 2 + (mp[1] - sy) ** 2);
+          if (d < minDist) { minDist = d; newHovered = i; }
+        }
+      }
+
+      hoveredMarkerIdxRef.current = newHovered;
+
+      if (newHovered !== prevHovered) {
+        if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+
+        if (newHovered !== null) {
+          const mk = S.current.markers[newHovered];
+          const name = MARKER_NAMES[newHovered] ?? "UNKNOWN";
+          const cat  = MARKER_CATEGORIES[newHovered] ?? "Intelligence";
+          setTooltip({ idx: newHovered, name, level: mk.level, category: cat });
+          setTooltipVisible(true);
+        } else {
+          setTooltipVisible(false);
+          hideTimer = setTimeout(() => setTooltip(null), 220);
+        }
+        prevHovered = newHovered;
+      }
+
+      // ── Tooltip position tracking ─────────────────────────────────────────
+      const el = tooltipElRef.current;
+      if (el && prevHovered !== null) {
+        const mk = S.current.markers[prevHovered];
+        if (mk) {
+          const [rx, ry, rz] = applyM(m, mk.pos);
+          if (rz < 0.04) {
+            // Marker behind globe — hide immediately
+            setTooltipVisible(false);
+            hideTimer = setTimeout(() => setTooltip(null), 220);
+            prevHovered = null;
+            hoveredMarkerIdxRef.current = null;
+          } else {
+            const sx = cx + rx * R, sy = cy - ry * R;
+            const TW = 168, TH = 82; // approx tooltip dimensions
+            const GAP = 13;
+
+            // Default: above the marker
+            let tx = sx - TW / 2;
+            let ty = sy - TH - GAP;
+
+            // Flip below if near top of canvas
+            if (ty < 8) ty = sy + GAP;
+
+            // Clamp horizontally
+            tx = Math.max(8, Math.min(lw - TW - 8, tx));
+
+            el.style.left = `${tx}px`;
+            el.style.top  = `${ty}px`;
+          }
+        }
+      }
+
+      rafId = requestAnimationFrame(tick);
+    }
+
+    rafId = requestAnimationFrame(tick);
+    return () => {
+      cancelAnimationFrame(rafId);
+      if (hideTimer) clearTimeout(hideTimer);
+    };
+  }, []);
+
   // ── Input helpers ──────────────────────────────────────────────────────────
 
   const getR = () =>
     canvasRef.current
-      ? Math.min(canvasRef.current.clientWidth, canvasRef.current.clientHeight) * 0.35
+      ? Math.min(canvasRef.current.clientWidth, canvasRef.current.clientHeight) * 0.42
       : 200;
 
   const applyDrag = (dx: number, dy: number) => {
@@ -479,7 +1030,10 @@ export default function DottedGlobe({ className }: { className?: string }) {
   }, [interactive]);
 
   const onMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!interactive || !S.current.dragging) return;
+    if (!interactive) return;
+    const rect = canvasRef.current?.getBoundingClientRect();
+    if (rect) mouseCanvasRef.current = [e.clientX - rect.left, e.clientY - rect.top];
+    if (!S.current.dragging) return;
     const dx = e.clientX - S.current.lastXY[0];
     const dy = e.clientY - S.current.lastXY[1];
     applyDrag(dx, dy);
@@ -489,21 +1043,30 @@ export default function DottedGlobe({ className }: { className?: string }) {
   }, [interactive]);
 
   const onMouseUp = useCallback(() => {
-    if (!interactive || !S.current.dragging) return;
+    if (!interactive) return;
+    if (!S.current.dragging) return;
     S.current.dragging = false;
     flushVelocity();
     setCursor("grab");
   }, [interactive]);
 
+  const onMouseEnter = useCallback(() => {
+    if (!interactive) return;
+    S.current.hovered = true;
+  }, [interactive]);
+
   const onMouseLeave = useCallback(() => {
     if (!interactive) return;
+    S.current.hovered = false;
+    mouseCanvasRef.current = null;
     if (S.current.dragging) { S.current.dragging = false; setCursor("grab"); }
   }, [interactive]);
 
-  // ── Touch (desktop only; mobile is auto-rotate) ────────────────────────────
+  // ── Touch ──────────────────────────────────────────────────────────────────
 
   const onTouchStart = useCallback((e: React.TouchEvent) => {
     if (!interactive) return;
+    e.preventDefault();
     const t = e.touches[0];
     S.current.dragging = true;
     S.current.lastXY = [t.clientX, t.clientY];
@@ -512,7 +1075,9 @@ export default function DottedGlobe({ className }: { className?: string }) {
   }, [interactive]);
 
   const onTouchMove = useCallback((e: React.TouchEvent) => {
-    if (!interactive || !S.current.dragging) return;
+    if (!interactive) return;
+    e.preventDefault();
+    if (!S.current.dragging) return;
     const t = e.touches[0];
     const dx = t.clientX - S.current.lastXY[0];
     const dy = t.clientY - S.current.lastXY[1];
@@ -523,30 +1088,89 @@ export default function DottedGlobe({ className }: { className?: string }) {
   }, [interactive]);
 
   const onTouchEnd = useCallback(() => {
-    if (!interactive || !S.current.dragging) return;
+    if (!interactive) return;
+    if (!S.current.dragging) return;
     S.current.dragging = false;
     flushVelocity();
   }, [interactive]);
 
   return (
-    <div className={className}>
+    <div
+      className={`size-full flex items-center justify-center relative ${className ?? ""}`}
+      style={{
+        background: "#F4F0EA",
+      }}
+    >
       <canvas
         ref={canvasRef}
-        className="h-full w-full"
+        className="w-full h-full"
         style={{
           cursor,
           touchAction: interactive ? "none" : "pan-y",
-          display: "block",
           pointerEvents: interactive ? "auto" : "none",
+          display: "block",
         }}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
         onMouseUp={onMouseUp}
+        onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       />
+
+      {/* Hover tooltip — anchored above the hovered marker */}
+      {tooltip && (() => {
+        const meta = TOOLTIP_META[tooltip.level];
+        return (
+          <div
+            ref={tooltipElRef}
+            style={{
+              position: "absolute",
+              zIndex: 30,
+              pointerEvents: "none",
+              opacity: tooltipVisible ? 1 : 0,
+              transform: tooltipVisible ? "translateY(0px)" : "translateY(7px)",
+              transition: "opacity 0.19s ease, transform 0.19s ease",
+              willChange: "opacity, transform",
+            }}
+          >
+            <div
+              style={{
+                background: "rgba(255,255,255,0.93)",
+                backdropFilter: "blur(12px)",
+                WebkitBackdropFilter: "blur(12px)",
+                border: "1px solid rgba(0,0,0,0.07)",
+                borderLeft: `2px solid ${meta.dot}`,
+                borderRadius: "10px",
+                width: "168px",
+                fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif",
+                boxShadow: "0 3px 16px rgba(0,0,0,0.09),0 1px 3px rgba(0,0,0,0.05)",
+                overflow: "hidden",
+              }}
+            >
+              <div style={{ padding: "11px 13px 11px 11px" }}>
+                {/* Location + status dot */}
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "7px" }}>
+                  <div style={{
+                    width: "5px", height: "5px", borderRadius: "50%",
+                    background: meta.dot, flexShrink: 0,
+                    boxShadow: `0 0 4px ${meta.dot}80`,
+                  }} />
+                  <span style={{
+                    fontSize: "10px", fontWeight: 700, letterSpacing: "0.07em",
+                    color: "#0f172a", textTransform: "uppercase" as const, lineHeight: 1,
+                  }}>
+                    {tooltip.name}
+                  </span>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }

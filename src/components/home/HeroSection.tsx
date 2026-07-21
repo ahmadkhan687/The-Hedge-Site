@@ -57,7 +57,7 @@ export default function HeroSection() {
         </div>
 
         <div className="flex min-w-0 max-w-full flex-col items-center lg:items-end lg:justify-self-end">
-          <div className="relative aspect-square w-[min(100%,clamp(280px,82vw,400px))] shrink-0 overflow-hidden sm:w-[min(100%,clamp(320px,58vw,460px))] lg:ml-auto lg:w-[min(calc(100vw-580px),560px)] xl:w-[min(calc(100vw-680px),720px)] 2xl:w-[min(calc(100vw-918px),1092px)]">
+          <div className="relative aspect-square w-[min(100%,clamp(280px,82vw,400px))] shrink-0 overflow-hidden bg-[#F4F0EA] sm:w-[min(100%,clamp(320px,58vw,460px))] lg:ml-auto lg:w-[min(calc(100vw-620px),460px)] xl:w-[min(calc(100vw-760px),560px)] 2xl:w-[min(calc(100vw-980px),760px)]">
             <HeroGlobe />
           </div>
 
