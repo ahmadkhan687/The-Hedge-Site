@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { CharReveal, FadeUp } from "@/components/ui/text-reveal";
+import { FadeUp, WordReveal } from "@/components/ui/text-reveal";
 
 export default function VarroHeroSection() {
   return (
@@ -12,10 +12,9 @@ export default function VarroHeroSection() {
           </p>
 
           <div className="mt-3 flex w-full flex-col items-center text-center">
-            <CharReveal
+            <WordReveal
               as="h1"
-              blur
-              className="font-eb-garamond text-[clamp(4.5rem,22vw,6.5rem)] font-normal leading-[0.85] text-[#2C2A26]"
+              className="font-eb-garamond text-[clamp(4.5rem,22vw,6.5rem)] font-normal leading-[0.85] tracking-normal text-[#2C2A26]"
               segments={[{ text: "Varro" }]}
             />
 
@@ -51,10 +50,9 @@ export default function VarroHeroSection() {
             Chapter
           </p>
 
-          <CharReveal
+          <WordReveal
             as="h1"
-            blur
-            className="w-full font-eb-garamond text-[clamp(4.5rem,22vw,220px)] font-normal leading-[80%] text-[#2C2A26]"
+            className="font-eb-garamond text-[clamp(4.5rem,22vw,220px)] font-normal leading-[80%] tracking-normal text-[#2C2A26]"
             segments={[{ text: "Varro" }]}
           />
 
@@ -75,9 +73,8 @@ export default function VarroHeroSection() {
             Mission designation: Varro Collection
           </p>
 
-          <CharReveal
+          <WordReveal
             as="h2"
-            blur
             className="font-eb-garamond text-[clamp(2.5rem,12vw,3.5rem)] font-normal leading-[0.9] text-[#2C2A26]"
             segments={[{ text: "A NATION'S\nOWN EYES." }]}
           />
@@ -123,9 +120,8 @@ export default function VarroHeroSection() {
               Mission designation: Varro Collection
             </p>
 
-            <CharReveal
+            <WordReveal
               as="h2"
-              blur
               className="font-eb-garamond text-[clamp(2.25rem,11vw,113px)] font-normal leading-[85%] text-[#2C2A26]"
               segments={[{ text: "A NATION'S OWN EYES." }]}
             />

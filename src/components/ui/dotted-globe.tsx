@@ -244,7 +244,9 @@ interface GlobeState {
 
 export default function DottedGlobe({ className }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [cursor, setCursor] = useState<"grab" | "grabbing">("grab");
+  const [cursor, setCursor] = useState<"grab" | "grabbing" | "default">("default");
+  // Desktop only: drag to rotate. Mobile stays auto-rotate (page scroll works).
+  const [interactive, setInteractive] = useState(false);
 
   const S = useRef<GlobeState>({
     rot: mulM(rotX(-0.18), rotY(-0.35)),
@@ -255,6 +257,19 @@ export default function DottedGlobe({ className }: { className?: string }) {
     dots: [],
     autoFade: 1,
   });
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const sync = () => {
+      const on = mq.matches;
+      setInteractive(on);
+      setCursor(on ? "grab" : "default");
+      if (!on) S.current.dragging = false;
+    };
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
 
   // Build dots after mount
   useEffect(() => {
@@ -454,47 +469,50 @@ export default function DottedGlobe({ className }: { className?: string }) {
   // ── Mouse ──────────────────────────────────────────────────────────────────
 
   const onMouseDown = useCallback((e: React.MouseEvent) => {
+    if (!interactive) return;
     S.current.dragging = true;
     S.current.lastXY = [e.clientX, e.clientY];
     S.current.recentD = [];
     S.current.vel = [0, 0];
     setCursor("grabbing");
     e.preventDefault();
-  }, []);
+  }, [interactive]);
 
   const onMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!S.current.dragging) return;
+    if (!interactive || !S.current.dragging) return;
     const dx = e.clientX - S.current.lastXY[0];
     const dy = e.clientY - S.current.lastXY[1];
     applyDrag(dx, dy);
     S.current.recentD.push([dx, dy, performance.now()]);
     if (S.current.recentD.length > 6) S.current.recentD.shift();
     S.current.lastXY = [e.clientX, e.clientY];
-  }, []);
+  }, [interactive]);
 
   const onMouseUp = useCallback(() => {
-    if (!S.current.dragging) return;
+    if (!interactive || !S.current.dragging) return;
     S.current.dragging = false;
     flushVelocity();
     setCursor("grab");
-  }, []);
+  }, [interactive]);
 
   const onMouseLeave = useCallback(() => {
+    if (!interactive) return;
     if (S.current.dragging) { S.current.dragging = false; setCursor("grab"); }
-  }, []);
+  }, [interactive]);
 
-  // ── Touch ──────────────────────────────────────────────────────────────────
+  // ── Touch (desktop only; mobile is auto-rotate) ────────────────────────────
 
   const onTouchStart = useCallback((e: React.TouchEvent) => {
+    if (!interactive) return;
     const t = e.touches[0];
     S.current.dragging = true;
     S.current.lastXY = [t.clientX, t.clientY];
     S.current.recentD = [];
     S.current.vel = [0, 0];
-  }, []);
+  }, [interactive]);
 
   const onTouchMove = useCallback((e: React.TouchEvent) => {
-    if (!S.current.dragging) return;
+    if (!interactive || !S.current.dragging) return;
     const t = e.touches[0];
     const dx = t.clientX - S.current.lastXY[0];
     const dy = t.clientY - S.current.lastXY[1];
@@ -502,20 +520,25 @@ export default function DottedGlobe({ className }: { className?: string }) {
     S.current.recentD.push([dx, dy, performance.now()]);
     if (S.current.recentD.length > 6) S.current.recentD.shift();
     S.current.lastXY = [t.clientX, t.clientY];
-  }, []);
+  }, [interactive]);
 
   const onTouchEnd = useCallback(() => {
-    if (!S.current.dragging) return;
+    if (!interactive || !S.current.dragging) return;
     S.current.dragging = false;
     flushVelocity();
-  }, []);
+  }, [interactive]);
 
   return (
     <div className={className}>
       <canvas
         ref={canvasRef}
         className="h-full w-full"
-        style={{ cursor, touchAction: "none", display: "block" }}
+        style={{
+          cursor,
+          touchAction: interactive ? "none" : "pan-y",
+          display: "block",
+          pointerEvents: interactive ? "auto" : "none",
+        }}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
         onMouseUp={onMouseUp}

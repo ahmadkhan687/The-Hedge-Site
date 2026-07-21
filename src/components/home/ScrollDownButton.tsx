@@ -24,7 +24,7 @@ export default function ScrollDownButton() {
         className="shrink-0"
       >
         <path
-          d="M2.4996 6H9.5004M6 9.5004L9.5004 6L6 2.4996"
+          d="M6 2.4996V9.5004M9.5004 6L6 9.5004L2.4996 6"
           stroke="currentColor"
           strokeWidth={2}
           strokeLinecap="round"

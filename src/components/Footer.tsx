@@ -46,7 +46,9 @@ export default function Footer() {
               Contact Us
             </Link>
             <Link
-              href="/about"
+              href="https://www.linkedin.com/company/thehedgecollective/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="font-inter text-sm font-extrabold uppercase leading-normal tracking-[0.04em] text-white no-underline"
             >
               Open Roles
@@ -77,7 +79,9 @@ export default function Footer() {
                 Contact Us
               </Link>
               <Link
-                href="/about"
+                href="https://www.linkedin.com/company/thehedgecollective/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="font-inter text-base font-extrabold uppercase leading-normal text-[#EAEAEA] no-underline"
               >
                 Open Roles

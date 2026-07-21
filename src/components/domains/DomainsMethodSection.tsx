@@ -35,7 +35,7 @@ const steps = [
     title: "Deepen",
     body: "Refine the model and improve detection for the next cycle.",
     bodyMobile: "Refine detection for the next cycle.",
-    icon: "/Domains/Vector.png",
+    icon: "/Domains/deepen.png",
   },
 ];
 
