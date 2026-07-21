@@ -478,6 +478,7 @@ export default function DottedGlobe({ className }: { className?: string }) {
 
       const dpr = window.devicePixelRatio || 1;
       const lw = canvas.clientWidth, lh = canvas.clientHeight;
+      const isMobile = window.innerWidth < 1024;
       const tw = Math.round(lw * dpr), th = Math.round(lh * dpr);
       if (canvas.width !== tw || canvas.height !== th) {
         canvas.width = tw;
@@ -675,7 +676,8 @@ export default function DottedGlobe({ className }: { className?: string }) {
           const pksx  = cx + pkrx * R, pksy = cy - pkry * R;
           const pkD   = 0.55 + pkrz * 0.45;
           const pkF   = Math.max(0, Math.min(1, pkrz * 5));
-          const pkBR  = 8.8 * pkD * st.scale;
+          const pkScale = isMobile ? 0.62 : 1;
+          const pkBR  = 8.8 * pkD * st.scale * pkScale;
           const pkTp  = (now * 0.52) % 1;
           const pkPop = Math.sin(pkTp * Math.PI);
           const pkPulse  = 1 + 0.42 * pkPop * pkPop;
@@ -687,14 +689,14 @@ export default function DottedGlobe({ className }: { className?: string }) {
             ctx.beginPath();
             ctx.arc(pksx, pksy, pkBR * (1 + rt * 5.5), 0, Math.PI * 2);
             ctx.strokeStyle = `rgba(${pkRgb},${(pkF * (1 - rt) * (i === 3 ? 0.58 : 0.36)).toFixed(3)})`;
-            ctx.lineWidth   = (i === 3 ? 2.0 : 0.9) * pkD * st.scale;
+            ctx.lineWidth   = (i === 3 ? 2.0 : 0.9) * pkD * st.scale * (isMobile ? 0.75 : 1);
             ctx.setLineDash([]);
             ctx.stroke();
           }
           // Core dot with arrival glow boost
           ctx.save();
           ctx.shadowColor = `rgba(${pkRgb},${(pkF * 0.72 * glowBoost).toFixed(3)})`;
-          ctx.shadowBlur  = 20 * pkD * st.scale * glowBoost;
+          ctx.shadowBlur  = 20 * pkD * st.scale * glowBoost * (isMobile ? 0.75 : 1);
           ctx.beginPath();
           ctx.arc(pksx, pksy, pkBR * pkPulse, 0, Math.PI * 2);
           ctx.fillStyle = `rgba(${pkRgb},${(pkF * 0.94).toFixed(3)})`;
@@ -722,7 +724,8 @@ export default function DottedGlobe({ className }: { className?: string }) {
         const cfg        = LVL[mk.level];
         const rgb        = LVL_RGB[mk.level];
         const depthScale = 0.55 + rz * 0.45;
-        const baseR      = cfg.size * depthScale * st.scale * (isHovMk ? 1.12 : 1);
+        const markerScale = isMobile ? 0.64 : 1;
+        const baseR      = cfg.size * depthScale * st.scale * markerScale * (isHovMk ? 1.12 : 1);
 
         // Pulse: sine-squared pop (slightly more dramatic on hover)
         const t          = ((now - mk.offset) % mk.period) / mk.period;
@@ -735,7 +738,7 @@ export default function DottedGlobe({ className }: { className?: string }) {
           ctx.beginPath();
           ctx.arc(sx, sy, radius, 0, Math.PI * 2);
           ctx.strokeStyle = `rgba(${rgb},${alpha.toFixed(3)})`;
-          ctx.lineWidth   = lw * st.scale;
+          ctx.lineWidth   = lw * st.scale * (isMobile ? 0.72 : 1);
           ctx.setLineDash(dash ? dash.map(d => d * st.scale) : []);
           ctx.stroke();
           ctx.setLineDash([]);
@@ -827,7 +830,7 @@ export default function DottedGlobe({ className }: { className?: string }) {
         if (effectiveGlow > 0) {
           ctx.save();
           ctx.shadowColor = `rgba(${rgb},${(fade * (isHovMk ? 0.82 : 0.65)).toFixed(3)})`;
-          ctx.shadowBlur  = effectiveGlow * depthScale * st.scale * (isHovMk ? 1.45 : 1);
+          ctx.shadowBlur  = effectiveGlow * depthScale * st.scale * (isHovMk ? 1.45 : 1) * (isMobile ? 0.75 : 1);
           ctx.beginPath();
           ctx.arc(sx, sy, baseR * pulseFactor, 0, Math.PI * 2);
           ctx.fillStyle = `rgba(${rgb},${coreA})`;
@@ -853,11 +856,11 @@ export default function DottedGlobe({ className }: { className?: string }) {
               ctx.moveTo(sx, sy);
               ctx.lineTo(lsx, lsy);
               ctx.strokeStyle = `rgba(${rgb},${lineA.toFixed(3)})`;
-              ctx.lineWidth   = (0.7 + depthScale * 0.25) * st.scale;
+              ctx.lineWidth   = (0.7 + depthScale * 0.25) * st.scale * (isMobile ? 0.72 : 1);
               ctx.setLineDash([]);
               ctx.stroke();
               ctx.beginPath();
-              ctx.arc(lsx, lsy, (1.5 + depthScale * 0.5) * st.scale, 0, Math.PI * 2);
+              ctx.arc(lsx, lsy, (1.5 + depthScale * 0.5) * st.scale * (isMobile ? 0.72 : 1), 0, Math.PI * 2);
               ctx.fillStyle = `rgba(${rgb},${Math.min(1, lineA * 1.4).toFixed(3)})`;
               ctx.fill();
             }
