@@ -27,12 +27,12 @@ export default function DomainsCaseFile({
     <div
       className={`flex w-full flex-col gap-6 border border-[#2A2520] bg-[#EAE5DE] p-8 sm:p-12 ${className ?? ""}`}
     >
-      <div className="flex items-center justify-between font-barlow-condensed text-xs font-extrabold uppercase text-[#6B665F]">
-        <span>{caseLabel}</span>
-        <span>Eyes only</span>
+      <div className="flex items-center justify-between font-barlow-condensed font-extrabold uppercase text-[#6B665F]">
+        <span className="text-[16px]">{caseLabel}</span>
+        <span className="text-xs lg:text-[16px]">Eyes only</span>
       </div>
 
-      <p className="font-barlow-condensed text-[13px] font-extrabold uppercase text-[#D7A92C]">
+      <p className="font-barlow-condensed text-[20px] font-extrabold uppercase text-[#D7A92C]">
         {verdict}
       </p>
 

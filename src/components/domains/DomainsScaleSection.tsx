@@ -17,7 +17,7 @@ export default function DomainsScaleSection() {
   return (
     <section className="px-5 py-16 sm:px-8 lg:px-[120px] lg:py-20">
       <div className="mx-auto flex w-full max-w-[1488px] flex-col gap-12 lg:gap-16">
-        <p className="font-barlow-condensed text-base font-extrabold uppercase text-[#C6A02C]">
+        <p className="font-barlow-condensed text-[24px] font-extrabold uppercase text-[#C6A02C]">
           Every scale
         </p>
 
@@ -43,7 +43,7 @@ export default function DomainsScaleSection() {
                 index === 0 ? "sm:border-r sm:border-[#1E2124]/20 sm:pr-10" : ""
               }`}
             >
-              <p className="font-barlow-condensed text-sm font-extrabold uppercase text-[#C6A02C]">
+              <p className="font-barlow-condensed text-[20px] font-extrabold uppercase text-[#C6A02C]">
                 {scale.label}
               </p>
               <p className="font-eb-garamond text-[28px] font-medium italic leading-normal text-[#111]">

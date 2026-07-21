@@ -56,7 +56,7 @@ export default function DomainThreatSection({
     >
       <div className="mx-auto flex w-full max-w-[1488px] flex-col gap-12 lg:gap-20">
         <div className="flex flex-col gap-6">
-          <p className="font-barlow-condensed text-base font-extrabold uppercase text-[#C6A02C]">
+          <p className="font-barlow-condensed text-[24px] font-extrabold uppercase text-[#C6A02C]">
             {eyebrow}
           </p>
           <h2 className="font-eb-garamond text-[clamp(2.25rem,5vw,64px)] font-medium leading-normal text-[#111]">
@@ -67,7 +67,7 @@ export default function DomainThreatSection({
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-3 sm:gap-10">
           {columns.map((column) => (
             <div key={column.label} className="flex flex-col gap-3">
-              <p className="font-barlow-condensed text-sm font-extrabold uppercase text-[#111]">
+              <p className="font-barlow-condensed text-[16px] font-extrabold uppercase text-[#111]">
                 {column.label}
               </p>
               <p className="font-inter text-base font-normal leading-[1.6] text-[#6B665F]">

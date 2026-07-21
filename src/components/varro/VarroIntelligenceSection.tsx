@@ -99,8 +99,8 @@ export default function VarroIntelligenceSection() {
         />
       </div>
 
-      {/* Desktop banner */}
-      <div className="relative mt-20 hidden h-[600px] w-full overflow-hidden lg:block">
+      {/* Desktop banner — match image aspect ratio so overlay text never crops */}
+      <div className="relative mt-20 hidden aspect-[1728/600] w-full overflow-hidden lg:block">
         <Image
           src="/Varro/banner.webp"
           alt="Varro intelligence banner visual"

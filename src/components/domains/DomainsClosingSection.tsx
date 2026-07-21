@@ -35,7 +35,7 @@ export default function DomainsClosingSection() {
 
           <div className="h-px w-full bg-[#F4F0EA]/15" />
 
-          <p className="text-center font-barlow-condensed text-xs font-extrabold uppercase tracking-[0.1em] text-[#D7A92C]">
+          <p className="text-center font-barlow-condensed text-[20px] font-extrabold uppercase tracking-[0.1em] text-[#D7A92C]">
             Varro · The Hedge Collective
           </p>
 
@@ -62,7 +62,7 @@ export default function DomainsClosingSection() {
         <div className="absolute inset-0 bg-black/86" />
         <div className="absolute inset-0 bg-gradient-to-r from-white/[0.06] to-transparent" />
 
-        <p className="relative z-10 font-barlow-condensed text-sm font-extrabold uppercase text-[#D7A92C]">
+        <p className="relative z-10 font-barlow-condensed text-[16px] font-extrabold uppercase text-[#D7A92C]">
           Domain
         </p>
 
@@ -74,7 +74,7 @@ export default function DomainsClosingSection() {
 
         <div className="relative z-10 h-px w-full max-w-[480px] bg-[#F4F0EA]/20" />
 
-        <p className="relative z-10 font-barlow-condensed text-sm font-extrabold uppercase text-[#D7A92C]">
+        <p className="relative z-10 font-barlow-condensed text-[20px] font-extrabold uppercase text-[#D7A92C]">
           Varro · The Hedge Collective
         </p>
       </div>

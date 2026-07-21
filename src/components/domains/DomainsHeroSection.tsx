@@ -16,7 +16,7 @@ export default function DomainsHeroSection() {
       </div>
 
       <div className="relative z-10 flex max-w-[851px] flex-col items-center gap-8 text-center">
-        <p className="font-barlow-condensed text-base font-extrabold uppercase leading-normal text-[#C6A02C]">
+        <p className="font-barlow-condensed text-[24px] font-extrabold uppercase leading-normal text-[#C6A02C]">
           Live today across continents
         </p>
 
