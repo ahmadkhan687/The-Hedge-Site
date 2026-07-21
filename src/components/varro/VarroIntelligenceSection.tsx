@@ -27,12 +27,12 @@ export default function VarroIntelligenceSection() {
       <div className="px-5 sm:px-8 lg:px-20">
         <div className="mx-auto flex w-full max-w-[1568px] flex-col gap-8 lg:flex-row lg:items-start lg:justify-center lg:gap-12">
           {/* Faculty card — desktop only (mobile lives in hero) */}
-          <div className="hidden h-[100px] w-[187px] shrink-0 flex-col gap-2 rounded-sm border border-[#2C2A26] bg-[#F5F0E8] p-3 lg:flex">
-            <p className="font-eb-garamond text-xs font-bold uppercase leading-normal text-[#4A4844]">
+          <div className="hidden h-[120px] w-[220px] shrink-0 flex-col gap-2 rounded-sm border border-[#2C2A26] bg-[#F5F0E8] p-3 lg:flex">
+            <p className="font-eb-garamond text-[20px] font-bold uppercase leading-normal text-[#4A4844]">
               Faculty
             </p>
             <div className="h-px w-6 bg-[#2C2A26]/25" />
-            <p className="font-eb-garamond text-[13px] font-normal leading-[1.35] text-[#4A4844]">
+            <p className="font-eb-garamond text-[16px] font-normal leading-[1.35] text-[#4A4844]">
               Sovereign intelligence
             </p>
           </div>

@@ -32,7 +32,7 @@ export default function VarroFiveMovesSection() {
       <div className="mx-auto flex w-full max-w-[1568px] flex-col gap-8 lg:gap-[72px]">
         <div className="flex flex-col gap-3 border-b border-white/15 pb-8 lg:gap-4 lg:border-b-0 lg:pb-0">
           <p className="font-archivo-narrow text-[10px] font-normal uppercase tracking-[2px] text-[#C6A02C]">
-            04 . The discipline
+            02 . The discipline
           </p>
           <h2 className="max-w-[700px] font-eb-garamond text-[clamp(1.875rem,6vw,54px)] font-medium leading-[1.15] tracking-[-0.66px] text-white lg:leading-[1.1]">
             Five moves. The same against any threat.

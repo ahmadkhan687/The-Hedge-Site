@@ -119,7 +119,7 @@ export default function VarroEditorialSection() {
 
             <div className="mt-4 flex flex-col gap-4 lg:pt-20">
               <p className="font-eb-garamond text-sm font-normal uppercase tracking-[3px] text-[#BF610A]">
-                03 . The daily verdict
+                01 . The daily verdict
               </p>
               <WordReveal
                 as="p"
