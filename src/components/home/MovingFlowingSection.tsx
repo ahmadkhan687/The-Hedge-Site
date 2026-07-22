@@ -1,3 +1,4 @@
+import CapabilitiesBackgroundVideo from "@/components/home/CapabilitiesBackgroundVideo";
 import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
 import { CharReveal, FadeUp } from "@/components/ui/text-reveal";
 
@@ -37,17 +38,8 @@ const cards = [
 export default function MovingFlowingSection() {
   return (
     <section className="relative w-full overflow-hidden bg-black lg:bg-[#121416]">
-      {/* Desktop only: video background */}
-      <video
-        className="absolute inset-0 hidden size-full object-cover object-[center_45%] opacity-70 lg:block"
-        autoPlay
-        muted
-        loop
-        playsInline
-      >
-        <source src="/Home/moving flowing bg video.mp4" type="video/mp4" />
-      </video>
-
+      {/* Desktop only: optimized looping video background */}
+      <CapabilitiesBackgroundVideo />
       <div
         className="absolute inset-0 hidden bg-[#0E121A]/50 lg:block"
         aria-hidden="true"

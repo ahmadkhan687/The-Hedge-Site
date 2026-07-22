@@ -1,20 +1,14 @@
+import LoopingBackgroundVideo from "@/components/ui/LoopingBackgroundVideo";
+
 export default function DomainsPrecisionCallout() {
   return (
     <section className="relative overflow-hidden bg-[#0A0A10]">
       {/* Earth background video — loops while section is on screen */}
       <div className="pointer-events-none absolute inset-0" aria-hidden>
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
+        <LoopingBackgroundVideo
+          src="/Domains/Earth-revolving-optimized.mp4"
           className="absolute inset-0 h-full w-full object-cover"
-        >
-          <source
-            src="/Domains/Earth_revolving_from_space_1080p_202607071448.mp4"
-            type="video/mp4"
-          />
-        </video>
+        />
         <div className="absolute inset-0 bg-[#0A0A10]/70" />
       </div>
 

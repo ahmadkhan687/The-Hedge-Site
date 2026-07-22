@@ -4,6 +4,7 @@ import PerspectivesFullBleedImage from "@/components/perspectives/PerspectivesFu
 import PerspectivesHeroSection from "@/components/perspectives/PerspectivesHeroSection";
 import PerspectivesQuoteSection from "@/components/perspectives/PerspectivesQuoteSection";
 import PerspectivesRecentPiecesSection from "@/components/perspectives/PerspectivesRecentPiecesSection";
+import LoopingBackgroundVideo from "@/components/ui/LoopingBackgroundVideo";
 
 export default function PerspectivesPageSection() {
   return (
@@ -13,15 +14,10 @@ export default function PerspectivesPageSection() {
           className="pointer-events-none absolute inset-0"
           aria-hidden="true"
         >
-          <video
+          <LoopingBackgroundVideo
+            src="/perspectives/perspectives-bg-optimized.mp4"
             className="h-full w-full object-cover opacity-[0.39] mix-blend-color-burn"
-            autoPlay
-            muted
-            loop
-            playsInline
-          >
-            <source src="/perspectives/video.mp4" type="video/mp4" />
-          </video>
+          />
         </div>
 
         <div className="relative z-10">

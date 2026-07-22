@@ -1,4 +1,5 @@
 import Image from "next/image";
+import LoopingBackgroundVideo from "@/components/ui/LoopingBackgroundVideo";
 import { Char3DReveal, MotionCTA } from "@/components/ui/text-reveal";
 
 export default function DomainsClosingSection() {
@@ -7,18 +8,10 @@ export default function DomainsClosingSection() {
       {/* —— Mobile layout —— */}
       <div className="relative flex min-h-[520px] flex-col justify-center px-5 py-20 sm:px-8 lg:hidden">
         <div className="pointer-events-none absolute inset-0" aria-hidden>
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
+          <LoopingBackgroundVideo
+            src="/Domains/Earth-revolving-optimized.mp4"
             className="absolute inset-0 h-full w-full object-cover"
-          >
-            <source
-              src="/Domains/Earth_revolving_from_space_1080p_202607071448.mp4"
-              type="video/mp4"
-            />
-          </video>
+          />
           <div className="absolute inset-0 bg-black/82" />
         </div>
 
