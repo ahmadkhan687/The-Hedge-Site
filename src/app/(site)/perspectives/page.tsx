@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import PerspectivesPageSection from "@/components/perspectives/PerspectivesPageSection";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Perspectives | The Hedge Collective",
   description:
