@@ -9,7 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 type AdminArticlesListProps = {
   articles: Article[];
 };
-
+// ... existing code ...
 export default function AdminArticlesList({ articles }: AdminArticlesListProps) {
   const router = useRouter();
   const [busyId, setBusyId] = useState<string | null>(null);
