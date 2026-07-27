@@ -79,7 +79,7 @@ export default function OperatingModelSection() {
               paddingClass="px-4 py-3 sm:pl-4 sm:pr-[8px] sm:pt-3 sm:pb-[10px]"
             />
             <SectionButton
-              href="/domains"
+              href="/perspectives"
               label="Read Technical Thesis"
               variant="filled"
               paddingClass="px-4 py-3 sm:pl-4 sm:pr-2 sm:pt-3 sm:pb-[10px]"
