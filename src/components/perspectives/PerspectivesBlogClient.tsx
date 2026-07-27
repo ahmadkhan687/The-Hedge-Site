@@ -30,7 +30,7 @@ function ReadDossierLink() {
   return (
     <span className="inline-flex items-center gap-[10px]">
       <span className="font-inter text-[11px] font-extrabold uppercase tracking-[0.02em] text-[#111]">
-        READ DOSSIER
+        READ MORE
       </span>
       <span className="text-[#111] text-[11px]">→</span>
     </span>
@@ -116,7 +116,7 @@ export default function PerspectivesBlogClient({ articles }: Props) {
           {featured ? (
             <Link
               href={`/perspectives/${featured.slug}`}
-              className="flex flex-col lg:flex-row h-full items-start no-underline"
+              className="flex flex-col lg:flex-row h-full items-stretch no-underline"
             >
               <div className="relative w-full lg:w-[900px] h-[260px] lg:h-full">
                 {featured.cover_image_url ? (
@@ -141,15 +141,12 @@ export default function PerspectivesBlogClient({ articles }: Props) {
                   </p>
                 </div>
 
-                <div className="absolute bottom-[24px] left-[24px] right-[24px] flex items-end justify-between">
-                  <p className="font-inter font-normal opacity-80 text-[#f3f1ea] text-[12px] whitespace-nowrap">
-                    IMAGE FEED // SIGINT-SATELLITE_A4
-                  </p>
+                <div className="absolute bottom-[24px] right-[24px] flex items-end">
                   <TelemetryStrip h={6} w={18} />
                 </div>
               </div>
 
-              <div className="flex-1 flex flex-col justify-between p-6 lg:p-[48px] gap-8">
+              <div className="flex-1 flex flex-col justify-between h-full p-6 lg:p-[48px] gap-8">
                 <div className="flex flex-col gap-[16px] items-start">
                   <p className="font-inter font-extrabold leading-[normal] text-[#e83387] text-[12px] whitespace-nowrap uppercase">
                     {featured.category}
