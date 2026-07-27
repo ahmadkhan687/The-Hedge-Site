@@ -3,22 +3,41 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { ARTICLE_CATEGORIES, type Article, type ArticleCategory } from "@/lib/articles";
+import {
+  ARTICLE_CATEGORIES,
+  type Article,
+  type ArticleCategory,
+} from "@/lib/articles";
 
-const TELEMETRY_COLORS = ["#e83387", "#f08a22", "#d7a92c", "#19b8b7", "#23b6d2"];
+const TELEMETRY_COLORS = [
+  "#e83387",
+  "#f08a22",
+  "#d7a92c",
+  "#19b8b7",
+  "#23b6d2",
+];
 
 function formatDate(iso: string | null): string {
   if (!iso) return "—";
   const d = new Date(iso);
-  const day = d.toLocaleDateString("en-US", { day: "2-digit", timeZone: "UTC" });
-  const month = d.toLocaleDateString("en-US", { month: "short", timeZone: "UTC" });
-  const year = d.toLocaleDateString("en-US", { year: "numeric", timeZone: "UTC" });
+  const day = d.toLocaleDateString("en-US", {
+    day: "2-digit",
+    timeZone: "UTC",
+  });
+  const month = d.toLocaleDateString("en-US", {
+    month: "short",
+    timeZone: "UTC",
+  });
+  const year = d.toLocaleDateString("en-US", {
+    year: "numeric",
+    timeZone: "UTC",
+  });
   return `${day} ${month.toUpperCase()} ${year}`;
 }
 
 function TelemetryStrip({ h, w }: { h: number; w: number }) {
   return (
-    <div className="flex gap-[3px] items-start" style={{ height: h }}>
+    <div className="flex shrink-0 items-start gap-[3px]" style={{ height: h }}>
       {TELEMETRY_COLORS.map((c) => (
         <div key={c} style={{ background: c, height: h, width: w }} />
       ))}
@@ -28,11 +47,11 @@ function TelemetryStrip({ h, w }: { h: number; w: number }) {
 
 function ReadDossierLink() {
   return (
-    <span className="inline-flex items-center gap-[10px]">
-      <span className="font-inter text-[11px] font-extrabold uppercase tracking-[0.02em] text-[#111]">
+    <span className="inline-flex shrink-0 items-center gap-1.5 sm:gap-[10px]">
+      <span className="font-inter text-[10px] font-extrabold uppercase tracking-[0.02em] text-[#111] sm:text-[11px]">
         READ MORE
       </span>
-      <span className="text-[#111] text-[11px]">→</span>
+      <span className="text-[10px] text-[#111] sm:text-[11px]">→</span>
     </span>
   );
 }
@@ -40,7 +59,14 @@ function ReadDossierLink() {
 type Props = { articles: Article[] };
 
 export default function PerspectivesBlogClient({ articles }: Props) {
-  const [activeFilter, setActiveFilter] = useState<ArticleCategory | null>(null);
+  const [activeFilter, setActiveFilter] = useState<ArticleCategory | null>(
+    null,
+  );
+  const [email, setEmail] = useState("");
+  const [subscribeStatus, setSubscribeStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+  const [subscribeMessage, setSubscribeMessage] = useState("");
 
   const filtered = useMemo(() => {
     if (!activeFilter) return articles;
@@ -55,33 +81,70 @@ export default function PerspectivesBlogClient({ articles }: Props) {
     ...ARTICLE_CATEGORIES.map((c) => ({ label: c, value: c })),
   ];
 
+  async function handleSubscribe(e: React.FormEvent) {
+    e.preventDefault();
+    setSubscribeStatus("loading");
+    setSubscribeMessage("");
+
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = (await res.json()) as {
+        ok?: boolean;
+        already?: boolean;
+        message?: string;
+        error?: string;
+      };
+
+      if (!res.ok) {
+        setSubscribeStatus("error");
+        setSubscribeMessage(data.error || "Unable to subscribe.");
+        return;
+      }
+
+      setSubscribeStatus("success");
+      setSubscribeMessage(
+        data.already
+          ? "You are already on the briefing list."
+          : "You are subscribed to briefings.",
+      );
+      setEmail("");
+    } catch {
+      setSubscribeStatus("error");
+      setSubscribeMessage("Unable to subscribe right now.");
+    }
+  }
+
   return (
-    <div className="bg-[#F4F0EA] flex flex-col items-start relative size-full">
+    <div className="relative flex size-full flex-col items-start bg-[#F4F0EA]">
       {/* Hero */}
-      <section className="flex flex-col gap-[40px] pb-[80px] pt-[120px] px-5 sm:px-8 lg:px-[120px] relative w-full">
-        <div className="flex flex-col gap-[16px] items-start relative w-full">
-          <p className="font-inter font-medium leading-[normal] text-[#6b665f] text-[14px] uppercase w-full">
+      <section className="relative flex w-full flex-col gap-6 px-5 pb-12 pt-16 sm:gap-8 sm:px-8 sm:pb-16 sm:pt-20 lg:gap-10 lg:px-[120px] lg:pb-20 lg:pt-[120px]">
+        <div className="relative flex w-full flex-col gap-3 sm:gap-4">
+          <p className="w-full font-inter text-[11px] font-medium uppercase leading-normal tracking-[0.04em] text-[#6b665f] sm:text-[13px] lg:text-[14px]">
             SOVEREIGN FORESIGHT / SECURITY TELEMETRY / DEFENSE REPORT
           </p>
-          <p className="font-eb-garamond font-normal leading-[0.95] text-[#111] text-[clamp(3rem,8vw,110px)] w-full">
+          <h1 className="w-full font-eb-garamond text-[clamp(2.5rem,12vw,110px)] font-normal leading-[0.95] text-[#111]">
             Perspectives &amp; Insights
-          </p>
+          </h1>
         </div>
 
-        <p className="font-eb-garamond font-normal leading-[1.5] text-[#6b665f] text-[24px] w-full max-w-[720px]">
+        <p className="w-full max-w-[720px] font-eb-garamond text-base font-normal leading-[1.5] text-[#6b665f] sm:text-xl lg:text-2xl">
           We monitor the entire geopolitical field to deliver attribution and
           cyber answers before a nation forms the question. Read our active
           defensive briefs.
         </p>
       </section>
 
-      {/* Filter pills */}
-      <section className="flex flex-col gap-[24px] items-start pb-[48px] px-5 sm:px-8 lg:px-[120px] relative w-full">
-        <div className="h-0 relative shrink-0 w-full">
+      {/* Filter pills — horizontal scroll on mobile */}
+      <section className="relative flex w-full flex-col gap-5 px-5 pb-8 sm:gap-6 sm:px-8 sm:pb-10 lg:px-[120px] lg:pb-12">
+        <div className="relative h-0 w-full shrink-0">
           <div className="absolute inset-x-0 top-[-1px] border-t border-[#1E2124]" />
         </div>
 
-        <div className="flex flex-wrap gap-[16px] items-start w-full">
+        <div className="-mx-5 flex gap-2.5 overflow-x-auto px-5 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:flex-wrap sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0">
           {filters.map((f) => {
             const isActive = f.value === activeFilter;
             return (
@@ -91,15 +154,15 @@ export default function PerspectivesBlogClient({ articles }: Props) {
                 onClick={() => setActiveFilter(f.value)}
                 className={
                   isActive
-                    ? "bg-[#111315] border border-[#111315] flex items-center px-[16px] py-[8px] rounded-[2px] shrink-0 cursor-pointer"
-                    : "bg-transparent border border-[rgba(107,102,95,0.2)] flex items-center px-[16px] py-[8px] rounded-[2px] shrink-0 cursor-pointer"
+                    ? "flex shrink-0 cursor-pointer items-center rounded-[2px] border border-[#111315] bg-[#111315] px-3 py-2 sm:px-4"
+                    : "flex shrink-0 cursor-pointer items-center rounded-[2px] border border-[rgba(107,102,95,0.2)] bg-transparent px-3 py-2 sm:px-4"
                 }
               >
                 <span
                   className={
                     isActive
-                      ? "font-inter font-medium leading-[normal] text-[#f3f1ea] text-[12px] whitespace-nowrap uppercase"
-                      : "font-inter font-medium leading-[normal] text-[#6b665f] text-[12px] whitespace-nowrap uppercase"
+                      ? "whitespace-nowrap font-inter text-[11px] font-medium uppercase leading-normal text-[#f3f1ea] sm:text-[12px]"
+                      : "whitespace-nowrap font-inter text-[11px] font-medium uppercase leading-normal text-[#6b665f] sm:text-[12px]"
                   }
                 >
                   {f.label}
@@ -111,14 +174,14 @@ export default function PerspectivesBlogClient({ articles }: Props) {
       </section>
 
       {/* Featured card */}
-      <section className="flex flex-col items-start pb-[80px] px-5 sm:px-8 lg:px-[120px] relative w-full">
-        <div className="border border-[#1e2124] w-full h-auto lg:h-[540px] overflow-clip relative">
+      <section className="relative flex w-full flex-col items-start px-5 pb-12 sm:px-8 sm:pb-16 lg:px-[120px] lg:pb-20">
+        <div className="relative w-full overflow-hidden border border-[#1e2124] lg:h-[540px]">
           {featured ? (
             <Link
               href={`/perspectives/${featured.slug}`}
-              className="flex flex-col lg:flex-row h-full items-stretch no-underline"
+              className="flex h-full flex-col items-stretch no-underline lg:flex-row"
             >
-              <div className="relative w-full lg:w-[900px] h-[260px] lg:h-full">
+              <div className="relative h-[200px] w-full sm:h-[280px] lg:h-full lg:w-[55%] xl:w-[900px]">
                 {featured.cover_image_url ? (
                   <div className="relative h-full w-full">
                     <Image
@@ -126,7 +189,10 @@ export default function PerspectivesBlogClient({ articles }: Props) {
                       alt={featured.title}
                       fill
                       priority
-                      unoptimized={featured.cover_image_url.includes("supabase.co")}
+                      sizes="(max-width: 1024px) 100vw, 55vw"
+                      unoptimized={featured.cover_image_url.includes(
+                        "supabase.co",
+                      )}
                       className="object-cover"
                     />
                     <div className="absolute inset-0 bg-[rgba(17,19,21,0.2)] mix-blend-multiply" />
@@ -135,46 +201,46 @@ export default function PerspectivesBlogClient({ articles }: Props) {
                   <div className="absolute inset-0 bg-[#111]/10" />
                 )}
 
-                <div className="absolute top-[24px] left-[24px] bg-[#d7a92c] flex items-start px-[12px] py-[6px] rounded-[2px]">
-                  <p className="font-inter font-extrabold text-[#111315] text-[11px] whitespace-nowrap uppercase">
+                <div className="absolute left-3 top-3 bg-[#d7a92c] px-2.5 py-1.5 rounded-[2px] sm:left-6 sm:top-6 sm:px-3 sm:py-1.5">
+                  <p className="whitespace-nowrap font-inter text-[9px] font-extrabold uppercase text-[#111315] sm:text-[11px]">
                     FEATURED INTERCEPT // CLASSIFIED
                   </p>
                 </div>
 
-                <div className="absolute bottom-[24px] right-[24px] flex items-end">
+                <div className="absolute bottom-3 right-3 flex items-end sm:bottom-6 sm:right-6">
                   <TelemetryStrip h={6} w={18} />
                 </div>
               </div>
 
-              <div className="flex-1 flex flex-col justify-between h-full p-6 lg:p-[48px] gap-8">
-                <div className="flex flex-col gap-[16px] items-start">
-                  <p className="font-inter font-extrabold leading-[normal] text-[#e83387] text-[12px] whitespace-nowrap uppercase">
+              <div className="flex h-full flex-1 flex-col justify-between gap-6 p-5 sm:gap-8 sm:p-8 lg:p-12">
+                <div className="flex flex-col items-start gap-3 sm:gap-4">
+                  <p className="whitespace-nowrap font-inter text-[11px] font-extrabold uppercase leading-normal text-[#e83387] sm:text-[12px]">
                     {featured.category}
                   </p>
-                  <p className="font-eb-garamond font-medium leading-[1.1] text-[#111] text-[clamp(1.5rem,3vw,40px)]">
+                  <p className="font-eb-garamond text-[clamp(1.35rem,4vw,40px)] font-medium leading-[1.15] text-[#111]">
                     {featured.title}
                   </p>
                   {featured.subtitle ? (
-                    <p className="font-eb-garamond font-normal leading-[1.5] text-[#6b665f] text-[18px]">
+                    <p className="font-eb-garamond text-base font-normal leading-[1.5] text-[#6b665f] sm:text-lg">
                       {featured.subtitle}
                     </p>
                   ) : null}
                 </div>
 
-                <div className="flex items-center justify-between whitespace-nowrap">
-                  <div className="flex flex-col gap-[4px] items-start">
-                    <p className="font-inter font-normal text-[#6b665f] text-[11px] uppercase">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                  <div className="flex flex-col items-start gap-1">
+                    <p className="font-inter text-[10px] font-normal uppercase text-[#6b665f] sm:text-[11px]">
                       AUTHOR // ANALYST
                     </p>
-                    <p className="font-inter font-medium text-[#111] text-[14px]">
+                    <p className="font-inter text-xs font-medium text-[#111] sm:text-sm">
                       THE HEDGE COLLECTIVE
                     </p>
                   </div>
-                  <div className="flex flex-col gap-[4px] items-end">
-                    <p className="font-inter font-normal text-[#6b665f] text-[11px] uppercase">
+                  <div className="flex flex-col items-start gap-1 sm:items-end">
+                    <p className="font-inter text-[10px] font-normal uppercase text-[#6b665f] sm:text-[11px]">
                       PUBLISHED // DELIVERED
                     </p>
-                    <p className="font-inter font-medium text-[#111] text-[14px]">
+                    <p className="font-inter text-xs font-medium text-[#111] sm:text-sm">
                       {formatDate(featured.published_at)}
                     </p>
                   </div>
@@ -182,24 +248,28 @@ export default function PerspectivesBlogClient({ articles }: Props) {
               </div>
             </Link>
           ) : (
-            <div className="flex items-center justify-center h-[300px]">
-              <p className="font-inter text-[#6B665F]">No articles in this category yet.</p>
+            <div className="flex h-[200px] items-center justify-center sm:h-[300px]">
+              <p className="px-4 text-center font-inter text-sm text-[#6B665F] sm:text-base">
+                No articles in this category yet.
+              </p>
             </div>
           )}
         </div>
       </section>
 
       {/* Grid */}
-      <section className="flex flex-col gap-[48px] pb-[120px] pt-0 px-5 sm:px-8 lg:px-[120px] relative w-full">
-        <div className="flex items-end justify-between w-full">
-          <p className="font-inter font-extrabold text-[#111] text-[16px] whitespace-nowrap uppercase">
+      <section className="relative flex w-full flex-col gap-8 px-5 pb-16 sm:gap-10 sm:px-8 sm:pb-20 lg:gap-12 lg:px-[120px] lg:pb-[120px]">
+        <div className="flex w-full items-end justify-between gap-4">
+          <p className="font-inter text-xs font-extrabold uppercase text-[#111] sm:text-[16px]">
             ACTIVE INTELLIGENCE DOSSIERS
           </p>
-          <TelemetryStrip h={8} w={28} />
+          <div className="hidden sm:block">
+            <TelemetryStrip h={8} w={28} />
+          </div>
         </div>
 
         {grid.length > 0 ? (
-          <div className="grid grid-cols-1 gap-[32px] w-full md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid w-full grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
             {grid.map((article) => {
               const footerTime = article.reading_time_minutes
                 ? `${article.reading_time_minutes} MIN READ`
@@ -212,17 +282,20 @@ export default function PerspectivesBlogClient({ articles }: Props) {
                 <Link
                   key={article.id}
                   href={`/perspectives/${article.slug}`}
-                  className="border border-[#1e2124] flex flex-col h-[560px] overflow-clip relative no-underline group"
+                  className="group relative flex min-h-0 flex-col overflow-hidden border border-[#1e2124] no-underline sm:min-h-[480px] lg:min-h-[560px]"
                 >
-                  <div className="relative h-[240px] w-full">
+                  <div className="relative aspect-[16/10] w-full sm:aspect-auto sm:h-[200px] lg:h-[240px]">
                     {article.cover_image_url ? (
                       <div className="relative h-full w-full">
                         <Image
                           src={article.cover_image_url}
                           alt={article.title}
                           fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                           className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                          unoptimized={article.cover_image_url.includes("supabase.co")}
+                          unoptimized={article.cover_image_url.includes(
+                            "supabase.co",
+                          )}
                         />
                         <div className="absolute inset-0 bg-[rgba(17,19,21,0.15)] mix-blend-multiply" />
                       </div>
@@ -230,9 +303,9 @@ export default function PerspectivesBlogClient({ articles }: Props) {
                       <div className="absolute inset-0 bg-[#111]/10" />
                     )}
 
-                    <div className="absolute top-[16px] left-[16px] right-[16px] flex items-center justify-between">
-                      <div className="bg-[#111315] flex items-start px-[8px] py-[4px]">
-                        <p className="font-inter font-medium text-[#f3f1ea] text-[9px] whitespace-nowrap uppercase">
+                    <div className="absolute left-3 right-3 top-3 flex items-center justify-between sm:left-4 sm:right-4 sm:top-4">
+                      <div className="flex items-start bg-[#111315] px-2 py-1">
+                        <p className="whitespace-nowrap font-inter text-[9px] font-medium uppercase text-[#f3f1ea]">
                           RESTRICTED
                         </p>
                       </div>
@@ -240,23 +313,23 @@ export default function PerspectivesBlogClient({ articles }: Props) {
                     </div>
                   </div>
 
-                  <div className="flex flex-col justify-between flex-1 p-[24px]">
-                    <div className="flex flex-col gap-[12px] items-start">
-                      <p className="font-inter font-extrabold text-[#d7a92c] text-[11px] whitespace-nowrap uppercase">
+                  <div className="flex flex-1 flex-col justify-between gap-6 p-4 sm:p-5 lg:p-6">
+                    <div className="flex flex-col items-start gap-2.5 sm:gap-3">
+                      <p className="whitespace-nowrap font-inter text-[10px] font-extrabold uppercase text-[#d7a92c] sm:text-[11px]">
                         {article.category}
                       </p>
-                      <p className="font-eb-garamond font-medium leading-[1.2] text-[#111] text-[24px]">
+                      <p className="font-eb-garamond text-xl font-medium leading-[1.2] text-[#111] sm:text-[22px] lg:text-2xl">
                         {article.title}
                       </p>
                       {article.subtitle ? (
-                        <p className="font-eb-garamond font-normal leading-[1.4] text-[#6b665f] text-[15px] line-clamp-3">
+                        <p className="line-clamp-3 font-eb-garamond text-sm font-normal leading-[1.4] text-[#6b665f] sm:text-[15px]">
                           {article.subtitle}
                         </p>
                       ) : null}
                     </div>
 
-                    <div className="flex items-center justify-between whitespace-nowrap mt-6">
-                      <p className="font-inter font-normal text-[#6b665f] text-[10px]">
+                    <div className="flex items-end justify-between gap-3">
+                      <p className="min-w-0 font-inter text-[9px] font-normal uppercase leading-snug text-[#6b665f] sm:text-[10px]">
                         {footerMeta}
                       </p>
                       <ReadDossierLink />
@@ -267,54 +340,82 @@ export default function PerspectivesBlogClient({ articles }: Props) {
             })}
           </div>
         ) : (
-          <p className="font-inter text-[#6B665F]">No published perspectives yet.</p>
+          <p className="font-inter text-sm text-[#6B665F] sm:text-base">
+            No published perspectives yet.
+          </p>
         )}
       </section>
 
       {/* Newsletter */}
-      <section className="bg-[#111315] flex flex-col gap-[48px] items-start pb-[64px] pt-[96px] px-5 sm:px-8 lg:px-[120px] relative w-full">
-        <div className="flex flex-col gap-[16px] items-start relative w-full">
-          <p className="font-inter font-extrabold text-[#d7a92c] text-[14px] uppercase">
+      <section className="relative flex w-full flex-col items-start gap-8 bg-[#111315] px-5 pb-12 pt-14 sm:gap-10 sm:px-8 sm:pb-16 sm:pt-20 lg:gap-12 lg:px-[120px] lg:pb-16 lg:pt-24">
+        <div className="relative flex w-full flex-col items-start gap-3 sm:gap-4">
+          <p className="font-inter text-xs font-extrabold uppercase text-[#d7a92c] sm:text-[14px]">
             05 - COMMUNICATIONS BRIEF
           </p>
           <div className="h-px w-full bg-white/10" />
         </div>
 
-        <div className="flex flex-col gap-[64px] items-start lg:flex-row w-full">
-          <div className="flex flex-col gap-[16px] items-start text-[#f3f1ea] max-w-[760px]">
-            <p className="font-eb-garamond font-medium leading-none text-[clamp(2.2rem,4.8vw,80px)]">
+        <div className="flex w-full flex-col items-start gap-8 lg:flex-row lg:gap-16">
+          <div className="flex max-w-[760px] flex-col items-start gap-4 text-[#f3f1ea] sm:gap-6">
+            <p className="font-eb-garamond text-[clamp(1.75rem,7vw,80px)] font-medium leading-[1.05]">
               A nation that secures itself keeps its own counsel.
             </p>
-            <p className="font-eb-garamond font-normal opacity-70 text-[18px] leading-[1.6]">
+            <p className="font-eb-garamond text-base font-normal leading-[1.6] opacity-70 sm:text-lg">
               Receive the monthly secure terminal briefs directly to your inbox.
               We analyze regional cyber activity, threat actor groups, and macro
               infrastructure vulnerabilities. No telemetry logging.
             </p>
           </div>
 
-          <div className="flex flex-col gap-[24px] flex-1 w-full">
-            <div className="flex items-center justify-between px-[16px] py-[14px] w-full bg-transparent">
-              <input
-                name="email"
-                type="email"
-                placeholder="ENTER SECURE EMAIL ADDRESS"
-                className="bg-transparent w-full outline-none font-inter text-[14px] opacity-60 text-[#f3f1ea]"
-              />
-              <TelemetryStrip h={6} w={18} />
-            </div>
-
-            <button
-              type="button"
-              className="bg-[#d7a92c] w-full rounded-[2px] px-[32px] py-[16px] text-left"
+          <div className="flex w-full flex-1 flex-col gap-5 sm:gap-6">
+            <form
+              onSubmit={handleSubscribe}
+              className="flex w-full flex-col gap-5 sm:gap-6"
             >
-              <span className="font-inter font-extrabold text-[#111315] text-[14px] uppercase">
-                SUBSCRIBE TO BRIEFINGS
-              </span>
-            </button>
+              <div className="flex w-full items-center justify-between gap-3 border-b border-white/20 px-0 py-3 sm:px-4 sm:py-3.5">
+                <input
+                  name="email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="ENTER SECURE EMAIL ADDRESS"
+                  className="w-full min-w-0 bg-transparent font-inter text-xs text-[#f3f1ea] outline-none placeholder:text-[#f3f1ea]/60 sm:text-sm"
+                />
+                <div className="hidden sm:block">
+                  <TelemetryStrip h={6} w={18} />
+                </div>
+              </div>
 
-            <p className="font-inter opacity-40 text-[#f3f1ea] text-[11px]">
-              SUBMISSION SECURED // AES-256 ENCRYPTED PATHWAY
-            </p>
+              <button
+                type="submit"
+                disabled={subscribeStatus === "loading"}
+                className="w-full rounded-[2px] bg-[#d7a92c] px-6 py-3.5 text-center disabled:opacity-60 sm:px-8 sm:py-4 sm:text-left"
+              >
+                <span className="font-inter text-xs font-extrabold uppercase text-[#111315] sm:text-[14px]">
+                  {subscribeStatus === "loading"
+                    ? "SUBMITTING…"
+                    : "SUBSCRIBE TO BRIEFINGS"}
+                </span>
+              </button>
+            </form>
+
+            {subscribeMessage ? (
+              <p
+                role="status"
+                className={`font-inter text-[11px] sm:text-xs ${
+                  subscribeStatus === "error"
+                    ? "text-[#ff8f8f]"
+                    : "text-[#d7a92c]"
+                }`}
+              >
+                {subscribeMessage}
+              </p>
+            ) : (
+              <p className="font-inter text-[10px] text-[#f3f1ea] opacity-40 sm:text-[11px]">
+                SUBMISSION SECURED // AES-256 ENCRYPTED PATHWAY
+              </p>
+            )}
           </div>
         </div>
       </section>

@@ -51,6 +51,12 @@ export default function AdminHeader() {
             New article
           </Link>
           <Link
+            href="/admin/subscribers"
+            className="font-inter text-sm font-medium uppercase text-[#111]/70 no-underline transition-opacity hover:opacity-70"
+          >
+            Subscribers
+          </Link>
+          <Link
             href="/perspectives"
             className="font-inter text-sm font-medium uppercase text-[#111]/70 no-underline transition-opacity hover:opacity-70"
           >

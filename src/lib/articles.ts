@@ -71,6 +71,7 @@ export type Article = {
   status: ArticleStatus;
   author_id: string | null;
   published_at: string | null;
+  subscribers_notified_at: string | null;
   created_at: string;
   updated_at: string;
 };

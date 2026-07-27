@@ -35,6 +35,8 @@ function mapRow(row: Record<string, unknown>): Article {
     status: row.status === "published" ? "published" : "draft",
     author_id: (row.author_id as string | null) ?? null,
     published_at: (row.published_at as string | null) ?? null,
+    subscribers_notified_at:
+      (row.subscribers_notified_at as string | null) ?? null,
     created_at: String(row.created_at),
     updated_at: String(row.updated_at),
   };

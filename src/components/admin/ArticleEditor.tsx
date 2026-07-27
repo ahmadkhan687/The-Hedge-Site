@@ -93,6 +93,7 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const [articleId, setArticleId] = useState<string | null>(initial?.id ?? null);
   const [autoSaveLabel, setAutoSaveLabel] = useState("");
+  const notifiedRef = useRef(Boolean(initial?.subscribers_notified_at));
 
   const formRef = useRef(form);
   const articleIdRef = useRef(articleId);
@@ -222,7 +223,21 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
       if (options?.manual) {
         router.replace(`/admin/articles/${data.id}`);
       }
-      return { ok: true as const, id: data.id, created: true };
+
+      const notify = await maybeNotifySubscribers({
+        id: data.id,
+        slug: payload.slug,
+        title: payload.title,
+        subtitle: payload.subtitle,
+        status: payload.status,
+      });
+
+      return {
+        ok: true as const,
+        id: data.id,
+        created: true,
+        notifyMessage: notify,
+      };
     }
 
     const { error: updateError } = await supabase
@@ -234,7 +249,81 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
       return { ok: false as const, error: updateError.message };
     }
 
-    return { ok: true as const, id, created: false };
+    const notify = await maybeNotifySubscribers({
+      id,
+      slug: payload.slug,
+      title: payload.title,
+      subtitle: payload.subtitle,
+      status: payload.status,
+    });
+
+    return {
+      ok: true as const,
+      id,
+      created: false,
+      notifyMessage: notify,
+    };
+  }
+
+  async function maybeNotifySubscribers(article: {
+    id: string;
+    slug: string;
+    title: string;
+    subtitle: string;
+    status: ArticleStatus;
+  }): Promise<string | null> {
+    if (article.status !== "published" || notifiedRef.current) {
+      return null;
+    }
+
+    try {
+      const res = await fetch("/api/notify-subscribers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: article.id,
+          slug: article.slug,
+          title: article.title,
+          subtitle: article.subtitle,
+        }),
+      });
+      const data = (await res.json()) as {
+        sent?: number;
+        skipped?: boolean;
+        reason?: string;
+        warning?: string;
+        error?: string;
+      };
+
+      if (!res.ok) {
+        return data.error
+          ? `Published, but email failed: ${data.error}`
+          : "Published, but subscriber email failed.";
+      }
+
+      // Don't lock retries if Resend isn't configured yet
+      if (data.reason !== "not_configured") {
+        notifiedRef.current = true;
+      }
+
+      if (data.reason === "not_configured") {
+        return `Published. ${data.warning}`;
+      }
+
+      if (data.reason === "already_notified" || data.skipped) {
+        return "Published.";
+      }
+
+      if (data.reason === "no_subscribers" || (data.sent ?? 0) === 0) {
+        return "Published. No subscribers to notify yet.";
+      }
+
+      return data.warning
+        ? `Published. Notified ${data.sent} subscribers. ${data.warning}`
+        : `Published. Notified ${data.sent} subscribers.`;
+    } catch {
+      return "Published, but subscriber email could not be sent.";
+    }
   }
 
   // Auto-save shortly after any change
@@ -268,10 +357,14 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
       }
 
       setError("");
-      setAutoSaveLabel(
-        formRef.current.status === "published" ? "Saved" : "Draft saved",
-      );
-      window.setTimeout(() => setAutoSaveLabel(""), 2000);
+      if (result.notifyMessage) {
+        setAutoSaveLabel(result.notifyMessage);
+      } else {
+        setAutoSaveLabel(
+          formRef.current.status === "published" ? "Saved" : "Draft saved",
+        );
+      }
+      window.setTimeout(() => setAutoSaveLabel(""), 3500);
     }, 1200);
 
     return () => window.clearTimeout(timer);
@@ -441,7 +534,8 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
     }
 
     setMessage(
-      form.status === "published" ? "Article published." : "Draft saved.",
+      result.notifyMessage ||
+        (form.status === "published" ? "Article published." : "Draft saved."),
     );
     setAutoSaveLabel("");
     router.refresh();
