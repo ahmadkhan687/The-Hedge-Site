@@ -261,7 +261,7 @@ export default function PerspectivesBlogClient({ articles }: Props) {
       <section className="relative flex w-full flex-col gap-8 px-5 pb-16 sm:gap-10 sm:px-8 sm:pb-20 lg:gap-12 lg:px-[120px] lg:pb-[120px]">
         <div className="flex w-full items-end justify-between gap-4">
           <p className="font-inter text-xs font-extrabold uppercase text-[#111] sm:text-[16px]">
-            ACTIVE INTELLIGENCE DOSSIERS
+            ACTIVE INTELLIGENCE Strategic Insights
           </p>
           <div className="hidden sm:block">
             <TelemetryStrip h={8} w={28} />
