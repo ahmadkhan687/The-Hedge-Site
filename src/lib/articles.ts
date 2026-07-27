@@ -83,14 +83,18 @@ export function createBlockId(): string {
   return `block-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
-export function slugify(value: string): string {
-  return value
+export function slugify(value: string, maxWords = 3): string {
+  const words = value
     .toLowerCase()
     .trim()
     .replace(/['’]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
-    .slice(0, 120);
+    .split("-")
+    .filter(Boolean)
+    .slice(0, maxWords);
+
+  return words.join("-");
 }
 
 export function formatArticleDate(iso: string | null): string {

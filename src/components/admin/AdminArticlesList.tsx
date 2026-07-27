@@ -118,7 +118,11 @@ export default function AdminArticlesList({ articles }: AdminArticlesListProps) 
                 </p>
 
                 <p className="font-inter text-sm text-[#6B665F]">
-                  {new Date(article.updated_at).toLocaleDateString()}
+                  {new Date(article.updated_at).toLocaleDateString("en-US", {
+                    month: "numeric",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
                 </p>
 
                 <div className="flex flex-wrap gap-3">

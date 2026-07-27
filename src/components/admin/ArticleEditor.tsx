@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   createBlockId,
   slugify,
@@ -86,6 +86,17 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
+  const [articleId, setArticleId] = useState<string | null>(initial?.id ?? null);
+  const [autoSaveLabel, setAutoSaveLabel] = useState("");
+
+  const formRef = useRef(form);
+  const articleIdRef = useRef(articleId);
+  const skipNextAutoSave = useRef(true);
+  const autoSaveLock = useRef(false);
+  const publishedAtRef = useRef(initial?.published_at ?? null);
+
+  formRef.current = form;
+  articleIdRef.current = articleId;
 
   useEffect(() => {
     if (!selectedBlockId && form.body[0]) {
@@ -105,8 +116,6 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
         target?.tagName === "TEXTAREA" ||
         target?.tagName === "SELECT";
 
-      // Always allow Alt + Arrow while editing text
-      // Otherwise Arrow only when not typing in a field
       if (typingInField && !e.altKey) return;
 
       e.preventDefault();
@@ -121,6 +130,147 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
     () => form.title.trim().length > 0 && form.slug.trim().length > 0,
     [form.title, form.slug],
   );
+
+  function buildPayload(
+    current: FormState,
+    userId: string,
+    existingAuthorId?: string | null,
+  ) {
+    const reading = current.reading_time_minutes.trim()
+      ? Number(current.reading_time_minutes)
+      : null;
+
+    return {
+      title: current.title.trim() || "Untitled",
+      subtitle: current.subtitle.trim(),
+      slug: slugify(current.slug || current.title),
+      number: current.number.trim() || null,
+      reading_time_minutes:
+        reading != null && !Number.isNaN(reading) ? reading : null,
+      cover_image_url: current.cover_image_url.trim() || null,
+      body: current.body,
+      status: current.status,
+      published_at:
+        current.status === "published"
+          ? (publishedAtRef.current ?? new Date().toISOString())
+          : null,
+      author_id: existingAuthorId ?? userId,
+      updated_at: new Date().toISOString(),
+    };
+  }
+
+  async function persistArticle(options?: {
+    manual?: boolean;
+    forceStatus?: ArticleStatus;
+  }) {
+    const current = formRef.current;
+    const title = current.title.trim();
+    const slug = slugify(current.slug || current.title);
+
+    if (!title || !slug) {
+      return { ok: false as const, error: "Title and slug are required." };
+    }
+
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { ok: false as const, error: "You must be signed in." };
+    }
+
+    const payload = buildPayload(
+      {
+        ...current,
+        slug,
+        status: options?.forceStatus ?? current.status,
+      },
+      user.id,
+      initial?.author_id,
+    );
+
+    if (payload.status === "published" && !publishedAtRef.current) {
+      publishedAtRef.current = payload.published_at;
+    }
+
+    const id = articleIdRef.current;
+
+    if (!id) {
+      const { data, error: insertError } = await supabase
+        .from("articles")
+        .insert(payload)
+        .select("id")
+        .single();
+
+      if (insertError || !data) {
+        return {
+          ok: false as const,
+          error: insertError?.message ?? "Failed to create article",
+        };
+      }
+
+      setArticleId(data.id);
+      articleIdRef.current = data.id;
+      skipNextAutoSave.current = true;
+      if (options?.manual) {
+        router.replace(`/admin/articles/${data.id}`);
+      }
+      return { ok: true as const, id: data.id, created: true };
+    }
+
+    const { error: updateError } = await supabase
+      .from("articles")
+      .update(payload)
+      .eq("id", id);
+
+    if (updateError) {
+      return { ok: false as const, error: updateError.message };
+    }
+
+    return { ok: true as const, id, created: false };
+  }
+
+  // Auto-save shortly after any change
+  useEffect(() => {
+    if (skipNextAutoSave.current) {
+      skipNextAutoSave.current = false;
+      return;
+    }
+
+    const title = form.title.trim();
+    const slug = form.slug.trim();
+    if (!title || !slug) return;
+    if (autoSaveLock.current || saving) return;
+
+    const timer = window.setTimeout(async () => {
+      if (autoSaveLock.current) return;
+      autoSaveLock.current = true;
+      setAutoSaveLabel("Saving…");
+
+      const result = await persistArticle({
+        forceStatus:
+          formRef.current.status === "published" ? "published" : "draft",
+      });
+
+      autoSaveLock.current = false;
+
+      if (!result.ok) {
+        setAutoSaveLabel("");
+        setError(result.error);
+        return;
+      }
+
+      setError("");
+      setAutoSaveLabel(
+        formRef.current.status === "published" ? "Saved" : "Draft saved",
+      );
+      window.setTimeout(() => setAutoSaveLabel(""), 2000);
+    }, 1200);
+
+    return () => window.clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- debounce on form only
+  }, [form, saving]);
 
   function updateField<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -272,81 +422,22 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
     setSaving(true);
     setError("");
     setMessage("");
+    autoSaveLock.current = true;
 
-    const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const result = await persistArticle({ manual: true });
 
-    if (!user) {
-      setSaving(false);
-      setError("You must be signed in.");
-      return;
-    }
-
-    const reading = form.reading_time_minutes.trim()
-      ? Number(form.reading_time_minutes)
-      : null;
-
-    const payload = {
-      title: form.title.trim(),
-      subtitle: form.subtitle.trim(),
-      slug: slugify(form.slug),
-      number: form.number.trim() || null,
-      reading_time_minutes:
-        reading != null && !Number.isNaN(reading) ? reading : null,
-      cover_image_url: form.cover_image_url.trim() || null,
-      body: form.body,
-      status: form.status,
-      published_at:
-        form.status === "published"
-          ? (initial?.published_at ?? new Date().toISOString())
-          : null,
-      author_id: mode === "create" ? user.id : (initial?.author_id ?? user.id),
-      updated_at: new Date().toISOString(),
-    };
-
-    if (mode === "create") {
-      const { data, error: insertError } = await supabase
-        .from("articles")
-        .insert(payload)
-        .select("id")
-        .single();
-
-      setSaving(false);
-
-      if (insertError || !data) {
-        setError(insertError?.message ?? "Failed to create article");
-        return;
-      }
-
-      setMessage("Article created.");
-      router.push(`/admin/articles/${data.id}`);
-      router.refresh();
-      return;
-    }
-
-    if (!initial) {
-      setSaving(false);
-      setError("Missing article.");
-      return;
-    }
-
-    const { error: updateError } = await supabase
-      .from("articles")
-      .update(payload)
-      .eq("id", initial.id);
-
+    autoSaveLock.current = false;
     setSaving(false);
 
-    if (updateError) {
-      setError(updateError.message);
+    if (!result.ok) {
+      setError(result.error);
       return;
     }
 
     setMessage(
       form.status === "published" ? "Article published." : "Draft saved.",
     );
+    setAutoSaveLabel("");
     router.refresh();
   }
 
@@ -374,12 +465,23 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
   return (
     <div className="mx-auto flex w-full max-w-[900px] flex-col gap-10">
       <div className="flex flex-col gap-2">
-        <p className="font-inter text-sm font-extrabold uppercase tracking-[0.08em] text-[#C6A02C]">
-          {mode === "create" ? "New article" : "Edit article"}
-        </p>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="font-inter text-sm font-extrabold uppercase tracking-[0.08em] text-[#C6A02C]">
+            {mode === "create" && !articleId ? "New article" : "Edit article"}
+          </p>
+          {autoSaveLabel ? (
+            <p className="font-inter text-xs font-medium uppercase tracking-[0.06em] text-[#1B7A3D]">
+              {autoSaveLabel}
+            </p>
+          ) : null}
+        </div>
         <h1 className="font-eb-garamond text-[clamp(2rem,4vw,40px)] font-medium text-[#111]">
           {form.title.trim() || "Untitled"}
         </h1>
+        <p className="font-inter text-xs text-[#6B665F]">
+          Changes auto-save as a draft while you type. Slug stays short for the
+          URL.
+        </p>
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2">
