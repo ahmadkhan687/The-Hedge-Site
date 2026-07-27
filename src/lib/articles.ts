@@ -48,12 +48,23 @@ export type ArticleBlock =
 
 export type ArticleStatus = "draft" | "published";
 
+export const ARTICLE_CATEGORIES = [
+  "GEO-STRATEGY",
+  "CYBER SIGNALS",
+  "TELEMETRY",
+  "CRYPTOGRAPHY",
+  "SUPPLY CHAINS",
+] as const;
+
+export type ArticleCategory = (typeof ARTICLE_CATEGORIES)[number];
+
 export type Article = {
   id: string;
   number: string | null;
   slug: string;
   title: string;
   subtitle: string;
+  category: ArticleCategory;
   reading_time_minutes: number | null;
   cover_image_url: string | null;
   body: ArticleBlock[];
@@ -69,6 +80,7 @@ export type ArticleInput = {
   slug: string;
   title: string;
   subtitle?: string;
+  category?: ArticleCategory;
   reading_time_minutes?: number | null;
   cover_image_url?: string | null;
   body: ArticleBlock[];

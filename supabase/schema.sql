@@ -19,9 +19,12 @@ create table if not exists public.articles (
 );
 
 -- If you created the older table with extra columns, drop them:
-alter table public.articles drop column if exists category;
 alter table public.articles drop column if exists author_name;
 alter table public.articles drop column if exists author_image_url;
+
+-- Category column (matches filter pills on the Perspectives page)
+alter table public.articles add column if not exists category text default 'GEO-STRATEGY'
+  check (category in ('GEO-STRATEGY', 'CYBER SIGNALS', 'TELEMETRY', 'CRYPTOGRAPHY', 'SUPPLY CHAINS'));
 
 -- Ensure remaining optional columns exist
 alter table public.articles add column if not exists reading_time_minutes integer;

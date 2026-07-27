@@ -4,10 +4,12 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
+  ARTICLE_CATEGORIES,
   createBlockId,
   slugify,
   type Article,
   type ArticleBlock,
+  type ArticleCategory,
   type ArticleStatus,
   type HeadingBlock,
   type ImageBlock,
@@ -30,6 +32,7 @@ type FormState = {
   subtitle: string;
   slug: string;
   number: string;
+  category: ArticleCategory;
   reading_time_minutes: string;
   cover_image_url: string;
   status: ArticleStatus;
@@ -42,6 +45,7 @@ function emptyForm(): FormState {
     subtitle: "",
     slug: "",
     number: "",
+    category: "GEO-STRATEGY",
     reading_time_minutes: "",
     cover_image_url: "",
     status: "draft",
@@ -62,6 +66,7 @@ function fromArticle(article: Article): FormState {
     subtitle: article.subtitle,
     slug: article.slug,
     number: article.number ?? "",
+    category: article.category,
     reading_time_minutes:
       article.reading_time_minutes != null
         ? String(article.reading_time_minutes)
@@ -145,6 +150,7 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
       subtitle: current.subtitle.trim(),
       slug: slugify(current.slug || current.title),
       number: current.number.trim() || null,
+      category: current.category,
       reading_time_minutes:
         reading != null && !Number.isNaN(reading) ? reading : null,
       cover_image_url: current.cover_image_url.trim() || null,
@@ -528,6 +534,21 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
             className={inputClass}
             placeholder="01"
           />
+        </Field>
+        <Field label="Category">
+          <select
+            value={form.category}
+            onChange={(e) =>
+              updateField("category", e.target.value as ArticleCategory)
+            }
+            className={inputClass}
+          >
+            {ARTICLE_CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
         </Field>
         <Field label="Status">
           <select
