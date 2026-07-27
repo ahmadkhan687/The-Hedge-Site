@@ -128,7 +128,7 @@ export default function DomainsMethodSection() {
             </span>
           </p>
           <Link
-            href="/varro"
+            href="/sovereignty"
             className="inline-flex items-center gap-3 font-archivo-narrow text-sm font-semibold uppercase tracking-[0.04em] text-[#6B665F] transition-opacity hover:opacity-70 lg:text-base"
           >
             The mind underneath
