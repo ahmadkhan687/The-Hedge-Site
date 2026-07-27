@@ -68,21 +68,11 @@ export default function PerspectivesBlogClient({ articles }: Props) {
           </p>
         </div>
 
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between w-full">
-          <p className="font-eb-garamond font-normal leading-[1.5] text-[#6b665f] text-[24px] w-full max-w-[720px]">
-            We monitor the entire geopolitical field to deliver attribution and
-            cyber answers before a nation forms the question. Read our active
-            defensive briefs.
-          </p>
-          <div className="hidden lg:flex flex-col gap-[6px] items-end leading-[normal] whitespace-nowrap">
-            <p className="font-inter font-extrabold text-[#d7a92c] text-[12px] uppercase tracking-[0.02em]">
-              SYSTEM STATUS: DEPLOYED
-            </p>
-            <p className="font-inter font-normal text-[#6b665f] text-[11px]">
-              GRID LOCATOR: 55.7558° N, 37.6173° E // TELEMETRY: OK
-            </p>
-          </div>
-        </div>
+        <p className="font-eb-garamond font-normal leading-[1.5] text-[#6b665f] text-[24px] w-full max-w-[720px]">
+          We monitor the entire geopolitical field to deliver attribution and
+          cyber answers before a nation forms the question. Read our active
+          defensive briefs.
+        </p>
       </section>
 
       {/* Filter pills */}
