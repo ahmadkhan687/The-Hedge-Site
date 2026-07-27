@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 import { createClient } from "@/lib/supabase/server";
 import { getAllSubscribers } from "@/lib/subscribers-api";
+import { createUnsubscribeToken } from "@/lib/unsubscribe-token";
 
 export type NotifyArticlePayload = {
   id: string;
@@ -16,12 +17,75 @@ function getSiteUrl(): string {
   return "http://localhost:3000";
 }
 
+function buildBriefingEmailHtml(options: {
+  siteUrl: string;
+  articleUrl: string;
+  unsubscribeUrl: string;
+  title: string;
+  excerpt: string;
+}): string {
+  const { siteUrl, articleUrl, unsubscribeUrl, title, excerpt } = options;
+  const logoUrl = `${siteUrl}/Home/logo.png`;
+  const buttonStyle =
+    "display:inline-block;background:#111111;color:#ffffff;text-decoration:none;padding:14px 22px;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;border:1px solid #111111;";
+
+  return `
+    <div style="margin:0;padding:0;background:#F4F0EA;">
+      <div style="font-family:Georgia,'Times New Roman',serif;max-width:560px;margin:0 auto;padding:40px 24px;color:#111111;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:28px;">
+          <tr>
+            <td style="vertical-align:middle;padding-right:12px;">
+              <img src="${logoUrl}" alt="The Hedge Collective" width="40" height="40" style="display:block;border:0;width:40px;height:40px;" />
+            </td>
+            <td style="vertical-align:middle;">
+              <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#111111;">
+                THE HEDGE COLLECTIVE
+              </p>
+            </td>
+          </tr>
+        </table>
+
+        <h1 style="font-size:32px;font-weight:500;line-height:1.2;margin:0 0 16px;color:#111111;">
+          ${escapeHtml(title)}
+        </h1>
+
+        <p style="font-size:16px;line-height:1.6;margin:0 0 28px;color:#111111;">
+          ${escapeHtml(excerpt)}
+        </p>
+
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 32px;">
+          <tr>
+            <td style="padding-right:10px;padding-bottom:10px;">
+              <a href="${articleUrl}" style="${buttonStyle}">
+                READ BRIEFING
+              </a>
+            </td>
+            <td style="padding-bottom:10px;">
+              <a href="${unsubscribeUrl}" style="${buttonStyle}">
+                UNSUBSCRIBE
+              </a>
+            </td>
+          </tr>
+        </table>
+
+        <p style="font-size:12px;line-height:1.5;margin:0;font-family:Arial,Helvetica,sans-serif;color:#111111;">
+          You are receiving this because you subscribed to Hedge Collective briefings.
+        </p>
+      </div>
+    </div>
+  `;
+}
+
 export async function notifySubscribersOfArticle(
   article: NotifyArticlePayload,
 ): Promise<{
   sent: number;
   skipped: boolean;
-  reason?: "already_notified" | "not_published" | "not_configured" | "no_subscribers";
+  reason?:
+    | "already_notified"
+    | "not_published"
+    | "not_configured"
+    | "no_subscribers";
   error: string | null;
 }> {
   const apiKey = process.env.RESEND_API_KEY;
@@ -40,7 +104,6 @@ export async function notifySubscribersOfArticle(
 
   const supabase = await createClient();
 
-  // Skip if already notified
   const { data: existing } = await supabase
     .from("articles")
     .select("subscribers_notified_at, status")
@@ -82,34 +145,23 @@ export async function notifySubscribersOfArticle(
   let sent = 0;
   const failures: string[] = [];
 
-  // Send in small batches to respect free-tier daily limits
   for (const subscriber of subscribers) {
     try {
+      const unsubscribeUrl = `${siteUrl}/api/unsubscribe?token=${encodeURIComponent(
+        createUnsubscribeToken(subscriber.email),
+      )}`;
+
       const { error } = await resend.emails.send({
         from,
         to: subscriber.email,
         subject: `New briefing: ${article.title}`,
-        html: `
-          <div style="font-family: Georgia, serif; max-width: 560px; margin: 0 auto; color: #111;">
-            <p style="font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #C6A02C; font-family: sans-serif;">
-              The Hedge Collective
-            </p>
-            <h1 style="font-size: 28px; font-weight: 500; line-height: 1.2; margin: 16px 0;">
-              ${escapeHtml(article.title)}
-            </h1>
-            <p style="font-size: 16px; line-height: 1.6; color: #6B665F;">
-              ${escapeHtml(excerpt)}
-            </p>
-            <p style="margin: 28px 0;">
-              <a href="${articleUrl}" style="display:inline-block;background:#D7A92C;color:#111315;text-decoration:none;padding:12px 20px;font-family:sans-serif;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;">
-                Read briefing
-              </a>
-            </p>
-            <p style="font-size: 12px; color: #999; font-family: sans-serif;">
-              You are receiving this because you subscribed to Hedge Collective briefings.
-            </p>
-          </div>
-        `,
+        html: buildBriefingEmailHtml({
+          siteUrl,
+          articleUrl,
+          unsubscribeUrl,
+          title: article.title,
+          excerpt,
+        }),
       });
 
       if (error) {

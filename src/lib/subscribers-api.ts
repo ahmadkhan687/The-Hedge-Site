@@ -28,11 +28,7 @@ export async function addSubscriber(
   }
 
   const supabase = createPublicClient();
-  const { data, error } = await supabase
-    .from("subscribers")
-    .insert({ email })
-    .select("*")
-    .single();
+  const { error } = await supabase.from("subscribers").insert({ email });
 
   if (error) {
     // Unique violation — already subscribed
@@ -42,7 +38,7 @@ export async function addSubscriber(
     return { subscriber: null, error: error.message };
   }
 
-  return { subscriber: mapRow(data as Record<string, unknown>), error: null };
+  return { subscriber: null, error: null };
 }
 
 export async function getAllSubscribers(): Promise<Subscriber[]> {
