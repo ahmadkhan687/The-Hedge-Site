@@ -50,14 +50,7 @@ function emptyForm(): FormState {
     reading_time_minutes: "",
     cover_image_url: "",
     status: "draft",
-    body: [
-      {
-        id: createBlockId(),
-        type: "paragraph",
-        lead: true,
-        text: "",
-      },
-    ],
+    body: [],
   };
 }
 
@@ -74,10 +67,7 @@ function fromArticle(article: Article): FormState {
         : "",
     cover_image_url: article.cover_image_url ?? "",
     status: article.status,
-    body:
-      article.body.length > 0
-        ? article.body
-        : [{ id: createBlockId(), type: "paragraph", text: "" }],
+    body: article.body,
   };
 }
 
@@ -197,6 +187,8 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
   async function persistArticle(options?: {
     manual?: boolean;
     forceStatus?: ArticleStatus;
+    /** Only send subscriber emails when true (manual publish). Never on autosave/preview. */
+    notifySubscribers?: boolean;
   }) {
     const current = formRef.current;
     const title = current.title.trim();
@@ -230,6 +222,8 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
     }
 
     const id = articleIdRef.current;
+    const shouldNotify =
+      Boolean(options?.notifySubscribers) && payload.status === "published";
 
     if (!id) {
       const { data, error: insertError } = await supabase
@@ -252,13 +246,15 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
         router.replace(`/admin/articles/${data.id}`);
       }
 
-      const notify = await maybeNotifySubscribers({
-        id: data.id,
-        slug: payload.slug,
-        title: payload.title,
-        subtitle: payload.subtitle,
-        status: payload.status,
-      });
+      const notify = shouldNotify
+        ? await maybeNotifySubscribers({
+            id: data.id,
+            slug: payload.slug,
+            title: payload.title,
+            subtitle: payload.subtitle,
+            status: payload.status,
+          })
+        : null;
 
       return {
         ok: true as const,
@@ -277,13 +273,15 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
       return { ok: false as const, error: updateError.message };
     }
 
-    const notify = await maybeNotifySubscribers({
-      id,
-      slug: payload.slug,
-      title: payload.title,
-      subtitle: payload.subtitle,
-      status: payload.status,
-    });
+    const notify = shouldNotify
+      ? await maybeNotifySubscribers({
+          id,
+          slug: payload.slug,
+          title: payload.title,
+          subtitle: payload.subtitle,
+          status: payload.status,
+        })
+      : null;
 
     return {
       ok: true as const,
@@ -374,6 +372,8 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
       const result = await persistArticle({
         forceStatus:
           formRef.current.status === "published" ? "published" : "draft",
+        // Never email on autosave — only on explicit "Save & publish"
+        notifySubscribers: false,
       });
 
       autoSaveLock.current = false;
@@ -385,14 +385,10 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
       }
 
       setError("");
-      if (result.notifyMessage) {
-        setAutoSaveLabel(result.notifyMessage);
-      } else {
-        setAutoSaveLabel(
-          formRef.current.status === "published" ? "Saved" : "Draft saved",
-        );
-      }
-      window.setTimeout(() => setAutoSaveLabel(""), 3500);
+      setAutoSaveLabel(
+        formRef.current.status === "published" ? "Saved" : "Draft saved",
+      );
+      window.setTimeout(() => setAutoSaveLabel(""), 2000);
     }, 1200);
 
     return () => window.clearTimeout(timer);
@@ -470,13 +466,10 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
   }
 
   function removeBlock(id: string) {
-    setForm((prev) => {
-      const nextBody =
-        prev.body.length <= 1
-          ? prev.body
-          : prev.body.filter((block) => block.id !== id);
-      return { ...prev, body: nextBody };
-    });
+    setForm((prev) => ({
+      ...prev,
+      body: prev.body.filter((block) => block.id !== id),
+    }));
     setSelectedBlockId((current) => (current === id ? null : current));
   }
 
@@ -492,7 +485,10 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
     });
   }
 
-  function addBlock(type: ArticleBlock["type"]) {
+  function addBlock(
+    type: ArticleBlock["type"],
+    options?: { afterId?: string | null },
+  ) {
     let block: ArticleBlock;
     if (type === "heading") {
       block = { id: createBlockId(), type: "heading", level: 2, text: "" };
@@ -510,7 +506,19 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
       block = { id: createBlockId(), type: "paragraph", text: "" };
     }
 
-    setForm((prev) => ({ ...prev, body: [...prev.body, block] }));
+    setForm((prev) => {
+      const afterId = options?.afterId;
+      if (!afterId) {
+        return { ...prev, body: [...prev.body, block] };
+      }
+      const index = prev.body.findIndex((b) => b.id === afterId);
+      if (index < 0) {
+        return { ...prev, body: [...prev.body, block] };
+      }
+      const body = [...prev.body];
+      body.splice(index + 1, 0, block);
+      return { ...prev, body };
+    });
     setSelectedBlockId(block.id);
   }
 
@@ -551,7 +559,10 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
     setMessage("");
     autoSaveLock.current = true;
 
-    const result = await persistArticle({ manual: true });
+    const result = await persistArticle({
+      manual: true,
+      notifySubscribers: formRef.current.status === "published",
+    });
 
     autoSaveLock.current = false;
     setSaving(false);
@@ -607,8 +618,8 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
           {form.title.trim() || "Untitled"}
         </h1>
         <p className="font-inter text-xs text-[#6B665F]">
-          Changes auto-save as a draft while you type. Slug stays short for the
-          URL.
+          Changes auto-save while you type. Preview never sends email.
+          Subscriber emails only go out when you click Save &amp; publish.
         </p>
       </div>
 
@@ -709,34 +720,51 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
       </Field>
 
       <div className="flex flex-col gap-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-col gap-1">
-            <p className="font-inter text-sm font-extrabold uppercase tracking-[0.08em] text-[#111]">
-              Body blocks
-            </p>
-            <p className="font-inter text-xs text-[#6B665F]">
-              Click a block to select it. Move with ↑ ↓ keys, Alt+↑ / Alt+↓
-              while typing, or the Move up / Move down buttons.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <AddButton onClick={() => addBlock("heading")}>+ Heading</AddButton>
-            <AddButton onClick={() => addBlock("paragraph")}>
-              + Paragraph
-            </AddButton>
-            <AddButton onClick={() => addBlock("quote")}>+ Quote</AddButton>
-            <AddButton onClick={() => addBlock("list")}>+ List</AddButton>
-            <AddButton onClick={() => addBlock("image")}>+ Image</AddButton>
-          </div>
+        <div className="flex flex-col gap-1">
+          <p className="font-inter text-sm font-extrabold uppercase tracking-[0.08em] text-[#111]">
+            Body blocks
+          </p>
+          <p className="font-inter text-xs text-[#6B665F]">
+            After each block, choose Heading / Paragraph / Quote / List /
+            Image to add the next one. Move with ↑ ↓ / Move up / Move down.
+          </p>
         </div>
 
         <div className="flex flex-col gap-4">
+          {form.body.length === 0 ? (
+            <div className="flex flex-wrap items-center gap-3 border border-dashed border-[#111]/20 bg-white/40 px-4 py-5">
+              <p className="font-inter text-xs font-extrabold uppercase tracking-[0.06em] text-[#6B665F]">
+                Start with
+              </p>
+              <select
+                defaultValue=""
+                onChange={(e) => {
+                  const value = e.target.value as ArticleBlock["type"] | "";
+                  if (!value) return;
+                  addBlock(value);
+                  e.target.value = "";
+                }}
+                className="min-w-[180px] border border-[#111]/20 bg-white px-3 py-2 font-inter text-xs font-semibold uppercase tracking-[0.06em] text-[#111] outline-none focus:border-[#111]/40"
+                aria-label="Select first block type"
+              >
+                <option value="" disabled>
+                  Select block type…
+                </option>
+                <option value="heading">Heading</option>
+                <option value="paragraph">Paragraph</option>
+                <option value="quote">Quote</option>
+                <option value="list">List</option>
+                <option value="image">Image</option>
+              </select>
+            </div>
+          ) : null}
+
           {form.body.map((block, index) => {
             const selected = selectedBlockId === block.id;
 
             return (
+              <div key={block.id} className="flex flex-col gap-2">
               <div
-                key={block.id}
                 role="button"
                 tabIndex={0}
                 onClick={(e) => {
@@ -968,6 +996,36 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
                       />
                     </div>
                   )}
+                </div>
+              </div>
+
+                <div
+                  className="flex flex-wrap items-center gap-3 border border-dashed border-[#111]/15 bg-[#111]/[0.02] px-3 py-2.5"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <p className="font-inter text-[10px] font-extrabold uppercase tracking-[0.06em] text-[#6B665F]">
+                    Add next block
+                  </p>
+                  <select
+                    defaultValue=""
+                    onChange={(e) => {
+                      const value = e.target.value as ArticleBlock["type"] | "";
+                      if (!value) return;
+                      addBlock(value, { afterId: block.id });
+                      e.target.value = "";
+                    }}
+                    className="min-w-[180px] border border-[#111]/20 bg-white px-3 py-2 font-inter text-xs font-semibold uppercase tracking-[0.06em] text-[#111] outline-none focus:border-[#111]/40"
+                    aria-label="Select block type to add below"
+                  >
+                    <option value="" disabled>
+                      Select block type…
+                    </option>
+                    <option value="heading">Heading</option>
+                    <option value="paragraph">Paragraph</option>
+                    <option value="quote">Quote</option>
+                    <option value="list">List</option>
+                    <option value="image">Image</option>
+                  </select>
                 </div>
               </div>
             );
