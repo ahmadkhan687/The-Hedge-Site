@@ -21,6 +21,7 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import RichTextEditor from "@/components/admin/RichTextEditor";
 import FileUploadField from "@/components/admin/FileUploadField";
+import ArticlePreviewModal from "@/components/admin/ArticlePreviewModal";
 
 type ArticleEditorProps = {
   mode: "create" | "edit";
@@ -93,6 +94,7 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const [articleId, setArticleId] = useState<string | null>(initial?.id ?? null);
   const [autoSaveLabel, setAutoSaveLabel] = useState("");
+  const [previewOpen, setPreviewOpen] = useState(false);
   const notifiedRef = useRef(Boolean(initial?.subscribers_notified_at));
 
   const formRef = useRef(form);
@@ -112,6 +114,7 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
 
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
+      if (previewOpen) return;
       if (!selectedBlockId) return;
       if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
 
@@ -130,12 +133,37 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [selectedBlockId, form.body]);
+  }, [selectedBlockId, form.body, previewOpen]);
 
   const canSave = useMemo(
     () => form.title.trim().length > 0 && form.slug.trim().length > 0,
     [form.title, form.slug],
   );
+
+  const previewArticle = useMemo((): Article => {
+    const reading = form.reading_time_minutes.trim()
+      ? Number(form.reading_time_minutes)
+      : null;
+
+    return {
+      id: articleId ?? "preview",
+      number: form.number.trim() || null,
+      slug: slugify(form.slug || form.title) || "preview",
+      title: form.title.trim() || "Untitled",
+      subtitle: form.subtitle.trim(),
+      category: form.category,
+      reading_time_minutes:
+        reading != null && !Number.isNaN(reading) ? reading : null,
+      cover_image_url: form.cover_image_url.trim() || null,
+      body: form.body,
+      status: form.status,
+      author_id: initial?.author_id ?? null,
+      published_at: publishedAtRef.current ?? new Date().toISOString(),
+      subscribers_notified_at: initial?.subscribers_notified_at ?? null,
+      created_at: initial?.created_at ?? new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+  }, [form, articleId, initial]);
 
   function buildPayload(
     current: FormState,
@@ -975,6 +1003,14 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
               : "Save draft"}
         </button>
 
+        <button
+          type="button"
+          onClick={() => setPreviewOpen(true)}
+          className="flex h-12 items-center justify-center border border-[#111]/25 bg-transparent px-6 font-inter text-sm font-semibold uppercase tracking-[0.08em] text-[#111] transition-opacity hover:opacity-70"
+        >
+          Preview
+        </button>
+
         {mode === "edit" && (
           <button
             type="button"
@@ -986,6 +1022,13 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
           </button>
         )}
       </div>
+
+      {previewOpen ? (
+        <ArticlePreviewModal
+          article={previewArticle}
+          onClose={() => setPreviewOpen(false)}
+        />
+      ) : null}
     </div>
   );
 }
