@@ -33,13 +33,31 @@ body {
   font-family: var(--font-inter), sans-serif;
 }
 
-/* Globe signal tooltip — scrollable but scrollbar hidden */
+/* Globe signal tooltip — thin pill scrollbar (visible + scrollable) */
 .globe-signal-scroll {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  scrollbar-width: thin;
+  scrollbar-color: #9a9590 transparent;
 }
 
 .globe-signal-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.globe-signal-scroll::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 2px 0;
+}
+
+.globe-signal-scroll::-webkit-scrollbar-thumb {
+  background: #9a9590;
+  border-radius: 999px;
+}
+
+.globe-signal-scroll::-webkit-scrollbar-thumb:hover {
+  background: #7a756f;
+}
+
+.globe-signal-scroll::-webkit-scrollbar-button {
   display: none;
   width: 0;
   height: 0;
