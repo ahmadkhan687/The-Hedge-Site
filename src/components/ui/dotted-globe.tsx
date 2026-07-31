@@ -275,7 +275,47 @@ interface MarkerData {
   ringStyle: RingStyle;
   period: number;
   offset: number;
+  label: string;
+  category: string;
+  content: string;
+  source: string;
+  country: string;
+  isNew: boolean;
 }
+
+export type GlobePulseMarker = {
+  id: string;
+  latitude: number;
+  longitude: number;
+  city: string | null;
+  countryName: string | null;
+  content: string | null;
+  source: string | null;
+  isNew?: boolean;
+};
+
+const RING_CYCLE: RingStyle[] = [
+  "staggered",
+  "triple",
+  "thick_thin",
+  "double",
+  "gradient",
+  "solid",
+  "dashed",
+  "dotted",
+];
+
+// Uniform pulse look — same medium-small size for every marker
+const UNIFORM_PULSE = {
+  size: 3.4,
+  numRings: 1,
+  pMin: 2.0,
+  pMax: 3.0,
+  expand: 2.4,
+  alpha: 0.82,
+  lw: 0.85,
+  glowBlur: 2,
+} as const;
 
 // Per-level display config
 const LVL = {
@@ -295,6 +335,8 @@ const LVL_RGB: Record<number, string> = {
   5: "17,17,17",
 };
 
+const NEW_PULSE_RGB = "27,122,61"; // green highlight for newly arrived pulses
+
 // [lat, lon, level, ringStyle, hasLine, lineAngleDeg]
 const RAW_MARKERS: [number, number, 1|2|3|4|5, RingStyle, boolean, number][] = [
   // ── Level 1 · Critical ─────────────────────────────────────────────────────
@@ -313,25 +355,100 @@ const RAW_MARKERS: [number, number, 1|2|3|4|5, RingStyle, boolean, number][] = [
   [ 30.0,   31.2, 4, "solid",      false,   0],  // Cairo
 ];
 
+function buildMarkerGeometry(
+  lat: number,
+  lon: number,
+  level: 1 | 2 | 3 | 4 | 5,
+  ringStyle: RingStyle,
+  hasLine: boolean,
+  lineAngleDeg: number,
+  i: number,
+  label: string,
+  category: string,
+  content: string,
+  source = "",
+  country = "",
+  isNew = false,
+): MarkerData {
+  const pos = latLonToVec3(lat, lon);
+  let lineEnd: Vec3 | null = null;
+  if (hasLine) {
+    const nT = northTangent(pos);
+    const eT = eastTangent(pos);
+    const a = lineAngleDeg * (Math.PI / 180);
+    const tangent: Vec3 = [
+      Math.cos(a) * nT[0] + Math.sin(a) * eT[0],
+      Math.cos(a) * nT[1] + Math.sin(a) * eT[1],
+      Math.cos(a) * nT[2] + Math.sin(a) * eT[2],
+    ];
+    lineEnd = sphereOffset(pos, tangent, 0.088);
+  }
+  const cfg = UNIFORM_PULSE;
+  const period = cfg.pMin + (Math.sin(i * 1.618) * 0.5 + 0.5) * (cfg.pMax - cfg.pMin);
+  const offset = (i * 0.731 * period) % period;
+  return {
+    pos,
+    lineEnd,
+    level,
+    ringStyle,
+    period,
+    offset,
+    label,
+    category,
+    content,
+    source,
+    country,
+    isNew,
+  };
+}
+
 function buildMarkers(): MarkerData[] {
-  return RAW_MARKERS.map(([lat, lon, level, ringStyle, hasLine, lineAngleDeg], i) => {
-    const pos = latLonToVec3(lat, lon);
-    let lineEnd: Vec3 | null = null;
-    if (hasLine) {
-      const nT = northTangent(pos);
-      const eT = eastTangent(pos);
-      const a = lineAngleDeg * (Math.PI / 180);
-      const tangent: Vec3 = [
-        Math.cos(a) * nT[0] + Math.sin(a) * eT[0],
-        Math.cos(a) * nT[1] + Math.sin(a) * eT[1],
-        Math.cos(a) * nT[2] + Math.sin(a) * eT[2],
-      ];
-      lineEnd = sphereOffset(pos, tangent, 0.088);
-    }
-    const cfg = LVL[level];
-    const period = cfg.pMin + (Math.sin(i * 1.618) * 0.5 + 0.5) * (cfg.pMax - cfg.pMin);
-    const offset = (i * 0.731 * period) % period;
-    return { pos, lineEnd, level, ringStyle, period, offset };
+  return RAW_MARKERS.map(([lat, lon, _level, _ringStyle, _hasLine, _lineAngleDeg], i) =>
+    buildMarkerGeometry(
+      lat,
+      lon,
+      4,
+      "solid",
+      false,
+      0,
+      i,
+      MARKER_NAMES[i] ?? "SIGNAL",
+      MARKER_CATEGORIES[i] ?? "Intelligence",
+      "",
+      "FIELD",
+      MARKER_NAMES[i] ?? "",
+      false,
+    ),
+  );
+}
+
+function buildMarkersFromPulses(pulses: GlobePulseMarker[]): MarkerData[] {
+  return pulses.slice(0, 50).map((pulse, i) => {
+    // Same medium-small size for every pulse
+    const level = 4 as const;
+    const ringStyle: RingStyle = "solid";
+    const hasLine = false;
+    const lineAngleDeg = 0;
+    const country = pulse.countryName?.trim() || "Unknown Location";
+    const label = (pulse.city || country).toUpperCase();
+    const source = pulse.source?.trim() || "OPEN SOURCE";
+    const category = [source, country].filter(Boolean).join(" · ");
+    const content = pulse.content ?? "";
+    return buildMarkerGeometry(
+      pulse.latitude,
+      pulse.longitude,
+      level,
+      ringStyle,
+      hasLine,
+      lineAngleDeg,
+      i,
+      label,
+      category,
+      content,
+      source,
+      country,
+      Boolean(pulse.isNew),
+    );
   });
 }
 
@@ -349,14 +466,6 @@ const MARKER_CATEGORIES: string[] = [
   "Supply Chain", "Satellite Monitoring", "Network Analysis",
   "Maritime Activity", "Communications",
 ];
-
-const TOOLTIP_META: Record<number, { label: string; dot: string; color: string }> = {
-  1: { label: "Priority", dot: "#111111", color: "#111111" },
-  2: { label: "Active",   dot: "#111111", color: "#111111" },
-  3: { label: "Active",   dot: "#111111", color: "#111111" },
-  4: { label: "Active",   dot: "#111111", color: "#111111" },
-  5: { label: "Active",   dot: "#111111", color: "#111111" },
-};
 
 // ── Global connectivity ────────────────────────────────────────────────────────
 
@@ -409,19 +518,30 @@ interface GlobeState {
   autoFade: number;
 }
 
-export default function DottedGlobe({ className }: { className?: string }) {
+export default function DottedGlobe({
+  className,
+  pulses,
+}: {
+  className?: string;
+  /** Live feed pulses — when present, replace hardcoded markers. */
+  pulses?: GlobePulseMarker[] | null;
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [cursor, setCursor] = useState<"grab" | "grabbing" | "default">("default");
   const [interactive, setInteractive] = useState(false);
 
-  // Hover tooltip state
+  // Hover tooltip state (imperative DOM — avoid React re-renders that hitch the canvas)
   const mouseCanvasRef = useRef<[number, number] | null>(null);
   const hoveredMarkerIdxRef = useRef<number | null>(null);
   const tooltipElRef = useRef<HTMLDivElement>(null);
-  const tooltipPosRef = useRef({ x: 0, y: 0 });
-  interface TooltipData { idx: number; name: string; level: number; category: string }
-  const [tooltip, setTooltip] = useState<TooltipData | null>(null);
-  const [tooltipVisible, setTooltipVisible] = useState(false);
+  const tooltipNameRef = useRef<HTMLSpanElement>(null);
+  const tooltipSourceRef = useRef<HTMLSpanElement>(null);
+  const tooltipCountryRef = useRef<HTMLSpanElement>(null);
+  const tooltipContentRef = useRef<HTMLParagraphElement>(null);
+  const tooltipNewBadgeRef = useRef<HTMLSpanElement>(null);
+  const tooltipPinnedRef = useRef(false);
+  const lastHoveredIdxRef = useRef<number | null>(null);
+  const hideTooltipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const S = useRef<GlobeState>({
     rot: mulM(rotX(-0.18), rotY(-0.35)),
@@ -454,12 +574,19 @@ export default function DottedGlobe({ className }: { className?: string }) {
     return () => mq.removeEventListener("change", sync);
   }, []);
 
-  // Build dots and markers after mount
+  // Build dots after mount; markers from live pulses or hardcoded fallback
   useEffect(() => {
     const mask = buildMask();
     S.current.dots = makeDots(24000, mask);
-    S.current.markers = buildMarkers();
   }, []);
+
+  useEffect(() => {
+    if (pulses && pulses.length > 0) {
+      S.current.markers = buildMarkersFromPulses(pulses);
+      return;
+    }
+    S.current.markers = buildMarkers();
+  }, [pulses]);
 
   // Render loop
   useEffect(() => {
@@ -500,8 +627,11 @@ export default function DottedGlobe({ className }: { className?: string }) {
       // Lerp glow
       st.glowA += ((st.hovered ? 1 : 0) - st.glowA) * 0.07;
 
-      // Lerp auto-rotation fade
-      st.autoFade += ((st.dragging ? 0 : 1) - st.autoFade) * 0.025;
+      // Lerp auto-rotation fade — pause while dragging OR while a pulse is hovered
+      // so the marker stays under the cursor and the tooltip remains readable.
+      const pauseAuto =
+        st.dragging || hoveredMarkerIdxRef.current !== null;
+      st.autoFade += ((pauseAuto ? 0 : 1) - st.autoFade) * 0.08;
 
       // Physics
       if (!st.dragging) {
@@ -721,8 +851,8 @@ export default function DottedGlobe({ className }: { className?: string }) {
         if (fade < 0.04) continue;
 
         const isHovMk   = hoveredMarkerIdxRef.current === _mi;
-        const cfg        = LVL[mk.level];
-        const rgb        = LVL_RGB[mk.level];
+        const cfg        = UNIFORM_PULSE;
+        const rgb        = mk.isNew ? NEW_PULSE_RGB : LVL_RGB[mk.level];
         const depthScale = 0.55 + rz * 0.45;
         const markerScale = isMobile ? 0.64 : 1;
         const baseR      = cfg.size * depthScale * st.scale * markerScale * (isHovMk ? 1.12 : 1);
@@ -824,13 +954,17 @@ export default function DottedGlobe({ className }: { className?: string }) {
           }
         }
 
-        // ── Core dot (with optional glow for levels 1–3, always on hover) ──
+        // ── Core dot (with optional glow for levels 1–3, always on hover / new) ──
         const coreA = (fade * cfg.alpha).toFixed(3);
-        const effectiveGlow = isHovMk ? Math.max(6, cfg.glowBlur) : cfg.glowBlur;
+        const effectiveGlow = mk.isNew
+          ? Math.max(10, cfg.glowBlur)
+          : isHovMk
+            ? Math.max(6, cfg.glowBlur)
+            : cfg.glowBlur;
         if (effectiveGlow > 0) {
           ctx.save();
-          ctx.shadowColor = `rgba(${rgb},${(fade * (isHovMk ? 0.82 : 0.65)).toFixed(3)})`;
-          ctx.shadowBlur  = effectiveGlow * depthScale * st.scale * (isHovMk ? 1.45 : 1) * (isMobile ? 0.75 : 1);
+          ctx.shadowColor = `rgba(${rgb},${(fade * (isHovMk || mk.isNew ? 0.82 : 0.65)).toFixed(3)})`;
+          ctx.shadowBlur  = effectiveGlow * depthScale * st.scale * (isHovMk || mk.isNew ? 1.45 : 1) * (isMobile ? 0.75 : 1);
           ctx.beginPath();
           ctx.arc(sx, sy, baseR * pulseFactor, 0, Math.PI * 2);
           ctx.fillStyle = `rgba(${rgb},${coreA})`;
@@ -903,82 +1037,147 @@ export default function DottedGlobe({ className }: { className?: string }) {
     return () => cancelAnimationFrame(raf);
   }, []);
 
-  // Tooltip hover detection + position tracking RAF
+  // Tooltip hover detection + position tracking RAF (no React setState — keeps pulses smooth)
   useEffect(() => {
     let rafId: number;
     let prevHovered: number | null = null;
-    let hideTimer: ReturnType<typeof setTimeout> | null = null;
+
+    function clearHideTimer() {
+      if (hideTooltipTimerRef.current) {
+        clearTimeout(hideTooltipTimerRef.current);
+        hideTooltipTimerRef.current = null;
+      }
+    }
+
+    function showTooltip(mk: MarkerData) {
+      const el = tooltipElRef.current;
+      if (!el) return;
+      clearHideTimer();
+      if (tooltipNameRef.current) {
+        tooltipNameRef.current.textContent = mk.label || "UNKNOWN";
+      }
+      if (tooltipSourceRef.current) {
+        const source = mk.source || "OPEN SOURCE";
+        tooltipSourceRef.current.textContent = source;
+        tooltipSourceRef.current.style.display = "inline";
+      }
+      if (tooltipCountryRef.current) {
+        const country = mk.country || "Unknown Location";
+        tooltipCountryRef.current.textContent = country;
+        tooltipCountryRef.current.style.display = "inline";
+      }
+      if (tooltipContentRef.current) {
+        tooltipContentRef.current.textContent =
+          mk.content || "No excerpt available for this signal.";
+        tooltipContentRef.current.scrollTop = 0;
+      }
+      if (tooltipNewBadgeRef.current) {
+        tooltipNewBadgeRef.current.style.display = mk.isNew ? "inline-flex" : "none";
+      }
+      el.style.opacity = "1";
+      el.style.transform = "translateY(0px) scale(1)";
+      el.style.pointerEvents = "auto";
+    }
+
+    function hideTooltipNow() {
+      const el = tooltipElRef.current;
+      if (!el) return;
+      clearHideTimer();
+      tooltipPinnedRef.current = false;
+      lastHoveredIdxRef.current = null;
+      el.style.opacity = "0";
+      el.style.transform = "translateY(10px) scale(0.98)";
+      el.style.pointerEvents = "none";
+    }
+
+    function scheduleHideTooltip() {
+      if (tooltipPinnedRef.current) return;
+      clearHideTimer();
+      // Delay so cursor can move from pulse → box without closing
+      hideTooltipTimerRef.current = setTimeout(() => {
+        if (tooltipPinnedRef.current) return;
+        hideTooltipNow();
+        prevHovered = null;
+        hoveredMarkerIdxRef.current = null;
+      }, 320);
+    }
 
     function tick() {
       const canvas = canvasRef.current;
-      if (!canvas) { rafId = requestAnimationFrame(tick); return; }
+      if (!canvas) {
+        rafId = requestAnimationFrame(tick);
+        return;
+      }
 
-      const lw = canvas.clientWidth, lh = canvas.clientHeight;
-      const cx = lw / 2, cy = lh / 2;
+      const lw = canvas.clientWidth,
+        lh = canvas.clientHeight;
+      const cx = lw / 2,
+        cy = lh / 2;
       const R = Math.min(lw, lh) * 0.42 * S.current.scale;
       const m = S.current.rot;
 
-      // ── Hover detection ──────────────────────────────────────────────────
       const mp = mouseCanvasRef.current;
       let newHovered: number | null = null;
-      if (mp && !S.current.dragging) {
-        let minDist = 22; // hover radius px
+
+      // Keep open while cursor is on the tooltip box
+      if (tooltipPinnedRef.current && lastHoveredIdxRef.current !== null) {
+        newHovered = lastHoveredIdxRef.current;
+      } else if (mp && !S.current.dragging) {
+        const acquireR = 28;
+        const keepR = 42;
+        let minDist = prevHovered !== null ? keepR : acquireR;
         for (let i = 0; i < S.current.markers.length; i++) {
           const [rx, ry, rz] = applyM(m, S.current.markers[i].pos);
           if (rz < 0.05) continue;
-          const sx = cx + rx * R, sy = cy - ry * R;
+          const sx = cx + rx * R,
+            sy = cy - ry * R;
           const d = Math.sqrt((mp[0] - sx) ** 2 + (mp[1] - sy) ** 2);
-          if (d < minDist) { minDist = d; newHovered = i; }
+          const limit = i === prevHovered ? keepR : acquireR;
+          if (d < limit && d < minDist) {
+            minDist = d;
+            newHovered = i;
+          }
         }
       }
 
       hoveredMarkerIdxRef.current = newHovered;
 
-      if (newHovered !== prevHovered) {
-        if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
-
-        if (newHovered !== null) {
+      if (newHovered !== null) {
+        lastHoveredIdxRef.current = newHovered;
+        clearHideTimer();
+        if (newHovered !== prevHovered) {
           const mk = S.current.markers[newHovered];
-          const name = MARKER_NAMES[newHovered] ?? "UNKNOWN";
-          const cat  = MARKER_CATEGORIES[newHovered] ?? "Intelligence";
-          setTooltip({ idx: newHovered, name, level: mk.level, category: cat });
-          setTooltipVisible(true);
-        } else {
-          setTooltipVisible(false);
-          hideTimer = setTimeout(() => setTooltip(null), 220);
+          if (mk) showTooltip(mk);
+          prevHovered = newHovered;
         }
-        prevHovered = newHovered;
+      } else if (prevHovered !== null && !tooltipPinnedRef.current) {
+        scheduleHideTooltip();
+        prevHovered = null;
       }
 
-      // ── Tooltip position tracking ─────────────────────────────────────────
       const el = tooltipElRef.current;
-      if (el && prevHovered !== null) {
-        const mk = S.current.markers[prevHovered];
+      const activeIdx = lastHoveredIdxRef.current;
+      if (el && activeIdx !== null && (prevHovered !== null || tooltipPinnedRef.current)) {
+        const mk = S.current.markers[activeIdx];
         if (mk) {
           const [rx, ry, rz] = applyM(m, mk.pos);
-          if (rz < 0.04) {
-            // Marker behind globe — hide immediately
-            setTooltipVisible(false);
-            hideTimer = setTimeout(() => setTooltip(null), 220);
+          if (rz < 0.04 && !tooltipPinnedRef.current) {
+            hideTooltipNow();
             prevHovered = null;
             hoveredMarkerIdxRef.current = null;
-          } else {
-            const sx = cx + rx * R, sy = cy - ry * R;
-            const TW = 168, TH = 82; // approx tooltip dimensions
-            const GAP = 13;
-
-            // Default: above the marker
+          } else if (!tooltipPinnedRef.current) {
+            // Freeze position while pinned so scrolling isn't jumpy
+            const sx = cx + rx * R,
+              sy = cy - ry * R;
+            const TW = 320,
+              TH = 190;
+            const GAP = 16;
             let tx = sx - TW / 2;
             let ty = sy - TH - GAP;
-
-            // Flip below if near top of canvas
             if (ty < 8) ty = sy + GAP;
-
-            // Clamp horizontally
             tx = Math.max(8, Math.min(lw - TW - 8, tx));
-
             el.style.left = `${tx}px`;
-            el.style.top  = `${ty}px`;
+            el.style.top = `${ty}px`;
           }
         }
       }
@@ -989,7 +1188,7 @@ export default function DottedGlobe({ className }: { className?: string }) {
     rafId = requestAnimationFrame(tick);
     return () => {
       cancelAnimationFrame(rafId);
-      if (hideTimer) clearTimeout(hideTimer);
+      clearHideTimer();
     };
   }, []);
 
@@ -1061,7 +1260,10 @@ export default function DottedGlobe({ className }: { className?: string }) {
   const onMouseLeave = useCallback(() => {
     if (!interactive) return;
     S.current.hovered = false;
-    mouseCanvasRef.current = null;
+    // Keep last canvas point if moving onto the tooltip box
+    if (!tooltipPinnedRef.current) {
+      mouseCanvasRef.current = null;
+    }
     if (S.current.dragging) { S.current.dragging = false; setCursor("grab"); }
   }, [interactive]);
 
@@ -1123,57 +1325,201 @@ export default function DottedGlobe({ className }: { className?: string }) {
         onTouchEnd={onTouchEnd}
       />
 
-      {/* Hover tooltip — anchored above the hovered marker */}
-      {tooltip && (() => {
-        const meta = TOOLTIP_META[tooltip.level];
-        return (
-          <div
-            ref={tooltipElRef}
-            style={{
-              position: "absolute",
-              zIndex: 30,
-              pointerEvents: "none",
-              opacity: tooltipVisible ? 1 : 0,
-              transform: tooltipVisible ? "translateY(0px)" : "translateY(7px)",
-              transition: "opacity 0.19s ease, transform 0.19s ease",
-              willChange: "opacity, transform",
-            }}
-          >
+      {/* Signal briefing tooltip — brand editorial panel */}
+      <div
+        ref={tooltipElRef}
+        aria-hidden="true"
+        onMouseEnter={() => {
+          tooltipPinnedRef.current = true;
+          if (hideTooltipTimerRef.current) {
+            clearTimeout(hideTooltipTimerRef.current);
+            hideTooltipTimerRef.current = null;
+          }
+        }}
+        onMouseLeave={() => {
+          tooltipPinnedRef.current = false;
+          // Close shortly after leaving the box (unless pulse is hovered again)
+          if (hideTooltipTimerRef.current) {
+            clearTimeout(hideTooltipTimerRef.current);
+          }
+          hideTooltipTimerRef.current = setTimeout(() => {
+            if (tooltipPinnedRef.current) return;
+            const el = tooltipElRef.current;
+            if (!el) return;
+            el.style.opacity = "0";
+            el.style.transform = "translateY(10px) scale(0.98)";
+            el.style.pointerEvents = "none";
+            lastHoveredIdxRef.current = null;
+            hoveredMarkerIdxRef.current = null;
+          }, 220);
+        }}
+        style={{
+          position: "absolute",
+          zIndex: 30,
+          pointerEvents: "none",
+          opacity: 0,
+          transform: "translateY(10px) scale(0.98)",
+          transition:
+            "opacity 0.22s cubic-bezier(0.22,1,0.36,1), transform 0.22s cubic-bezier(0.22,1,0.36,1)",
+          willChange: "opacity, transform",
+          left: 0,
+          top: 0,
+        }}
+      >
+        <div
+          style={{
+            width: "320px",
+            background:
+              "linear-gradient(165deg, rgba(255,252,247,0.97) 0%, rgba(244,240,234,0.96) 100%)",
+            border: "1px solid rgba(17,17,17,0.12)",
+            borderTop: "2px solid #C6A02C",
+            boxShadow: "0 18px 40px rgba(17,17,17,0.12)",
+            overflow: "hidden",
+          }}
+        >
+          <div style={{ padding: "10px 12px 11px" }}>
             <div
               style={{
-                background: "rgba(255,255,255,0.93)",
-                backdropFilter: "blur(12px)",
-                WebkitBackdropFilter: "blur(12px)",
-                border: "1px solid rgba(0,0,0,0.07)",
-                borderLeft: `2px solid ${meta.dot}`,
-                borderRadius: "10px",
-                width: "168px",
-                fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif",
-                boxShadow: "0 3px 16px rgba(0,0,0,0.09),0 1px 3px rgba(0,0,0,0.05)",
-                overflow: "hidden",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: "8px",
+                marginBottom: "6px",
               }}
             >
-              <div style={{ padding: "11px 13px 11px 11px" }}>
-                {/* Location + status dot */}
-                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "7px" }}>
-                  <div style={{
-                    width: "5px", height: "5px", borderRadius: "50%",
-                    background: meta.dot, flexShrink: 0,
-                    boxShadow: `0 0 4px ${meta.dot}80`,
-                  }} />
-                  <span style={{
-                    fontSize: "10px", fontWeight: 700, letterSpacing: "0.07em",
-                    color: "#0f172a", textTransform: "uppercase" as const, lineHeight: 1,
-                  }}>
-                    {tooltip.name}
-                  </span>
-                </div>
-
+              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                <span
+                  style={{
+                    fontFamily: "var(--font-inter), sans-serif",
+                    fontSize: "9px",
+                    fontWeight: 800,
+                    letterSpacing: "0.14em",
+                    textTransform: "uppercase",
+                    color: "#C6A02C",
+                    lineHeight: 1,
+                  }}
+                >
+                  Live signal
+                </span>
+                <span
+                  ref={tooltipNewBadgeRef}
+                  style={{
+                    display: "none",
+                    alignItems: "center",
+                    fontFamily: "var(--font-inter), sans-serif",
+                    fontSize: "8px",
+                    fontWeight: 800,
+                    letterSpacing: "0.12em",
+                    textTransform: "uppercase",
+                    color: "#1B7A3D",
+                    background: "rgba(27,122,61,0.12)",
+                    padding: "2px 5px",
+                    lineHeight: 1,
+                  }}
+                >
+                  New
+                </span>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px",
+                  flexShrink: 0,
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "var(--font-inter), sans-serif",
+                    fontSize: "9px",
+                    fontWeight: 700,
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase",
+                    color: "#6B665F",
+                    lineHeight: 1,
+                  }}
+                >
+                  Source
+                </span>
+                <span
+                  ref={tooltipSourceRef}
+                  style={{
+                    fontFamily: "var(--font-archivo-narrow), sans-serif",
+                    fontSize: "10px",
+                    fontWeight: 600,
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                    color: "#111111",
+                    lineHeight: 1,
+                  }}
+                />
               </div>
             </div>
+
+            <div
+              style={{
+                display: "flex",
+                alignItems: "baseline",
+                gap: "6px",
+                flexWrap: "wrap",
+                marginBottom: "5px",
+              }}
+            >
+              <span
+                ref={tooltipNameRef}
+                style={{
+                  fontFamily: "var(--font-eb-garamond), serif",
+                  fontSize: "20px",
+                  fontWeight: 500,
+                  letterSpacing: "-0.02em",
+                  color: "#111111",
+                  lineHeight: 1,
+                }}
+              />
+              <span
+                ref={tooltipCountryRef}
+                style={{
+                  fontFamily: "var(--font-inter), sans-serif",
+                  fontSize: "10px",
+                  fontWeight: 600,
+                  letterSpacing: "0.06em",
+                  textTransform: "uppercase",
+                  color: "#6B665F",
+                  lineHeight: 1.1,
+                }}
+              />
+            </div>
+
+            <div
+              style={{
+                height: "1px",
+                background: "rgba(17,17,17,0.1)",
+                margin: "0 0 6px",
+              }}
+            />
+
+            <p
+              ref={tooltipContentRef}
+              className="globe-signal-scroll"
+              style={{
+                margin: 0,
+                fontFamily: "var(--font-eb-garamond), serif",
+                fontSize: "13px",
+                fontWeight: 400,
+                fontStyle: "italic",
+                color: "#272521",
+                lineHeight: 1.25,
+                height: "6.25em",
+                overflowY: "auto",
+                overflowX: "hidden",
+                wordBreak: "break-word",
+                whiteSpace: "pre-wrap",
+                overscrollBehavior: "contain",
+              }}
+            />
           </div>
-        );
-      })()}
+        </div>
+      </div>
     </div>
   );
 }

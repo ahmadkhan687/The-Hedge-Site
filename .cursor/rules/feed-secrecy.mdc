@@ -1,0 +1,26 @@
+---
+description: Keep upstream feed/provider details secret — never expose in UI, console, or client code
+alwaysApply: true
+---
+
+# Confidential realtime feed
+
+## Never expose
+
+- Vendor/product names (e.g. Pulsar, Apache Pulsar, TRAC, pulsarplatform)
+- Upstream GraphQL URL or any provider hostname
+- Access tokens, bearer headers, search hashes, broker/topic/queue names
+- Raw GraphQL queries, GraphQL errors, stack traces, or upstream response bodies
+- Debug logs of API payloads in the browser (`console.log` / `warn` / `info` / `debug` / unnecessary `error`)
+
+## Required architecture
+
+- Browser talks only to first-party routes (e.g. `/api/signals-feed`)
+- Upstream URL + credentials live in **server-only** env (`FEED_UPSTREAM_URL`, `FEED_API_TOKEN`, `FEED_SEARCH_HASH`) — never `NEXT_PUBLIC_*`
+- On failure: return empty/safe data; do not send technical error strings to the client
+- UI copy stays product-facing (e.g. “Live signal”) — never infrastructure language
+
+## Production bar
+
+- No debug components, homepage probes, or developer-only overlays for this feed
+- Client catch blocks stay silent; no toast/banner that reveals internals
