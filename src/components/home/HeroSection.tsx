@@ -1,5 +1,5 @@
 import ColorBars from "@/components/home/ColorBars";
-import HeroGlobe from "@/components/home/HeroGlobe";
+import HeroGlobe from "@/components/home/HeroGlobeLazy";
 import ScrollDownButton from "@/components/home/ScrollDownButton";
 import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
 import { CharReveal, FadeUp } from "@/components/ui/text-reveal";

@@ -483,10 +483,11 @@ export default function DottedGlobe({
     return () => mq.removeEventListener("change", sync);
   }, []);
 
-  // Build dots after mount; markers from live pulses or hardcoded fallback
+  // Build dots after mount — fewer on mobile for smoother first paint/CPU
   useEffect(() => {
     const mask = buildMask();
-    S.current.dots = makeDots(24000, mask);
+    const isMobile = window.matchMedia("(max-width: 1023px)").matches;
+    S.current.dots = makeDots(isMobile ? 7000 : 12000, mask);
   }, []);
 
   useEffect(() => {
