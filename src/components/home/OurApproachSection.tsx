@@ -1,6 +1,10 @@
 import Image from "next/image";
+import Link from "next/link";
 import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
 import { CharReveal, FadeUp, HoverShrink } from "@/components/ui/text-reveal";
+
+const linkFocus =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#C6A02C]";
 
 const approachItems = [
   {
@@ -80,13 +84,19 @@ export default function OurApproachSection() {
           amount={0.2}
           className="relative aspect-square w-full overflow-hidden border border-[#111] sm:aspect-auto sm:h-[520px] lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:h-[760px]"
         >
-          <Image
-            src="/Home/HOME3.webp"
-            alt="Our approach operations visual"
-            fill
-            className="object-cover"
-            sizes="(max-width: 1024px) 100vw, 50vw"
-          />
+          <Link
+            href="/about"
+            aria-label="Go to About"
+            className={`absolute inset-0 block no-underline transition-opacity hover:opacity-90 ${linkFocus}`}
+          >
+            <Image
+              src="/Home/HOME3.webp"
+              alt="Our approach operations visual"
+              fill
+              className="object-cover"
+              sizes="(max-width: 1024px) 100vw, 50vw"
+            />
+          </Link>
         </FadeUp>
 
         {/* List — third on mobile, under header on desktop */}
@@ -107,19 +117,24 @@ export default function OurApproachSection() {
                   : ""
               }
             >
-              <HoverShrink className="py-6 lg:py-7">
-                <div className="mb-3 flex items-baseline gap-3 sm:gap-4">
-                  <span className="font-eb-garamond text-base font-medium text-[#C6A02C] lg:text-[15.746px] lg:font-normal lg:text-[#C8C2B6]">
-                    {item.number}
-                  </span>
-                  <h3 className="font-eb-garamond text-xl font-semibold leading-tight text-[#111] lg:font-archivo-narrow lg:text-[22.417px] lg:font-bold lg:uppercase lg:leading-none">
-                    {item.title}
-                  </h3>
-                </div>
-                <p className="font-eb-garamond text-sm font-normal leading-[160%] text-[#4A4844] lg:text-[17.933px] lg:leading-normal lg:text-[#21211C] lg:opacity-70">
-                  {item.description}
-                </p>
-              </HoverShrink>
+              <Link
+                href="/about"
+                className={`block text-inherit no-underline transition-opacity hover:opacity-70 ${linkFocus}`}
+              >
+                <HoverShrink className="py-6 lg:py-7">
+                  <div className="mb-3 flex items-baseline gap-3 sm:gap-4">
+                    <span className="font-eb-garamond text-base font-medium text-[#C6A02C] lg:text-[15.746px] lg:font-normal lg:text-[#C8C2B6]">
+                      {item.number}
+                    </span>
+                    <h3 className="font-eb-garamond text-xl font-semibold leading-tight text-[#111] lg:font-archivo-narrow lg:text-[22.417px] lg:font-bold lg:uppercase lg:leading-none">
+                      {item.title}
+                    </h3>
+                  </div>
+                  <p className="font-eb-garamond text-sm font-normal leading-[160%] text-[#4A4844] lg:text-[17.933px] lg:leading-normal lg:text-[#21211C] lg:opacity-70">
+                    {item.description}
+                  </p>
+                </HoverShrink>
+              </Link>
             </FadeUp>
           ))}
 

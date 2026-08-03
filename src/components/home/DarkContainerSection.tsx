@@ -11,6 +11,9 @@ const bars = [
   { width: 18, color: "#23B6D2" },
 ];
 
+const linkFocus =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#C6A02C]";
+
 export default function DarkContainerSection() {
   return (
     <section className="w-full overflow-hidden bg-[#121416] text-white">
@@ -28,7 +31,11 @@ export default function DarkContainerSection() {
           </div>
         </div>
 
-        <div className="relative -mx-5 aspect-[4/3] w-[calc(100%+2.5rem)] overflow-hidden rounded-sm sm:-mx-6 sm:w-[calc(100%+3rem)]">
+        <Link
+          href="/varro"
+          aria-label="Go to Varro"
+          className={`relative -mx-5 aspect-[4/3] w-[calc(100%+2.5rem)] overflow-hidden rounded-sm no-underline transition-opacity hover:opacity-90 sm:-mx-6 sm:w-[calc(100%+3rem)] ${linkFocus}`}
+        >
           <Image
             src="/Home/varo.webp"
             alt="Varro command console interface"
@@ -37,16 +44,19 @@ export default function DarkContainerSection() {
             sizes="(max-width: 1023px) 100vw, 0px"
             priority
           />
-        </div>
+        </Link>
 
         <p className="font-eb-garamond text-base font-normal leading-[1.7] text-[#B8B8B8]">
           One mind that never sleeps. Agents watch every source — networks,
           narratives, signals — in real time, at national scale.
         </p>
 
-        <h2 className="font-eb-garamond text-[clamp(3.5rem,14vw,5rem)] font-bold leading-none tracking-[-2px] text-[#F4F0EA]">
+        <Link
+          href="/varro"
+          className={`inline-block font-eb-garamond text-[clamp(3.5rem,14vw,5rem)] font-bold leading-none tracking-[-2px] text-[#F4F0EA] no-underline transition-opacity hover:opacity-80 ${linkFocus}`}
+        >
           VARRO
-        </h2>
+        </Link>
 
         <CharReveal
           as="p"
@@ -87,9 +97,12 @@ export default function DarkContainerSection() {
               </div>
             </div>
 
-            <h2 className="font-eb-garamond text-[clamp(2.75rem,10vw,7.875rem)] font-bold leading-[100%] tracking-[-3.5px] text-white">
+            <Link
+              href="/varro"
+              className={`inline-block w-fit font-eb-garamond text-[clamp(2.75rem,10vw,7.875rem)] font-bold leading-[100%] tracking-[-3.5px] text-white no-underline transition-opacity hover:opacity-80 ${linkFocus}`}
+            >
               VARRO
-            </h2>
+            </Link>
 
             <CharReveal
               as="p"
@@ -128,7 +141,11 @@ export default function DarkContainerSection() {
           </div>
         </div>
 
-        <div className="relative aspect-[1603/606] w-full overflow-hidden border border-white/20">
+        <Link
+          href="/varro"
+          aria-label="Go to Varro"
+          className={`relative aspect-[1603/606] w-full overflow-hidden border border-white/20 no-underline transition-opacity hover:opacity-90 ${linkFocus}`}
+        >
           <Image
             src="/Home/varo.webp"
             alt="Varro command console interface"
@@ -136,7 +153,7 @@ export default function DarkContainerSection() {
             className="object-cover"
             sizes="(max-width: 1023px) 0px, (max-width: 1728px) calc(100vw - 140px), 1588px"
           />
-        </div>
+        </Link>
       </div>
     </section>
   );

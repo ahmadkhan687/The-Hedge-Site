@@ -38,7 +38,7 @@ const cards = [
 export default function MovingFlowingSection() {
   return (
     <section className="relative w-full overflow-hidden bg-black lg:bg-[#121416]">
-      {/* Desktop only: optimized looping video background */}
+      {/* Desktop: looping video background */}
       <CapabilitiesBackgroundVideo />
       <div
         className="absolute inset-0 hidden bg-[#0E121A]/50 lg:block"

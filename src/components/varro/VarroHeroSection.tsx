@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { FadeUp, WordReveal } from "@/components/ui/text-reveal";
 
 export default function VarroHeroSection() {
@@ -90,7 +91,10 @@ export default function VarroHeroSection() {
           <div className="mt-4 h-px w-16 bg-[#D9D7D2]" />
         </div>
 
-        <div className="mx-auto mt-8 flex w-full max-w-[900px] flex-col gap-3 border border-[#2C2A26] p-5">
+        <Link
+          href="/sovereignty"
+          className="mx-auto mt-8 flex w-full max-w-[900px] flex-col gap-3 border border-[#2C2A26] p-5 text-inherit no-underline transition-opacity hover:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#C6A02C]"
+        >
           <p className="font-eb-garamond text-sm font-bold uppercase leading-normal text-[#2C2A26]">
             Faculty
           </p>
@@ -98,7 +102,7 @@ export default function VarroHeroSection() {
           <p className="font-eb-garamond text-base font-normal leading-[1.35] text-[#4A4844]">
             Sovereign intelligence
           </p>
-        </div>
+        </Link>
       </section>
 
       {/* —— Desktop: mission copy —— */}

@@ -7,7 +7,7 @@ type LoopingBackgroundVideoProps = {
   className?: string;
 };
 
-/** Optimized, faststart MP4 background that keeps looping while mounted/in view. */
+/** Background MP4 that autoplays and loops continuously while in view. */
 export default function LoopingBackgroundVideo({
   src,
   className,
@@ -23,14 +23,8 @@ export default function LoopingBackgroundVideo({
       void video.play().catch(() => {});
     };
 
-    const onEnded = () => {
-      video.currentTime = 0;
-      play();
-    };
-
-    const onStall = () => {
-      play();
-    };
+    // Ensure playback starts (autoplay policies / hydration).
+    play();
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -43,15 +37,9 @@ export default function LoopingBackgroundVideo({
       { threshold: 0.01 },
     );
 
-    video.addEventListener("ended", onEnded);
-    video.addEventListener("waiting", onStall);
-    video.addEventListener("stalled", onStall);
     observer.observe(video);
 
     return () => {
-      video.removeEventListener("ended", onEnded);
-      video.removeEventListener("waiting", onStall);
-      video.removeEventListener("stalled", onStall);
       observer.disconnect();
     };
   }, []);
@@ -60,6 +48,7 @@ export default function LoopingBackgroundVideo({
     <video
       ref={videoRef}
       className={className}
+      autoPlay
       muted
       loop
       playsInline

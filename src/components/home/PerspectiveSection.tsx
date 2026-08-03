@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
 import { MotionCTA, WordReveal } from "@/components/ui/text-reveal";
 
@@ -9,6 +10,9 @@ const desktopTiles = [
   { width: 224, color: "#23B6D2" },
 ];
 
+const linkFocus =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#C6A02C]";
+
 export default function PerspectiveSection() {
   return (
     <section className="w-full bg-[#FBFAF7] py-10 lg:py-14">
@@ -16,10 +20,13 @@ export default function PerspectiveSection() {
         className={`${HOME_CONTENT_SHELL} flex flex-col gap-6 lg:h-[647px] lg:gap-12 lg:py-12`}
       >
         <div className="flex flex-col gap-3">
-          {/* Mobile: small sans-serif · Desktop: large serif */}
-          <p className="font-inter text-sm font-extrabold uppercase leading-none tracking-[0.04em] text-[#C6A02C] lg:font-eb-garamond lg:text-[36px] lg:font-bold lg:tracking-normal">
+          {/* Match Domains / Sovereignty section labels */}
+          <Link
+            href="/perspectives"
+            className={`w-fit font-eb-garamond text-base font-bold uppercase leading-normal text-[#C6A02C] no-underline transition-opacity hover:opacity-70 lg:text-xl ${linkFocus}`}
+          >
             05 - Perspective
-          </p>
+          </Link>
 
           {/* Mobile: 4 equal bars */}
           <div
@@ -59,11 +66,11 @@ export default function PerspectiveSection() {
         />
 
         <MotionCTA
-          href="/request-access"
+          href="/perspectives"
           tapScale={0.95}
-          className="inline-flex min-h-[52px] w-full items-center justify-start border-2 border-[#111] bg-[#111] px-5 py-3 font-inter text-sm font-extrabold uppercase leading-normal text-[#FBFAF7] no-underline transition-opacity hover:opacity-80 lg:min-h-[44px] lg:w-fit lg:justify-center lg:px-[22px] lg:py-[15px] lg:text-base"
+          className="inline-flex min-h-[52px] w-full items-center justify-start gap-3 border-2 border-[#111] bg-[#111] px-5 py-3 font-inter text-sm font-extrabold uppercase leading-normal text-[#FBFAF7] no-underline transition-opacity hover:opacity-80 lg:min-h-[44px] lg:w-fit lg:justify-center lg:px-[22px] lg:py-[15px] lg:text-base"
         >
-          Request a briefing
+          Read More <span aria-hidden="true">→</span>
         </MotionCTA>
       </div>
     </section>

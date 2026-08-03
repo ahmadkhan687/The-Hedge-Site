@@ -1,6 +1,6 @@
 import LoopingBackgroundVideo from "@/components/ui/LoopingBackgroundVideo";
 
-/** Desktop Capabilities background — optimized MP4, keeps looping while mounted. */
+/** Desktop Capabilities background — public/Home/moving-flowing-bg.mp4 */
 export default function CapabilitiesBackgroundVideo() {
   return (
     <LoopingBackgroundVideo

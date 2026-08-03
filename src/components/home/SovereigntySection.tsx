@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
 import { WordReveal } from "@/components/ui/text-reveal";
 
@@ -9,6 +10,9 @@ const desktopTiles = [
   { width: 43, color: "#19B8B7" },
   { width: 18, color: "#23B6D2" },
 ];
+
+const linkFocus =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#C6A02C]";
 
 export default function SovereigntySection() {
   return (
@@ -22,9 +26,12 @@ export default function SovereigntySection() {
             <p className="font-inter text-[10px] font-extrabold uppercase tracking-[0.12em] text-[#8A8A8A]">
               Sovereign Intelligence
             </p>
-            <p className="font-inter text-sm font-extrabold uppercase leading-normal text-[#E83387]">
+            <Link
+              href="/sovereignty"
+              className={`w-fit font-inter text-sm font-extrabold uppercase leading-normal text-[#E83387] no-underline transition-opacity hover:opacity-70 ${linkFocus}`}
+            >
               04 - Sovereignty
-            </p>
+            </Link>
             <div
               className="mt-1 flex items-center gap-[5px]"
               aria-hidden="true"
@@ -36,7 +43,11 @@ export default function SovereigntySection() {
             </div>
           </div>
 
-          <div className="relative aspect-[16/10] w-full overflow-hidden">
+          <Link
+            href="/sovereignty"
+            aria-label="Go to Sovereignty"
+            className={`relative aspect-[16/10] w-full overflow-hidden no-underline transition-opacity hover:opacity-90 ${linkFocus}`}
+          >
             <Image
               src="/Home/HOME5.webp"
               alt="Sovereign intelligence visual"
@@ -44,7 +55,7 @@ export default function SovereigntySection() {
               className="object-cover"
               sizes="(max-width: 639px) calc(100vw - 40px), (max-width: 1023px) calc(100vw - 48px), 0px"
             />
-          </div>
+          </Link>
 
           <WordReveal
             as="h2"
@@ -70,13 +81,16 @@ export default function SovereigntySection() {
           </div>
         </div>
 
-        {/* —— Desktop layout (unchanged) —— */}
+        {/* —— Desktop layout (unchanged structure) —— */}
         <div className="hidden flex-col gap-12 lg:flex">
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-4">
-              <p className="font-eb-garamond text-xl font-bold uppercase leading-normal text-[#D7A92C]">
+              <Link
+                href="/sovereignty"
+                className={`w-fit font-eb-garamond text-xl font-bold uppercase leading-normal text-[#D7A92C] no-underline transition-opacity hover:opacity-70 ${linkFocus}`}
+              >
                 04 - Sovereignty
-              </p>
+              </Link>
               <div className="flex items-center gap-[6px]" aria-hidden="true">
                 {desktopTiles.map((tile) => (
                   <span
@@ -112,7 +126,11 @@ export default function SovereigntySection() {
             </p>
           </div>
 
-          <div className="relative aspect-[1527/642] w-full overflow-hidden border-[3px] border-[#111]">
+          <Link
+            href="/sovereignty"
+            aria-label="Go to Sovereignty"
+            className={`relative aspect-[1527/642] w-full overflow-hidden border-[3px] border-[#111] no-underline transition-opacity hover:opacity-90 ${linkFocus}`}
+          >
             <Image
               src="/Home/HOME5.webp"
               alt="Sovereign intelligence visual"
@@ -137,7 +155,7 @@ export default function SovereigntySection() {
                 </p>
               </div>
             </div>
-          </div>
+          </Link>
         </div>
       </div>
     </section>

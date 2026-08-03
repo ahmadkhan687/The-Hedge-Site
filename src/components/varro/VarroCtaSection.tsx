@@ -1,6 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
-import { MotionCTA, WordReveal } from "@/components/ui/text-reveal";
+import { WordReveal } from "@/components/ui/text-reveal";
 
 export default function VarroCtaSection() {
   return (
@@ -22,23 +21,10 @@ export default function VarroCtaSection() {
           segments={[{ text: "The Machine Never Makes the Call." }]}
         />
 
-        <Link
-          href="/request-access"
-          className="inline-flex items-center gap-2 font-schibsted-grotesk text-sm font-semibold uppercase leading-normal text-[#2C2A26] underline decoration-from-font underline-offset-4 transition-opacity hover:opacity-70"
-        >
+        <p className="font-schibsted-grotesk text-sm font-semibold uppercase leading-normal text-[#2C2A26]">
           Built to be handed over. On your terms.
-          <span aria-hidden="true">→</span>
-        </Link>
+        </p>
       </div>
-
-      <MotionCTA
-        href="/request-access"
-        hoverScale={1.1}
-        tapScale={0.9}
-        className="relative z-10 inline-flex h-[49px] w-[212px] items-center justify-center border-2 border-[#111] bg-[#111] font-inter text-base font-extrabold uppercase leading-normal text-[#FBFAF7] transition-opacity hover:opacity-85"
-      >
-        Request a briefing
-      </MotionCTA>
     </section>
   );
 }

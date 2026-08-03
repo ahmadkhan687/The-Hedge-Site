@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
 import { HoverScale, WordReveal } from "@/components/ui/text-reveal";
 
@@ -15,6 +16,9 @@ const domains = [
   "Coordinated Networks",
   "Engineered Radicalisation",
 ];
+
+const linkFocus =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#C6A02C]";
 
 export default function DomainsSection() {
   return (
@@ -34,9 +38,12 @@ export default function DomainsSection() {
         {/* Header */}
         <div className="flex flex-col gap-4 lg:gap-6">
           <div className="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-center lg:gap-4">
-            <p className="font-eb-garamond text-base font-bold uppercase leading-normal text-[#C6A02C] lg:text-xl">
+            <Link
+              href="/domains"
+              className={`w-fit font-eb-garamond text-base font-bold uppercase leading-normal text-[#C6A02C] no-underline transition-opacity hover:opacity-70 lg:text-xl ${linkFocus}`}
+            >
               03 - Domains
-            </p>
+            </Link>
 
             {/* Mobile: 4 equal bars under label */}
             <div
@@ -76,7 +83,11 @@ export default function DomainsSection() {
         </div>
 
         {/* Image — second on mobile, last on desktop */}
-        <div className="relative order-2 aspect-[16/10] w-full overflow-hidden border border-[#111] lg:order-3 lg:aspect-[537/302]">
+        <Link
+          href="/domains"
+          aria-label="Go to Domains"
+          className={`relative order-2 aspect-[16/10] w-full overflow-hidden border border-[#111] no-underline transition-opacity hover:opacity-90 lg:order-3 lg:aspect-[537/302] ${linkFocus}`}
+        >
           <Image
             src="/Home/HOME4.webp"
             alt="Intelligence domains visualization"
@@ -84,7 +95,7 @@ export default function DomainsSection() {
             className="object-cover"
             sizes="(max-width: 1728px) 100vw, 1728px"
           />
-        </div>
+        </Link>
 
         {/* Domain list — third on mobile, middle on desktop */}
         <div className="order-3 lg:order-2">
