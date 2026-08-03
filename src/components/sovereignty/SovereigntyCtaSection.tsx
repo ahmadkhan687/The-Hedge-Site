@@ -2,7 +2,7 @@ import { FadeUp, MotionCTA, WordReveal } from "@/components/ui/text-reveal";
 
 export default function SovereigntyCtaSection() {
   return (
-    <section className="px-5 py-16 sm:px-8 lg:px-[120px] lg:py-24">
+    <section className="px-5 py-12 sm:px-8  lg:pb-24 lg:pt-10">
       <div className="mx-auto flex w-full max-w-[1140px] flex-col gap-6">
         <WordReveal
           as="h2"

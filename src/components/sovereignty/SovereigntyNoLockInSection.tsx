@@ -23,7 +23,7 @@ const cards = [
 
 export default function SovereigntyNoLockInSection() {
   return (
-    <section className="bg-[#F4F0EA] px-5 py-14 sm:px-8 lg:px-[120px] lg:py-[140px]">
+    <section className="bg-[#F4F0EA] px-5 py-14 sm:px-8 lg:px-[120px] lg:pb-16 lg:pt-[120px]">
       {/* —— Mobile layout —— */}
       <div className="mx-auto flex w-full max-w-[1488px] flex-col gap-8 lg:hidden">
         <div className="flex flex-col gap-4">
@@ -140,7 +140,7 @@ export default function SovereigntyNoLockInSection() {
         </div>
       </div>
 
-      <div className="mx-auto mt-20 hidden w-full max-w-[1488px] justify-center lg:mt-24 lg:flex">
+      <div className="mx-auto mt-16 hidden w-full max-w-[1488px] justify-center lg:mt-16 lg:flex">
         <CharReveal
           as="p"
           blur
