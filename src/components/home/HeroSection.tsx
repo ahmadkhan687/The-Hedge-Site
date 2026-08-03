@@ -36,9 +36,12 @@ export default function HeroSection() {
         </div>
 
         <div className="flex min-w-0 max-w-full flex-col items-center lg:items-end lg:justify-self-end">
-          <div className="relative aspect-square w-[min(100%,clamp(280px,82vw,400px))] shrink-0 overflow-hidden bg-[#F4F0EA] sm:w-[min(100%,clamp(320px,58vw,460px))] lg:ml-auto lg:w-[min(calc(100vw-620px),460px)] xl:w-[min(calc(100vw-760px),560px)] 2xl:w-[min(calc(100vw-980px),760px)]">
+          <div className="relative aspect-square w-[min(100%,clamp(300px,88vw,440px))] shrink-0 overflow-visible bg-[#F4F0EA] sm:w-[min(100%,clamp(340px,62vw,480px))] lg:ml-auto lg:w-[min(calc(100vw-620px),460px)] lg:overflow-hidden xl:w-[min(calc(100vw-760px),560px)] 2xl:w-[min(calc(100vw-980px),760px)]">
             <HeroGlobe />
           </div>
+          <p className="mt-3 text-center font-inter text-[10px] font-extrabold uppercase tracking-[0.12em] text-[#6B665F] lg:hidden">
+            Live signals · Drag to explore · Tap a pulse
+          </p>
 
           {/* Desktop: color bars + scroll down (right-aligned) */}
           <div className="mt-4 hidden w-full max-w-[240px] flex-col items-end gap-5 self-end sm:gap-6 lg:flex 2xl:mt-[42px] 2xl:gap-7">

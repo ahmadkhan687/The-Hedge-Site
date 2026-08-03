@@ -448,6 +448,11 @@ export default function DottedGlobe({
   const tooltipContentRef = useRef<HTMLParagraphElement>(null);
   const tooltipNewBadgeRef = useRef<HTMLSpanElement>(null);
   const tooltipPinnedRef = useRef(false);
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  const touchDidDragRef = useRef(false);
+  const isMobileRef = useRef(false);
+  const showTooltipRef = useRef<(mk: MarkerData) => void>(() => {});
+  const hideTooltipRef = useRef<() => void>(() => {});
   const lastHoveredIdxRef = useRef<number | null>(null);
   const hideTooltipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -466,16 +471,12 @@ export default function DottedGlobe({
   });
 
   useEffect(() => {
-    const mq = window.matchMedia("(min-width: 1024px)");
+    // Enable drag + pulse interaction on all breakpoints (including mobile).
+    const mq = window.matchMedia("(max-width: 1023px)");
     const sync = () => {
-      const on = mq.matches;
-      setInteractive(on);
-      setCursor(on ? "grab" : "default");
-      if (!on) {
-        S.current.dragging = false;
-        S.current.hovered = false;
-        mouseCanvasRef.current = null;
-      }
+      isMobileRef.current = mq.matches;
+      setInteractive(true);
+      setCursor("grab");
     };
     sync();
     mq.addEventListener("change", sync);
@@ -748,7 +749,7 @@ export default function DottedGlobe({
         const cfg        = UNIFORM_PULSE;
         const rgb        = mk.isNew ? NEW_PULSE_RGB : LVL_RGB[mk.level];
         const depthScale = 0.55 + rz * 0.45;
-        const markerScale = isMobile ? 0.64 : 1;
+        const markerScale = isMobile ? 1.22 : 1;
         const baseR      = cfg.size * depthScale * st.scale * markerScale * (isHovMk ? 1.12 : 1);
 
         // Pulse: sine-squared pop (slightly more dramatic on hover)
@@ -762,7 +763,7 @@ export default function DottedGlobe({
           ctx.beginPath();
           ctx.arc(sx, sy, radius, 0, Math.PI * 2);
           ctx.strokeStyle = `rgba(${rgb},${alpha.toFixed(3)})`;
-          ctx.lineWidth   = lw * st.scale * (isMobile ? 0.72 : 1);
+          ctx.lineWidth   = lw * st.scale * (isMobile ? 1.05 : 1);
           ctx.setLineDash(dash ? dash.map(d => d * st.scale) : []);
           ctx.stroke();
           ctx.setLineDash([]);
@@ -858,7 +859,7 @@ export default function DottedGlobe({
         if (effectiveGlow > 0) {
           ctx.save();
           ctx.shadowColor = `rgba(${rgb},${(fade * (isHovMk || mk.isNew ? 0.82 : 0.65)).toFixed(3)})`;
-          ctx.shadowBlur  = effectiveGlow * depthScale * st.scale * (isHovMk || mk.isNew ? 1.45 : 1) * (isMobile ? 0.75 : 1);
+          ctx.shadowBlur  = effectiveGlow * depthScale * st.scale * (isHovMk || mk.isNew ? 1.45 : 1) * (isMobile ? 1.1 : 1);
           ctx.beginPath();
           ctx.arc(sx, sy, baseR * pulseFactor, 0, Math.PI * 2);
           ctx.fillStyle = `rgba(${rgb},${coreA})`;
@@ -968,6 +969,12 @@ export default function DottedGlobe({
       if (tooltipNewBadgeRef.current) {
         tooltipNewBadgeRef.current.style.display = mk.isNew ? "inline-flex" : "none";
       }
+      // Responsive panel width for phone screens
+      const panel = el.firstElementChild as HTMLElement | null;
+      if (panel && canvasRef.current) {
+        const maxW = Math.min(320, canvasRef.current.clientWidth - 16);
+        panel.style.width = `${maxW}px`;
+      }
       el.style.opacity = "1";
       el.style.transform = "translateY(0px) scale(1)";
       el.style.pointerEvents = "auto";
@@ -983,6 +990,9 @@ export default function DottedGlobe({
       el.style.transform = "translateY(10px) scale(0.98)";
       el.style.pointerEvents = "none";
     }
+
+    showTooltipRef.current = showTooltip;
+    hideTooltipRef.current = hideTooltipNow;
 
     function scheduleHideTooltip() {
       if (tooltipPinnedRef.current) return;
@@ -1013,12 +1023,13 @@ export default function DottedGlobe({
       const mp = mouseCanvasRef.current;
       let newHovered: number | null = null;
 
-      // Keep open while cursor is on the tooltip box
+      // Keep open while cursor / finger is on the tooltip box
       if (tooltipPinnedRef.current && lastHoveredIdxRef.current !== null) {
         newHovered = lastHoveredIdxRef.current;
       } else if (mp && !S.current.dragging) {
-        const acquireR = 28;
-        const keepR = 42;
+        const mobile = isMobileRef.current;
+        const acquireR = mobile ? 40 : 28;
+        const keepR = mobile ? 56 : 42;
         let minDist = prevHovered !== null ? keepR : acquireR;
         for (let i = 0; i < S.current.markers.length; i++) {
           const [rx, ry, rz] = applyM(m, S.current.markers[i].pos);
@@ -1059,12 +1070,12 @@ export default function DottedGlobe({
             hideTooltipNow();
             prevHovered = null;
             hoveredMarkerIdxRef.current = null;
-          } else if (!tooltipPinnedRef.current) {
-            // Freeze position while pinned so scrolling isn't jumpy
-            const sx = cx + rx * R,
-              sy = cy - ry * R;
-            const TW = 320,
-              TH = 190;
+          } else {
+            const sx = cx + rx * R;
+            const sy = cy - ry * R;
+            const panel = el.firstElementChild as HTMLElement | null;
+            const TW = panel?.offsetWidth || (isMobileRef.current ? 280 : 320);
+            const TH = 190;
             const GAP = 16;
             let tx = sx - TW / 2;
             let ty = sy - TH - GAP;
@@ -1163,35 +1174,115 @@ export default function DottedGlobe({
 
   // ── Touch ──────────────────────────────────────────────────────────────────
 
+  const findNearestMarkerIdx = useCallback(
+    (canvasX: number, canvasY: number): number | null => {
+      const canvas = canvasRef.current;
+      if (!canvas) return null;
+      const lw = canvas.clientWidth;
+      const lh = canvas.clientHeight;
+      const cx = lw / 2;
+      const cy = lh / 2;
+      const R = Math.min(lw, lh) * 0.42 * S.current.scale;
+      const m = S.current.rot;
+      const hitR = isMobileRef.current ? 44 : 30;
+      let best: number | null = null;
+      let bestD = hitR;
+      for (let i = 0; i < S.current.markers.length; i++) {
+        const [rx, ry, rz] = applyM(m, S.current.markers[i].pos);
+        if (rz < 0.05) continue;
+        const sx = cx + rx * R;
+        const sy = cy - ry * R;
+        const d = Math.sqrt((canvasX - sx) ** 2 + (canvasY - sy) ** 2);
+        if (d < bestD) {
+          bestD = d;
+          best = i;
+        }
+      }
+      return best;
+    },
+    [],
+  );
+
   const onTouchStart = useCallback((e: React.TouchEvent) => {
     if (!interactive) return;
-    e.preventDefault();
     const t = e.touches[0];
+    const rect = canvasRef.current?.getBoundingClientRect();
+    touchStartRef.current = { x: t.clientX, y: t.clientY };
+    touchDidDragRef.current = false;
     S.current.dragging = true;
     S.current.lastXY = [t.clientX, t.clientY];
     S.current.recentD = [];
     S.current.vel = [0, 0];
+    if (rect) {
+      mouseCanvasRef.current = [t.clientX - rect.left, t.clientY - rect.top];
+    }
   }, [interactive]);
 
   const onTouchMove = useCallback((e: React.TouchEvent) => {
     if (!interactive) return;
-    e.preventDefault();
     if (!S.current.dragging) return;
     const t = e.touches[0];
+    const start = touchStartRef.current;
+    if (start) {
+      const dist = Math.hypot(t.clientX - start.x, t.clientY - start.y);
+      if (dist > 10) touchDidDragRef.current = true;
+    }
+    if (touchDidDragRef.current) {
+      e.preventDefault();
+    }
     const dx = t.clientX - S.current.lastXY[0];
     const dy = t.clientY - S.current.lastXY[1];
-    applyDrag(dx, dy);
-    S.current.recentD.push([dx, dy, performance.now()]);
-    if (S.current.recentD.length > 6) S.current.recentD.shift();
+    if (touchDidDragRef.current) {
+      applyDrag(dx, dy);
+      S.current.recentD.push([dx, dy, performance.now()]);
+      if (S.current.recentD.length > 6) S.current.recentD.shift();
+    }
     S.current.lastXY = [t.clientX, t.clientY];
+    const rect = canvasRef.current?.getBoundingClientRect();
+    if (rect) {
+      mouseCanvasRef.current = [t.clientX - rect.left, t.clientY - rect.top];
+    }
   }, [interactive]);
 
-  const onTouchEnd = useCallback(() => {
+  const onTouchEnd = useCallback((e: React.TouchEvent) => {
     if (!interactive) return;
     if (!S.current.dragging) return;
     S.current.dragging = false;
-    flushVelocity();
-  }, [interactive]);
+
+    if (!touchDidDragRef.current) {
+      // Tap: open nearest pulse tooltip
+      const rect = canvasRef.current?.getBoundingClientRect();
+      const t = e.changedTouches[0];
+      if (rect && t) {
+        const cx = t.clientX - rect.left;
+        const cy = t.clientY - rect.top;
+        mouseCanvasRef.current = [cx, cy];
+        const idx = findNearestMarkerIdx(cx, cy);
+        if (idx !== null) {
+          const mk = S.current.markers[idx];
+          if (mk) {
+            hoveredMarkerIdxRef.current = idx;
+            lastHoveredIdxRef.current = idx;
+            tooltipPinnedRef.current = true;
+            showTooltipRef.current(mk);
+            // Auto-unpin after a few seconds so the globe can resume
+            window.setTimeout(() => {
+              tooltipPinnedRef.current = false;
+            }, 4500);
+          }
+        } else {
+          hideTooltipRef.current();
+          hoveredMarkerIdxRef.current = null;
+          lastHoveredIdxRef.current = null;
+        }
+      }
+    } else {
+      flushVelocity();
+    }
+
+    touchStartRef.current = null;
+    touchDidDragRef.current = false;
+  }, [interactive, findNearestMarkerIdx]);
 
   return (
     <div
@@ -1208,6 +1299,8 @@ export default function DottedGlobe({
           touchAction: interactive ? "none" : "pan-y",
           pointerEvents: interactive ? "auto" : "none",
           display: "block",
+          WebkitUserSelect: "none",
+          userSelect: "none",
         }}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
