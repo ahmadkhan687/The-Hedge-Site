@@ -1364,8 +1364,9 @@ export default function DottedGlobe({
                 style={{
                   fontFamily: "var(--font-eb-garamond), serif",
                   fontSize: "20px",
-                  fontWeight: 500,
+                  fontWeight: 600,
                   letterSpacing: "-0.02em",
+                  textTransform: "uppercase",
                   color: "#111111",
                   lineHeight: 1,
                 }}
@@ -1397,12 +1398,12 @@ export default function DottedGlobe({
               className="globe-signal-scroll"
               style={{
                 margin: 0,
-                fontFamily: "var(--font-eb-garamond), serif",
+                fontFamily: "var(--font-inter), sans-serif",
                 fontSize: "13px",
                 fontWeight: 400,
-                fontStyle: "italic",
+                fontStyle: "normal",
                 color: "#272521",
-                lineHeight: 1.25,
+                lineHeight: 1.35,
                 height: "6.25em",
                 overflowY: "auto",
                 overflowX: "hidden",
