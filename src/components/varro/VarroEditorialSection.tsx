@@ -18,8 +18,10 @@ const metrics = [
 
 export default function VarroEditorialSection() {
   return (
-    <section className="bg-[#F5F0E8] px-5 pb-12 pt-8 sm:px-8 lg:px-20 lg:pb-16 lg:pt-12">
-      <div className="mx-auto flex w-full max-w-[1568px] flex-col gap-12 lg:gap-24">
+    <section
+      id="varro-capability"
+      className="scroll-mt-24 bg-[#F5F0E8] px-5 pb-12 pt-8 sm:px-8 lg:px-20 lg:pb-16 lg:pt-12"
+    >      <div className="mx-auto flex w-full max-w-[1568px] flex-col gap-12 lg:gap-24">
         {/* —— Mobile layout —— */}
         <div className="flex flex-col gap-6 lg:hidden">
           <div className="-mx-5 w-[calc(100%+2.5rem)]">

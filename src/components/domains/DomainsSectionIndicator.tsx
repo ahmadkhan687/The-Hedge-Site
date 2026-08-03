@@ -28,7 +28,8 @@ export default function DomainsSectionIndicator() {
     const ratios = new Map<string, number>();
 
     const pickActive = () => {
-      let bestId = DOMAINS_SECTIONS[0].id;
+      let bestId: (typeof DOMAINS_SECTIONS)[number]["id"] =
+        DOMAINS_SECTIONS[0].id;
       let bestRatio = -1;
       for (const section of DOMAINS_SECTIONS) {
         const ratio = ratios.get(section.id) ?? 0;

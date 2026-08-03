@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import VarroBannerScrollButton from "@/components/varro/VarroBannerScrollButton";
 
 const faculties = [
   {
@@ -93,7 +94,7 @@ export default function VarroIntelligenceSection() {
       </div>
 
       {/* Mobile banner */}
-      <div className="relative mt-6 h-[280px] w-full overflow-hidden sm:mt-16 sm:h-[420px] lg:hidden">
+      <VarroBannerScrollButton className="relative mt-6 block h-[280px] w-full cursor-pointer overflow-hidden border-0 bg-transparent p-0 sm:mt-16 sm:h-[420px] lg:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-[#C6A02C]">
         <Image
           src="/Varro/bannermobile.webp"
           alt="Varro intelligence banner visual"
@@ -101,10 +102,10 @@ export default function VarroIntelligenceSection() {
           className="object-cover object-center"
           sizes="100vw"
         />
-      </div>
+      </VarroBannerScrollButton>
 
       {/* Desktop banner — match image aspect ratio so overlay text never crops */}
-      <div className="relative mt-20 hidden aspect-[1728/600] w-full overflow-hidden lg:block">
+      <VarroBannerScrollButton className="relative mt-20 hidden aspect-[1728/600] w-full cursor-pointer overflow-hidden border-0 bg-transparent p-0 lg:block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-[#C6A02C]">
         <Image
           src="/Varro/banner.webp"
           alt="Varro intelligence banner visual"
@@ -112,7 +113,7 @@ export default function VarroIntelligenceSection() {
           className="object-cover object-center"
           sizes="100vw"
         />
-      </div>
+      </VarroBannerScrollButton>
     </section>
   );
 }
