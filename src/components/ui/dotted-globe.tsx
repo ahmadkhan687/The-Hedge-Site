@@ -294,17 +294,6 @@ export type GlobePulseMarker = {
   isNew?: boolean;
 };
 
-const RING_CYCLE: RingStyle[] = [
-  "staggered",
-  "triple",
-  "thick_thin",
-  "double",
-  "gradient",
-  "solid",
-  "dashed",
-  "dotted",
-];
-
 // Uniform pulse look — same medium-small size for every marker
 const UNIFORM_PULSE = {
   size: 3.4,
@@ -317,15 +306,6 @@ const UNIFORM_PULSE = {
   glowBlur: 2,
 } as const;
 
-// Per-level display config
-const LVL = {
-  1: { size: 7.2, numRings: 5, pMin: 4.5, pMax: 6.0, expand: 4.5, alpha: 0.93, lw: 1.0, glowBlur: 14 },
-  2: { size: 5.5, numRings: 3, pMin: 3.0, pMax: 4.5, expand: 3.5, alpha: 0.88, lw: 0.9, glowBlur: 7  },
-  3: { size: 4.2, numRings: 2, pMin: 2.5, pMax: 3.5, expand: 2.8, alpha: 0.82, lw: 0.85,glowBlur: 3  },
-  4: { size: 2.9, numRings: 1, pMin: 2.0, pMax: 3.0, expand: 2.2, alpha: 0.76, lw: 0.8, glowBlur: 0  },
-  5: { size: 1.9, numRings: 1, pMin: 1.5, pMax: 2.5, expand: 1.8, alpha: 0.52, lw: 0.7, glowBlur: 0  },
-} as const;
-
 // Level → rgb string
 const LVL_RGB: Record<number, string> = {
   1: "17,17,17",
@@ -336,24 +316,6 @@ const LVL_RGB: Record<number, string> = {
 };
 
 const NEW_PULSE_RGB = "27,122,61"; // green highlight for newly arrived pulses
-
-// [lat, lon, level, ringStyle, hasLine, lineAngleDeg]
-const RAW_MARKERS: [number, number, 1|2|3|4|5, RingStyle, boolean, number][] = [
-  // ── Level 1 · Critical ─────────────────────────────────────────────────────
-  [ 40.7,  -74.0, 1, "staggered",  true,  135],  // New York
-  [ 51.5,   -0.1, 1, "staggered",  true,  125],  // London
-  [ 25.2,   55.3, 1, "staggered",  true,   30],  // Dubai
-  [  1.4,  103.8, 1, "staggered",  true,   60],  // Singapore
-  [ 35.7,  139.7, 2, "triple",     true,   55],  // Tokyo
-  // ── Level 2 · High ─────────────────────────────────────────────────────────
-  [ 19.1,   72.9, 2, "triple",     true,   75],  // Mumbai
-  [-33.9,  151.2, 2, "thick_thin", true,  115],  // Sydney
-  [-23.5,  -46.6, 2, "thick_thin", true,   65],  // São Paulo
-  // ── Level 3 · Medium ───────────────────────────────────────────────────────
-  [-26.2,   28.0, 3, "double",     false,   0],  // Johannesburg
-  // ── Level 4 · Low ──────────────────────────────────────────────────────────
-  [ 30.0,   31.2, 4, "solid",      false,   0],  // Cairo
-];
 
 function buildMarkerGeometry(
   lat: number,
@@ -402,26 +364,6 @@ function buildMarkerGeometry(
   };
 }
 
-function buildMarkers(): MarkerData[] {
-  return RAW_MARKERS.map(([lat, lon, _level, _ringStyle, _hasLine, _lineAngleDeg], i) =>
-    buildMarkerGeometry(
-      lat,
-      lon,
-      4,
-      "solid",
-      false,
-      0,
-      i,
-      MARKER_NAMES[i] ?? "SIGNAL",
-      MARKER_CATEGORIES[i] ?? "Intelligence",
-      "",
-      "FIELD",
-      MARKER_NAMES[i] ?? "",
-      false,
-    ),
-  );
-}
-
 function buildMarkersFromPulses(pulses: GlobePulseMarker[]): MarkerData[] {
   return pulses.slice(0, 50).map((pulse, i) => {
     // Same medium-small size for every pulse
@@ -452,55 +394,21 @@ function buildMarkersFromPulses(pulses: GlobePulseMarker[]): MarkerData[] {
   });
 }
 
-// ── Marker tooltip data ────────────────────────────────────────────────────────
-
-// Names ordered to match RAW_MARKERS indices (0–9)
-const MARKER_NAMES: string[] = [
-  "NEW YORK", "LONDON", "DUBAI", "SINGAPORE", "TOKYO",
-  "MUMBAI", "SYDNEY", "SÃO PAULO", "JOHANNESBURG", "CAIRO",
-];
-
-const MARKER_CATEGORIES: string[] = [
-  "Financial Networks", "Cyber Intelligence", "Maritime Activity",
-  "Economic Signals", "Communications",
-  "Supply Chain", "Satellite Monitoring", "Network Analysis",
-  "Maritime Activity", "Communications",
-];
-
-// ── Global connectivity ────────────────────────────────────────────────────────
-
-const PAKISTAN_VEC3: Vec3 = latLonToVec3(30, 70);
-
 function slerp(a: Vec3, b: Vec3, t: number): Vec3 {
-  const dot = Math.max(-1, Math.min(1, a[0]*b[0] + a[1]*b[1] + a[2]*b[2]));
+  const dot = Math.max(-1, Math.min(1, a[0] * b[0] + a[1] * b[1] + a[2] * b[2]));
   const omega = Math.acos(dot);
   if (omega < 1e-5) {
-    return [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t];
+    return [
+      a[0] + (b[0] - a[0]) * t,
+      a[1] + (b[1] - a[1]) * t,
+      a[2] + (b[2] - a[2]) * t,
+    ];
   }
   const so = Math.sin(omega);
-  const ka = Math.sin((1-t)*omega)/so, kb = Math.sin(t*omega)/so;
-  return [ka*a[0]+kb*b[0], ka*a[1]+kb*b[1], ka*a[2]+kb*b[2]];
+  const ka = Math.sin((1 - t) * omega) / so;
+  const kb = Math.sin(t * omega) / so;
+  return [ka * a[0] + kb * b[0], ka * a[1] + kb * b[1], ka * a[2] + kb * b[2]];
 }
-
-interface ConnDatum { vec: Vec3; pPhase: number; pSpeed: number; oPhase: number; oSpeed: number; nParts: number }
-
-const CONN_LL: [number, number][] = [
-  [ 51.51,  -0.13],  // London
-  [ 40.71, -74.01],  // New York
-  [-23.55, -46.63],  // São Paulo
-  [-26.20,  28.04],  // Johannesburg
-  [ 35.69, 139.69],  // Tokyo
-  [-33.87, 151.21],  // Sydney
-];
-
-const CONN_DATA: ConnDatum[] = CONN_LL.map(([lat, lon], i) => ({
-  vec:    latLonToVec3(lat, lon),
-  pPhase: i * 0.6173,
-  pSpeed: 0.07 + (i * 17 % 8) * 0.008,  // slow: ~7–12s per trip
-  oPhase: i * 2.3941,
-  oSpeed: 0.12 + (i * 11 % 5) * 0.03,   // slow pulse cycle
-  nParts: 1,
-}));
 
 // ── Globe component ────────────────────────────────────────────────────────────
 
@@ -523,7 +431,7 @@ export default function DottedGlobe({
   pulses,
 }: {
   className?: string;
-  /** Live feed pulses — when present, replace hardcoded markers. */
+  /** Live feed pulses only — no hardcoded markers. */
   pulses?: GlobePulseMarker[] | null;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -581,11 +489,12 @@ export default function DottedGlobe({
   }, []);
 
   useEffect(() => {
+    // Live feed only — no hardcoded city markers
     if (pulses && pulses.length > 0) {
       S.current.markers = buildMarkersFromPulses(pulses);
       return;
     }
-    S.current.markers = buildMarkers();
+    S.current.markers = [];
   }, [pulses]);
 
   // Render loop
@@ -738,103 +647,88 @@ export default function DottedGlobe({
         }
       }
 
-      // ── Pulse markers + connectivity ──
+      // ── Pulse markers + chain connections between live pulses ──
       ctx.save();
       ctx.beginPath();
       ctx.arc(cx, cy, R, 0, Math.PI * 2);
       ctx.clip();
 
-      // ── Global connectivity lines (rendered before markers so they sit beneath) ──
+      // Chain: each pulse links to the next (ring), with traveling particles
       {
-        const N_ARC = 30;
-        let pkArrival = 0;
-        ctx.lineCap = "round";
+        const markers = st.markers;
+        const n = markers.length;
+        if (n >= 2) {
+          const N_ARC = 28;
+          ctx.lineCap = "round";
 
-        for (const cd of CONN_DATA) {
-          // Independent opacity pulse per line
-          const opW = 0.5 + 0.5 * Math.sin(now * cd.oSpeed * Math.PI * 2 + cd.oPhase);
-          const lineAlpha = 0.08 + opW * 0.18; // 0.08–0.26
+          for (let i = 0; i < n; i++) {
+            const a = markers[i].pos;
+            const b = markers[(i + 1) % n].pos;
+            const oPhase = i * 2.3941;
+            const oSpeed = 0.12 + (i * 11 % 5) * 0.03;
+            const pPhase = i * 0.6173;
+            const pSpeed = 0.07 + (i * 17 % 8) * 0.008;
 
-          // Arc segments — drawn as individual short strokes for depth-based fading
-          ctx.setLineDash([2, 3.5]);
-          ctx.lineWidth = 0.85;
-          let px = 0, py = 0, pz = 0, hp = false;
-          for (let i = 0; i <= N_ARC; i++) {
-            const t = i / N_ARC;
-            const pt = slerp(cd.vec, PAKISTAN_VEC3, t);
-            const [rx, ry, rz] = applyM(m, pt);
-            const sx = cx + rx * R, sy = cy - ry * R;
-            if (hp) {
-              const sz = Math.min(rz, pz);
-              if (sz > -0.03) {
-                const df = Math.max(0, Math.min(1, (sz + 0.08) / 0.20));
-                const a  = df * lineAlpha;
-                if (a > 0.008) {
-                  ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(sx, sy);
-                  ctx.strokeStyle = `rgba(28,33,52,${a.toFixed(3)})`;
-                  ctx.stroke();
+            const opW = 0.5 + 0.5 * Math.sin(now * oSpeed * Math.PI * 2 + oPhase);
+            const lineAlpha = 0.08 + opW * 0.18;
+
+            ctx.setLineDash([2, 3.5]);
+            ctx.lineWidth = 0.85;
+            let px = 0,
+              py = 0,
+              pz = 0,
+              hp = false;
+            for (let s = 0; s <= N_ARC; s++) {
+              const tt = s / N_ARC;
+              const pt = slerp(a, b, tt);
+              const [rx, ry, rz] = applyM(m, pt);
+              const sx = cx + rx * R,
+                sy = cy - ry * R;
+              if (hp) {
+                const sz = Math.min(rz, pz);
+                if (sz > -0.03) {
+                  const df = Math.max(0, Math.min(1, (sz + 0.08) / 0.2));
+                  const alpha = df * lineAlpha;
+                  if (alpha > 0.008) {
+                    ctx.beginPath();
+                    ctx.moveTo(px, py);
+                    ctx.lineTo(sx, sy);
+                    ctx.strokeStyle = `rgba(28,33,52,${alpha.toFixed(3)})`;
+                    ctx.stroke();
+                  }
                 }
               }
+              px = sx;
+              py = sy;
+              pz = rz;
+              hp = true;
             }
-            px = sx; py = sy; pz = rz; hp = true;
-          }
-          ctx.setLineDash([]);
-
-          // Travelling particles
-          for (let p = 0; p < cd.nParts; p++) {
-            const tv = (now * cd.pSpeed + cd.pPhase + p / cd.nParts) % 1;
-            const pp = slerp(cd.vec, PAKISTAN_VEC3, tv);
-            const [prx, pry, prz] = applyM(m, pp);
-            if (prz < 0.02) continue;
-            const df2 = Math.max(0, Math.min(1, (prz + 0.08) / 0.20));
-            // Accumulate arrival glow boost for Pakistan
-            pkArrival += Math.max(0, (tv - 0.85) / 0.15) * df2;
-            ctx.save();
-            ctx.shadowColor = "rgba(28,33,52,0.45)";
-            ctx.shadowBlur  = 3 * st.scale;
-            ctx.beginPath();
-            ctx.arc(cx + prx * R, cy - pry * R, 1.3 * st.scale, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(28,33,52,${(0.50 * df2).toFixed(3)})`;
-            ctx.fill();
-            ctx.restore();
-          }
-        }
-
-        // Pakistan hub marker — slightly larger and more prominent than existing L1
-        const [pkrx, pkry, pkrz] = applyM(m, PAKISTAN_VEC3);
-        if (pkrz > 0.02) {
-          const pksx  = cx + pkrx * R, pksy = cy - pkry * R;
-          const pkD   = 0.55 + pkrz * 0.45;
-          const pkF   = Math.max(0, Math.min(1, pkrz * 5));
-          const pkScale = isMobile ? 0.62 : 1;
-          const pkBR  = 8.8 * pkD * st.scale * pkScale;
-          const pkTp  = (now * 0.52) % 1;
-          const pkPop = Math.sin(pkTp * Math.PI);
-          const pkPulse  = 1 + 0.42 * pkPop * pkPop;
-          const glowBoost = Math.min(2.4, 1 + Math.min(pkArrival, 4) * 0.45);
-          const pkRgb = "17,17,17";
-          // Four staggered rings
-          for (let i = 0; i < 4; i++) {
-            const rt = (pkTp + i / 4) % 1;
-            ctx.beginPath();
-            ctx.arc(pksx, pksy, pkBR * (1 + rt * 5.5), 0, Math.PI * 2);
-            ctx.strokeStyle = `rgba(${pkRgb},${(pkF * (1 - rt) * (i === 3 ? 0.58 : 0.36)).toFixed(3)})`;
-            ctx.lineWidth   = (i === 3 ? 2.0 : 0.9) * pkD * st.scale * (isMobile ? 0.75 : 1);
             ctx.setLineDash([]);
-            ctx.stroke();
-          }
-          // Core dot with arrival glow boost
-          ctx.save();
-          ctx.shadowColor = `rgba(${pkRgb},${(pkF * 0.72 * glowBoost).toFixed(3)})`;
-          ctx.shadowBlur  = 20 * pkD * st.scale * glowBoost * (isMobile ? 0.75 : 1);
-          ctx.beginPath();
-          ctx.arc(pksx, pksy, pkBR * pkPulse, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(${pkRgb},${(pkF * 0.94).toFixed(3)})`;
-          ctx.fill();
-          ctx.restore();
-        }
 
-        ctx.lineCap = "butt"; // restore default for marker loop
+            const tv = (now * pSpeed + pPhase) % 1;
+            const pp = slerp(a, b, tv);
+            const [prx, pry, prz] = applyM(m, pp);
+            if (prz >= 0.02) {
+              const df2 = Math.max(0, Math.min(1, (prz + 0.08) / 0.2));
+              ctx.save();
+              ctx.shadowColor = "rgba(28,33,52,0.45)";
+              ctx.shadowBlur = 3 * st.scale;
+              ctx.beginPath();
+              ctx.arc(
+                cx + prx * R,
+                cy - pry * R,
+                1.3 * st.scale,
+                0,
+                Math.PI * 2,
+              );
+              ctx.fillStyle = `rgba(28,33,52,${(0.5 * df2).toFixed(3)})`;
+              ctx.fill();
+              ctx.restore();
+            }
+          }
+
+          ctx.lineCap = "butt";
+        }
       }
 
       for (let _mi = 0; _mi < st.markers.length; _mi++) {
