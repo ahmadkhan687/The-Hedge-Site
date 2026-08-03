@@ -350,7 +350,7 @@ export default function PerspectivesBlogClient({ articles }: Props) {
       <section className="relative flex w-full flex-col items-start gap-8 bg-[#111315] px-5 pb-12 pt-14 sm:gap-10 sm:px-8 sm:pb-16 sm:pt-20 lg:gap-12 lg:px-[120px] lg:pb-16 lg:pt-24">
         <div className="relative flex w-full flex-col items-start gap-3 sm:gap-4">
           <p className="font-inter text-xs font-extrabold uppercase text-[#d7a92c] sm:text-[14px]">
-            05 - COMMUNICATIONS BRIEF
+            COMMUNICATIONS BRIEF
           </p>
           <div className="h-px w-full bg-white/10" />
         </div>

@@ -54,7 +54,7 @@ export default function OurApproachSection() {
         <div className="space-y-3 lg:col-start-1 lg:row-start-1">
           <Link
             href="/sovereignty"
-            className={`inline-block w-fit text-inherit no-underline underline-offset-[6px] transition-[text-decoration-color,opacity] hover:underline hover:decoration-[#C6A02C] hover:outline hover:outline-2 hover:outline-offset-4 hover:outline-[#C6A02C] ${linkFocus}`}
+            className={`inline-block w-fit text-inherit no-underline transition-opacity hover:opacity-70 hover:outline hover:outline-2 hover:outline-offset-4 hover:outline-[#C6A02C] ${linkFocus}`}
           >
             <CharReveal
               as="h2"
