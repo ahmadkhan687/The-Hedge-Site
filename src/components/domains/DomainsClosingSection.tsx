@@ -1,6 +1,6 @@
 import Image from "next/image";
 import LoopingBackgroundVideo from "@/components/ui/LoopingBackgroundVideo";
-import { Char3DReveal, MotionCTA } from "@/components/ui/text-reveal";
+import { Char3DReveal } from "@/components/ui/text-reveal";
 
 export default function DomainsClosingSection() {
   return (
@@ -31,14 +31,6 @@ export default function DomainsClosingSection() {
           <p className="text-center font-barlow-condensed text-[20px] font-extrabold uppercase tracking-[0.1em] text-[#D7A92C]">
             Varro · The Hedge Collective
           </p>
-
-          <MotionCTA
-            href="/request-access"
-            tapScale={0.95}
-            className="flex min-h-[52px] w-full items-center justify-center bg-[#C6A02C] font-inter text-sm font-extrabold uppercase leading-normal tracking-[0.06em] text-white no-underline transition-opacity hover:opacity-85"
-          >
-            Request Briefing
-          </MotionCTA>
         </div>
       </div>
 

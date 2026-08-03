@@ -2,7 +2,7 @@ import { FadeUp, MotionCTA, WordReveal } from "@/components/ui/text-reveal";
 
 export default function AboutCtaSection() {
   return (
-    <section className="flex flex-col items-center gap-10 bg-[#111] px-5 py-20 sm:px-8 lg:px-[120px] lg:py-40">
+    <section className="hidden flex-col items-center gap-10 bg-[#111] px-5 py-20 sm:px-8 lg:flex lg:px-[120px] lg:py-40">
       <div className="flex max-w-[900px] flex-col items-center gap-6 text-center">
         <WordReveal
           as="h2"

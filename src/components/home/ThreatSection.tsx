@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
-import { FadeUp, MotionCTA, WordReveal } from "@/components/ui/text-reveal";
+import { FadeUp, WordReveal } from "@/components/ui/text-reveal";
 
 export default function ThreatSection() {
   return (
@@ -60,14 +60,6 @@ export default function ThreatSection() {
           So we built the means to{" "}
           <span className="italic">see through it.</span>
         </FadeUp>
-
-        <MotionCTA
-          href="/request-access"
-          tapScale={0.95}
-          className="mt-2 flex min-h-[52px] w-full items-center justify-center border-2 border-[#111] bg-transparent font-inter text-sm font-extrabold uppercase leading-normal text-[#111] no-underline transition-opacity hover:opacity-80 lg:hidden"
-        >
-          Request Briefing
-        </MotionCTA>
       </div>
     </section>
   );
