@@ -3,7 +3,10 @@ import { CharReveal, FadeUp } from "@/components/ui/text-reveal";
 
 export default function DomainsHeroSection() {
   return (
-    <section className="relative flex items-center justify-center overflow-hidden px-5 py-24 sm:px-8 lg:px-[120px] lg:py-[160px]">
+    <section
+      id="domains-hero"
+      className="relative flex items-center justify-center overflow-hidden px-5 py-24 sm:px-8 lg:px-[120px] lg:py-[160px] scroll-mt-24"
+    >
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <Image
           src="/Domains/Hero.webp"

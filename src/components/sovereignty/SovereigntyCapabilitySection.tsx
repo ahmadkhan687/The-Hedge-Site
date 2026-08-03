@@ -1,18 +1,27 @@
 import Image from "next/image";
+import Link from "next/link";
 import { FadeUp, WordReveal } from "@/components/ui/text-reveal";
+
+const linkFocus =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#C6A02C]";
 
 export default function SovereigntyCapabilitySection() {
   return (
     <section className="px-5 py-16 sm:px-8 lg:px-[120px] lg:py-[140px]">
       <div className="mx-auto flex w-full max-w-[1488px] flex-col gap-12 lg:gap-20">
         <div className="flex max-w-[1140px] flex-col gap-8">
-          <p className="font-inter text-base font-extrabold uppercase text-[#C6A02C]">
-            Our approach
-          </p>
+          <Link
+            href="/about"
+            className={`w-fit font-inter text-base font-extrabold uppercase text-[#C6A02C] no-underline underline-offset-4 transition-opacity hover:underline hover:opacity-70 ${linkFocus}`}
+          >
+            You own the data
+          </Link>
           <WordReveal
             as="h2"
             className="font-eb-garamond text-[clamp(2rem,4vw,56px)] font-medium leading-[1.2] text-[#111]"
-            segments={[{ text: "Capability you own. Not capability you rent." }]}
+            segments={[
+              { text: "Capability you own. Not capability you rent." },
+            ]}
           />
           <FadeUp
             as="p"

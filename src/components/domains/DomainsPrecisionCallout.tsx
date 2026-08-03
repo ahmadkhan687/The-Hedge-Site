@@ -2,7 +2,10 @@ import LoopingBackgroundVideo from "@/components/ui/LoopingBackgroundVideo";
 
 export default function DomainsPrecisionCallout() {
   return (
-    <section className="relative overflow-hidden bg-[#0A0A10]">
+    <section
+      id="domains-precision"
+      className="relative scroll-mt-24 overflow-hidden bg-[#0A0A10]"
+    >
       {/* Earth background video — loops while section is on screen */}
       <div className="pointer-events-none absolute inset-0" aria-hidden>
         <LoopingBackgroundVideo

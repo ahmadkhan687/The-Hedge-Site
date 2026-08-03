@@ -2,28 +2,7 @@ import ColorBars from "@/components/home/ColorBars";
 import HeroGlobe from "@/components/home/HeroGlobe";
 import ScrollDownButton from "@/components/home/ScrollDownButton";
 import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
-import { CharReveal, FadeUp, MotionCTA } from "@/components/ui/text-reveal";
-
-function ArrowIcon() {
-  return (
-    <svg
-      width={12}
-      height={12}
-      viewBox="0 0 12 12"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-      className="shrink-0"
-    >
-      <path
-        d="M2.4996 6H9.5004M6 9.5004L9.5004 6L6 2.4996"
-        stroke="currentColor"
-        strokeWidth={2}
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
+import { CharReveal, FadeUp } from "@/components/ui/text-reveal";
 
 export default function HeroSection() {
   return (
@@ -69,7 +48,7 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Mobile-only: color bars + operating model copy + text CTAs */}
+      {/* Mobile-only: color bars + operating model copy (CTA lives below image) */}
       <div className={`${HOME_CONTENT_SHELL} mt-8 flex flex-col gap-6 lg:hidden`}>
         <div className="flex items-center gap-[5px]" aria-hidden="true">
           <span className="h-[10px] w-9 bg-[#E83387]" />
@@ -82,24 +61,6 @@ export default function HeroSection() {
           One mind reads the whole field. The analysis, the attribution, the
           answer, before the country has formed the question.
         </p>
-
-        <div className="flex flex-col items-start gap-4">
-          <MotionCTA
-            href="/request-access"
-            className="inline-flex w-fit items-center gap-2 font-inter text-sm font-extrabold uppercase leading-normal text-[#111] no-underline transition-opacity hover:opacity-70"
-          >
-            Request a <span className="text-[#E83387]">Briefing</span>
-            <ArrowIcon />
-          </MotionCTA>
-
-          <MotionCTA
-            href="/perspectives"
-            className="inline-flex w-fit items-center gap-2 font-inter text-sm font-extrabold uppercase leading-normal text-[#111] no-underline transition-opacity hover:opacity-70"
-          >
-            Read <span className="text-[#D7A92C]">Technical Thesis</span>
-            <ArrowIcon />
-          </MotionCTA>
-        </div>
       </div>
     </section>
   );

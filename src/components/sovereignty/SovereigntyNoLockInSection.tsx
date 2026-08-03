@@ -1,5 +1,9 @@
 import Image from "next/image";
+import Link from "next/link";
 import { CharReveal } from "@/components/ui/text-reveal";
+
+const linkFocus =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#C6A02C]";
 
 const cards = [
   {
@@ -27,9 +31,12 @@ export default function SovereigntyNoLockInSection() {
       {/* —— Mobile layout —— */}
       <div className="mx-auto flex w-full max-w-[1488px] flex-col gap-8 lg:hidden">
         <div className="flex flex-col gap-4">
-          <p className="font-inter text-xs font-extrabold uppercase tracking-[0.06em] text-[#C6A02C]">
+          <Link
+            href="/about"
+            className={`w-fit font-inter text-xs font-extrabold uppercase tracking-[0.06em] text-[#C6A02C] no-underline underline-offset-4 transition-opacity hover:underline hover:opacity-70 ${linkFocus}`}
+          >
             No lock in
-          </p>
+          </Link>
           <h2 className="font-eb-garamond text-[clamp(1.75rem,7vw,2.25rem)] font-medium leading-[1.15] text-[#111]">
             When we leave, the sight stays.
           </h2>
@@ -89,9 +96,12 @@ export default function SovereigntyNoLockInSection() {
       <div className="mx-auto hidden w-full max-w-[1488px] grid-cols-2 gap-16 lg:grid">
         <div className="flex flex-col gap-12 lg:gap-16">
           <div className="flex flex-col gap-6">
-            <p className="font-inter text-base font-extrabold uppercase text-[#C6A02C]">
+            <Link
+              href="/about"
+              className={`w-fit font-inter text-base font-extrabold uppercase text-[#C6A02C] no-underline underline-offset-4 transition-opacity hover:underline hover:opacity-70 ${linkFocus}`}
+            >
               No lock in
-            </p>
+            </Link>
             <h2 className="font-eb-garamond text-[clamp(1.75rem,3.5vw,36px)] font-medium leading-normal text-[#111]">
               When we leave, the sight
               <br />

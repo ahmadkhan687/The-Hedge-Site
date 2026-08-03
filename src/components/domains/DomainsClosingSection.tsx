@@ -4,7 +4,10 @@ import { Char3DReveal } from "@/components/ui/text-reveal";
 
 export default function DomainsClosingSection() {
   return (
-    <section className="relative overflow-hidden bg-[#0A0A10]">
+    <section
+      id="domains-closing"
+      className="relative scroll-mt-24 overflow-hidden bg-[#0A0A10]"
+    >
       {/* —— Mobile layout —— */}
       <div className="relative flex min-h-[520px] flex-col justify-center px-5 py-20 sm:px-8 lg:hidden">
         <div className="pointer-events-none absolute inset-0" aria-hidden>

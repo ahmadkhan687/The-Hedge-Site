@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import VarroMissionScreen from "@/components/varro/VarroMissionScreen";
 import { SlideInLeft, WordReveal } from "@/components/ui/text-reveal";
 
@@ -130,7 +131,13 @@ export default function VarroEditorialSection() {
           </div>
 
           <div className="flex flex-col gap-6 lg:pt-[100px]">
-            <VarroMissionScreen className="min-h-[420px] shadow-[0_20px_50px_rgba(0,0,0,0.12)] lg:min-h-[480px]" />
+            <Link
+              href="/domains#domains-threat-synthetic"
+              aria-label="Go to Synthetic Narrative Warfare on Domains"
+              className="block text-inherit no-underline transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#C6A02C]"
+            >
+              <VarroMissionScreen className="min-h-[420px] shadow-[0_20px_50px_rgba(0,0,0,0.12)] lg:min-h-[480px]" />
+            </Link>
             <p className="hidden self-end text-right font-archivo-narrow text-xs font-normal uppercase leading-relaxed tracking-[1.8px] text-[#73706E] lg:block sm:text-sm">
               Illustrative. Real briefs carry no client mark
               <br />

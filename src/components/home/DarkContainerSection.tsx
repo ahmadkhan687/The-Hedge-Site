@@ -72,7 +72,7 @@ export default function DarkContainerSection() {
           href="/varro"
           className="mt-2 flex min-h-[52px] w-full items-center justify-center border border-white bg-transparent font-inter text-sm font-extrabold uppercase leading-normal tracking-[0.04em] text-white no-underline transition-opacity hover:opacity-80"
         >
-          More About Us
+          Discover Varro
         </Link>
       </div>
 
@@ -136,7 +136,7 @@ export default function DarkContainerSection() {
               href="/varro"
               className="inline-flex min-h-[42px] items-center gap-3 rounded-sm bg-black/20 px-5 py-3 font-eb-garamond text-base font-normal leading-[14px] text-white transition-opacity hover:opacity-80"
             >
-              More about us <span aria-hidden="true">→</span>
+              Discover Varro <span aria-hidden="true">→</span>
             </Link>
           </div>
         </div>

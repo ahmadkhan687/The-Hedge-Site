@@ -32,8 +32,8 @@ export default function VarroFiveMovesSection() {
   return (
     <section className="bg-[#080810]">
       <Link
-        href="/sovereignty"
-        aria-label="Go to Sovereignty"
+        href="/domains"
+        aria-label="Go to Domains"
         className="block px-5 py-12 text-inherit no-underline transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-[#C6A02C] sm:px-8 lg:px-[88px] lg:py-[120px]"
       >
         <div className="mx-auto flex w-full max-w-[1568px] flex-col gap-8 lg:gap-[72px]">

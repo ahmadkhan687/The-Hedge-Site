@@ -7,7 +7,7 @@ export default function AboutDisciplineSection() {
         <div className="flex flex-col gap-12">
           <div className="flex flex-col gap-6">
             <p className="font-inter text-sm font-medium uppercase text-[#C6A02C]">
-              The Discipline
+              Capabilities
             </p>
             <h2 className="font-eb-garamond text-[clamp(2rem,4vw,56px)] font-medium leading-[1.2] text-[#111]">
               What we build to.

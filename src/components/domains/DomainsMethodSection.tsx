@@ -41,7 +41,10 @@ const steps = [
 
 export default function DomainsMethodSection() {
   return (
-    <section className="bg-[#F4F0EA] px-5 py-14 sm:px-8 lg:px-[120px] lg:py-24">
+    <section
+      id="domains-method"
+      className="scroll-mt-24 bg-[#F4F0EA] px-5 py-14 sm:px-8 lg:px-[120px] lg:py-24"
+    >
       <div className="mx-auto flex w-full max-w-[1488px] flex-col gap-10 lg:gap-12">
         <div className="flex flex-col gap-5 lg:gap-4">
           <div className="flex flex-col gap-3">

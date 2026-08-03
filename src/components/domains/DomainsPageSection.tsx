@@ -5,6 +5,8 @@ import DomainsHeroSection from "@/components/domains/DomainsHeroSection";
 import DomainsMethodSection from "@/components/domains/DomainsMethodSection";
 import DomainsPrecisionCallout from "@/components/domains/DomainsPrecisionCallout";
 import DomainsScaleSection from "@/components/domains/DomainsScaleSection";
+import DomainsSectionIndicator from "@/components/domains/DomainsSectionIndicator";
+import DomainsHashScroll from "@/components/domains/DomainsHashScroll";
 
 const threatOneFields = [
   { label: "Theatre", value: "West Africa, partner states" },
@@ -52,9 +54,12 @@ const threatThreeFields = [
 export default function DomainsPageSection() {
   return (
     <>
+      <DomainsHashScroll />
+      <DomainsSectionIndicator />
       <DomainsHeroSection />
 
       <DomainThreatSection
+        id="domains-threat-synthetic"
         eyebrow="Varro field"
         title="Synthetic Narrative Warfare"
         columns={[
@@ -86,6 +91,7 @@ export default function DomainsPageSection() {
       <DomainsEditorialBreak />
 
       <DomainThreatSection
+        id="domains-threat-networks"
         eyebrow="Varro hand"
         title="Coordinated Networks"
         columns={[
@@ -118,6 +124,7 @@ export default function DomainsPageSection() {
       <DomainsPrecisionCallout />
 
       <DomainThreatSection
+        id="domains-threat-radicalisation"
         eyebrow="Varro path"
         title="Engineered Radicalisation"
         columns={[

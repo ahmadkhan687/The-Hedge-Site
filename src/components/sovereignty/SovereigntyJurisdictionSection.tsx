@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 const features = [
   "Model-agnostic by design.",
@@ -105,9 +106,12 @@ export default function SovereigntyJurisdictionSection() {
           </div>
 
           <div className="flex justify-start">
-            <span className="inline-flex h-7 items-center border border-[#111] px-4 font-inter text-base font-extrabold uppercase text-[#111]">
+            <Link
+              href="/about"
+              className="inline-flex h-7 items-center border border-[#111] px-4 font-inter text-base font-extrabold uppercase text-[#111] no-underline transition-opacity hover:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#C6A02C]"
+            >
               Full Ownership
-            </span>
+            </Link>
           </div>
         </div>
 

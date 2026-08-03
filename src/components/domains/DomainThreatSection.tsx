@@ -28,6 +28,7 @@ type DomainThreatSectionProps = {
   hideImageOnMobile?: boolean;
   hideCaseOnMobile?: boolean;
   mobileCaseFollowImage?: string;
+  id?: string;
 };
 
 export default function DomainThreatSection({
@@ -47,10 +48,12 @@ export default function DomainThreatSection({
   hideImageOnMobile = false,
   hideCaseOnMobile = false,
   mobileCaseFollowImage,
+  id,
 }: DomainThreatSectionProps) {
   return (
     <section
-      className={`px-5 py-16 sm:px-8 lg:px-[120px] lg:py-40 ${
+      id={id}
+      className={`scroll-mt-24 px-5 py-16 sm:px-8 lg:px-[120px] lg:py-40 ${
         bordered ? "lg:border-t lg:border-[#111]" : ""
       }`}
     >

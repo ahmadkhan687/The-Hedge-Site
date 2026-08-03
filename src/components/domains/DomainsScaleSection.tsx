@@ -15,7 +15,10 @@ const scales = [
 
 export default function DomainsScaleSection() {
   return (
-    <section className="px-5 py-16 sm:px-8 lg:px-[120px] lg:py-20">
+    <section
+      id="domains-scale"
+      className="scroll-mt-24 px-5 py-16 sm:px-8 lg:px-[120px] lg:py-20"
+    >
       <div className="mx-auto flex w-full max-w-[1488px] flex-col gap-12 lg:gap-16">
         <p className="font-barlow-condensed text-[24px] font-extrabold uppercase text-[#C6A02C]">
           Every scale

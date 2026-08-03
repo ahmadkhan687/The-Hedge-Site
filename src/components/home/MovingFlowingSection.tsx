@@ -1,3 +1,4 @@
+import Link from "next/link";
 import CapabilitiesBackgroundVideo from "@/components/home/CapabilitiesBackgroundVideo";
 import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
 import { CharReveal, FadeUp } from "@/components/ui/text-reveal";
@@ -38,65 +39,71 @@ const cards = [
 export default function MovingFlowingSection() {
   return (
     <section className="relative w-full overflow-hidden bg-black lg:bg-[#121416]">
-      {/* Desktop: looping video background */}
-      <CapabilitiesBackgroundVideo />
-      <div
-        className="absolute inset-0 hidden bg-[#0E121A]/50 lg:block"
-        aria-hidden="true"
-      />
-
-      <div
-        className={`${HOME_CONTENT_SHELL} relative z-10 py-10 lg:py-0 lg:pt-12`}
+      <Link
+        href="/about"
+        aria-label="Go to About"
+        className="relative block text-inherit no-underline transition-opacity hover:opacity-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-[#C6A02C]"
       >
-        <p className="font-inter text-xs font-extrabold uppercase tracking-[0.08em] text-[#A8A8A8] lg:font-eb-garamond lg:text-2xl lg:font-bold lg:tracking-normal lg:text-[#C6A02C]">
-          Capabilities
-        </p>
-
-        {/* Mobile-only color bars */}
+        {/* Desktop: looping video background */}
+        <CapabilitiesBackgroundVideo />
         <div
-          className="mt-3 flex items-center gap-[5px] lg:hidden"
+          className="absolute inset-0 hidden bg-[#0E121A]/50 lg:block"
           aria-hidden="true"
-        >
-          <span className="h-[10px] w-9 bg-[#E83387]" />
-          <span className="h-[10px] w-9 bg-[#F08A22]" />
-          <span className="h-[10px] w-9 bg-[#D7A92C]" />
-          <span className="h-[10px] w-9 bg-[#23B6D2]" />
-        </div>
-
-        <CharReveal
-          as="h2"
-          className="mt-5 font-eb-garamond text-[clamp(1.875rem,7vw,64px)] font-medium leading-[1.05] text-white lg:mt-4 lg:leading-[90%]"
-          segments={[
-            { text: "Precision statecraft " },
-            { text: "at scale.", className: "font-semibold italic" },
-          ]}
         />
 
-        {/* Desktop-only white rule */}
-        <div className="mt-4 hidden h-px w-full bg-white lg:block" />
+        <div
+          className={`${HOME_CONTENT_SHELL} relative z-10 py-10 lg:py-0 lg:pt-12`}
+        >
+          <p className="font-inter text-xs font-extrabold uppercase tracking-[0.08em] text-[#A8A8A8] lg:font-eb-garamond lg:text-2xl lg:font-bold lg:tracking-normal lg:text-[#C6A02C]">
+            Capabilities
+          </p>
 
-        {/* Mobile: 1-col dark cards · Desktop: 3-col white cards */}
-        <div className="mt-8 grid grid-cols-1 gap-3 lg:mb-[5.04rem] lg:mt-[5.04rem] lg:grid-cols-3 lg:gap-5">
-          {cards.map((card, index) => (
-            <FadeUp
-              key={card.title}
-              as="article"
-              y={40}
-              once
-              amount={0.2}
-              delay={index * 0.08}
-              className="flex flex-col items-start gap-2 rounded-md border border-white/10 bg-[#1A1A1A] p-5 will-change-transform lg:gap-3 lg:rounded-none lg:border-0 lg:bg-white lg:p-7"
-            >
-              <h3 className="font-eb-garamond text-xl font-semibold leading-[105%] text-white lg:text-[28px] lg:font-medium lg:italic lg:text-[#111]">
-                {card.title}
-              </h3>
-              <p className="font-inter text-sm font-normal leading-[160%] text-[#A8A8A8] lg:text-base lg:text-[#6B665F]">
-                {card.description}
-              </p>
-            </FadeUp>
-          ))}
+          {/* Mobile-only color bars */}
+          <div
+            className="mt-3 flex items-center gap-[5px] lg:hidden"
+            aria-hidden="true"
+          >
+            <span className="h-[10px] w-9 bg-[#E83387]" />
+            <span className="h-[10px] w-9 bg-[#F08A22]" />
+            <span className="h-[10px] w-9 bg-[#D7A92C]" />
+            <span className="h-[10px] w-9 bg-[#23B6D2]" />
+          </div>
+
+          <CharReveal
+            as="h2"
+            className="mt-5 font-eb-garamond text-[clamp(1.875rem,7vw,64px)] font-medium leading-[1.05] text-white lg:mt-4 lg:leading-[90%]"
+            segments={[
+              { text: "Precision statecraft " },
+              { text: "at scale.", className: "font-semibold italic" },
+            ]}
+          />
+
+          {/* Desktop-only white rule */}
+          <div className="mt-4 hidden h-px w-full bg-white lg:block" />
+
+          {/* Mobile: 1-col dark cards · Desktop: 3-col white cards */}
+          <div className="mt-8 grid grid-cols-1 gap-3 lg:mb-[5.04rem] lg:mt-[5.04rem] lg:grid-cols-3 lg:gap-5">
+            {cards.map((card, index) => (
+              <FadeUp
+                key={card.title}
+                as="article"
+                y={40}
+                once
+                amount={0.2}
+                delay={index * 0.08}
+                className="flex flex-col items-start gap-2 rounded-md border border-white/10 bg-[#1A1A1A] p-5 will-change-transform lg:gap-3 lg:rounded-none lg:border-0 lg:bg-white lg:p-7"
+              >
+                <h3 className="font-eb-garamond text-xl font-semibold leading-[105%] text-white lg:text-[28px] lg:font-medium lg:italic lg:text-[#111]">
+                  {card.title}
+                </h3>
+                <p className="font-inter text-sm font-normal leading-[160%] text-[#A8A8A8] lg:text-base lg:text-[#6B665F]">
+                  {card.description}
+                </p>
+              </FadeUp>
+            ))}
+          </div>
         </div>
-      </div>
+      </Link>
     </section>
   );
 }

@@ -7,8 +7,35 @@ import DottedGlobe, {
 
 const REFRESH_MS = 360_000; // 6 minutes
 const NEW_HIGHLIGHT_MS = 90_000; // clear "new" after 90s even before next refresh
+const STORAGE_KEY = "thc-globe-pulses-v1";
 
 type PulseWithMeta = GlobePulseMarker & { isNew?: boolean };
+
+function readCachedPulses(): PulseWithMeta[] | null {
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { pulses?: GlobePulseMarker[] };
+    if (!Array.isArray(parsed.pulses) || parsed.pulses.length === 0) return null;
+    return parsed.pulses.slice(0, 50).map((pulse) => ({
+      ...pulse,
+      isNew: false,
+    }));
+  } catch {
+    return null;
+  }
+}
+
+function writeCachedPulses(pulses: GlobePulseMarker[]) {
+  try {
+    sessionStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ pulses: pulses.slice(0, 50) }),
+    );
+  } catch {
+    // Ignore quota / private mode
+  }
+}
 
 export default function HeroGlobe() {
   const [mounted, setMounted] = useState(false);
@@ -18,6 +45,12 @@ export default function HeroGlobe() {
   const highlightTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
+    // Restore last pulses instantly so dots appear with the globe on return visits.
+    const cached = readCachedPulses();
+    if (cached) {
+      prevIdsRef.current = new Set(cached.map((p) => p.id));
+      setPulses(cached);
+    }
     setMounted(true);
   }, []);
 
@@ -29,7 +62,7 @@ export default function HeroGlobe() {
       if (inFlight) return;
       inFlight = true;
       try {
-        const res = await fetch("/api/signals-feed", { cache: "no-store" });
+        const res = await fetch("/api/signals-feed");
         if (cancelled || !res.ok) return;
 
         const data = (await res.json()) as { pulses?: GlobePulseMarker[] };
@@ -40,7 +73,7 @@ export default function HeroGlobe() {
           : [];
 
         if (incoming.length === 0) {
-          // Keep previous pulses on empty payload
+          // Keep previous / cached pulses on empty payload
           return;
         }
 
@@ -54,6 +87,7 @@ export default function HeroGlobe() {
 
         prevIdsRef.current = new Set(incoming.map((p) => p.id));
         isFirstLoadRef.current = false;
+        writeCachedPulses(incoming);
         setPulses(next);
 
         if (highlightTimerRef.current) {
