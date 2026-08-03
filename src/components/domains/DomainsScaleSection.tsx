@@ -24,7 +24,7 @@ export default function DomainsScaleSection() {
           Every scale
         </p>
 
-        <h2 className="max-w-[980px] font-eb-garamond text-[clamp(2.25rem,6vw,72px)] font-medium leading-normal text-[#111]">
+        <h2 className="max-w-[980px] font-eb-garamond text-[clamp(2.25rem,6vw,72px)] font-medium leading-[1.1] text-[#111]">
           From a single person to a whole continent.
         </h2>
 
