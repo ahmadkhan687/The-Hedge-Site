@@ -317,6 +317,53 @@ const LVL_RGB: Record<number, string> = {
 
 const NEW_PULSE_RGB = "27,122,61"; // green highlight for newly arrived pulses
 
+/** Turn plain-text URLs into safe clickable anchors (new tab). */
+const URL_IN_TEXT_RE = /(https?:\/\/[^\s<>"'`]+)/gi;
+
+function trimTrailingUrlPunctuation(url: string): { href: string; trailing: string } {
+  let href = url;
+  let trailing = "";
+  while (href.length > 0 && /[.,);:!?'"]$/.test(href)) {
+    trailing = href.slice(-1) + trailing;
+    href = href.slice(0, -1);
+  }
+  return { href, trailing };
+}
+
+function setTooltipContentWithLinks(el: HTMLElement, raw: string) {
+  el.replaceChildren();
+  const text = raw || "No excerpt available for this signal.";
+  let last = 0;
+  URL_IN_TEXT_RE.lastIndex = 0;
+  let match: RegExpExecArray | null;
+  while ((match = URL_IN_TEXT_RE.exec(text)) !== null) {
+    if (match.index > last) {
+      el.appendChild(document.createTextNode(text.slice(last, match.index)));
+    }
+    const { href, trailing } = trimTrailingUrlPunctuation(match[0]);
+    if (href) {
+      const a = document.createElement("a");
+      a.href = href;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.textContent = href;
+      a.addEventListener("mousedown", (e) => e.stopPropagation());
+      a.addEventListener("click", (e) => e.stopPropagation());
+      el.appendChild(a);
+    }
+    if (trailing) {
+      el.appendChild(document.createTextNode(trailing));
+    }
+    last = match.index + match[0].length;
+  }
+  if (last < text.length) {
+    el.appendChild(document.createTextNode(text.slice(last)));
+  }
+  if (!el.childNodes.length) {
+    el.appendChild(document.createTextNode(text));
+  }
+}
+
 function buildMarkerGeometry(
   lat: number,
   lon: number,
@@ -963,8 +1010,10 @@ export default function DottedGlobe({
         tooltipCountryRef.current.style.display = "inline";
       }
       if (tooltipContentRef.current) {
-        tooltipContentRef.current.textContent =
-          mk.content || "No excerpt available for this signal.";
+        setTooltipContentWithLinks(
+          tooltipContentRef.current,
+          mk.content || "No excerpt available for this signal.",
+        );
         tooltipContentRef.current.scrollTop = 0;
       }
       if (tooltipNewBadgeRef.current) {
