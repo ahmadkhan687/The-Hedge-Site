@@ -32,7 +32,8 @@ export default function OperatingModelSection() {
             height={760}
             className="h-auto w-full object-cover"
             sizes="100vw"
-            loading="lazy"
+            priority
+            unoptimized
           />
         </div>
 

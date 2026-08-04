@@ -24,9 +24,7 @@ export default function Home() {
   return (
     <main className="flex-1">
       <HeroSection />
-      <div className="scroll-section">
-        <OperatingModelSection />
-      </div>
+      <OperatingModelSection />
       <div className="scroll-section">
         <ThreatSection />
       </div>
