@@ -2,7 +2,6 @@ import ColorBars from "@/components/home/ColorBars";
 import HeroGlobe from "@/components/home/HeroGlobeLazy";
 import ScrollDownButton from "@/components/home/ScrollDownButton";
 import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
-import { CharReveal, FadeUp } from "@/components/ui/text-reveal";
 
 export default function HeroSection() {
   return (
@@ -15,24 +14,23 @@ export default function HeroSection() {
             STRATEGIC PRODUCTS / INTELLIGENCE / DELIVERY
           </p>
 
-          <CharReveal
-            as="h1"
-            className="mt-3 font-eb-garamond text-[clamp(2.75rem,12vw,7.5rem)] font-normal leading-[0.9] text-[#111] sm:mt-5 lg:text-[clamp(2.25rem,4vw,3.5rem)] xl:text-[clamp(2.75rem,4.5vw,4.5rem)] 2xl:text-[clamp(4rem,6vw,7.5rem)]"
-            segments={[{ text: "Systems for\nserious\noutcomes." }]}
-          />
+          {/* Static H1 — no Motion opacity:0 (LCP must paint immediately on mobile) */}
+          <h1 className="mt-3 font-eb-garamond text-[clamp(2.75rem,12vw,7.5rem)] font-normal leading-[0.9] text-[#111] sm:mt-5 lg:text-[clamp(2.25rem,4vw,3.5rem)] xl:text-[clamp(2.75rem,4.5vw,4.5rem)] 2xl:text-[clamp(4rem,6vw,7.5rem)]">
+            Systems for
+            <br />
+            serious
+            <br />
+            outcomes.
+          </h1>
 
-          <FadeUp
-            as="p"
-            className="mt-5 max-w-[620px] font-eb-garamond text-[clamp(1.0625rem,3.2vw,1.625rem)] font-normal leading-[155%] text-[#272521] sm:mt-[30px] lg:text-lg xl:text-xl 2xl:text-[clamp(1.0625rem,3vw,1.625rem)]"
-            delay={0.35}
-          >
+          <p className="mt-5 max-w-[620px] font-eb-garamond text-[clamp(1.0625rem,3.2vw,1.625rem)] font-normal leading-[155%] text-[#272521] sm:mt-[30px] lg:text-lg xl:text-xl 2xl:text-[clamp(1.0625rem,3vw,1.625rem)]">
             We monitor the entire field to deliver answers before the country
             forms the question.
             <br />
             <span className="font-semibold italic">
               Sovereign intelligence, operated by a sovereign state.
             </span>
-          </FadeUp>
+          </p>
         </div>
 
         <div className="flex min-w-0 max-w-full flex-col items-center lg:items-end lg:justify-self-end">
@@ -43,7 +41,6 @@ export default function HeroSection() {
             Live signals · Drag to explore · Tap a pulse
           </p>
 
-          {/* Desktop: color bars + scroll down (right-aligned) */}
           <div className="mt-4 hidden w-full max-w-[240px] flex-col items-end gap-5 self-end sm:gap-6 lg:flex 2xl:mt-[42px] 2xl:gap-7">
             <ColorBars />
             <ScrollDownButton />
@@ -51,7 +48,6 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Mobile-only: color bars + operating model copy (CTA lives below image) */}
       <div className={`${HOME_CONTENT_SHELL} mt-8 flex flex-col gap-6 lg:hidden`}>
         <div className="flex items-center gap-[5px]" aria-hidden="true">
           <span className="h-[10px] w-9 bg-[#E83387]" />

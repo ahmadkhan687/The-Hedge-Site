@@ -1,12 +1,24 @@
+import dynamic from "next/dynamic";
 import HeroSection from "@/components/home/HeroSection";
 import OperatingModelSection from "@/components/home/OperatingModelSection";
-import ThreatSection from "@/components/home/ThreatSection";
-import DarkContainerSection from "@/components/home/DarkContainerSection";
-import OurApproachSection from "@/components/home/OurApproachSection";
-import MovingFlowingSection from "@/components/home/MovingFlowingSection";
-import DomainsSection from "@/components/home/DomainsSection";
-import SovereigntySection from "@/components/home/SovereigntySection";
-import PerspectiveSection from "@/components/home/PerspectiveSection";
+
+const ThreatSection = dynamic(() => import("@/components/home/ThreatSection"));
+const DarkContainerSection = dynamic(
+  () => import("@/components/home/DarkContainerSection"),
+);
+const OurApproachSection = dynamic(
+  () => import("@/components/home/OurApproachSection"),
+);
+const MovingFlowingSection = dynamic(
+  () => import("@/components/home/MovingFlowingSection"),
+);
+const DomainsSection = dynamic(() => import("@/components/home/DomainsSection"));
+const SovereigntySection = dynamic(
+  () => import("@/components/home/SovereigntySection"),
+);
+const PerspectiveSection = dynamic(
+  () => import("@/components/home/PerspectiveSection"),
+);
 
 export default function Home() {
   return (

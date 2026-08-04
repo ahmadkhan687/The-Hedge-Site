@@ -535,7 +535,7 @@ export default function DottedGlobe({
   useEffect(() => {
     const mask = buildMask();
     const isMobile = window.matchMedia("(max-width: 1023px)").matches;
-    S.current.dots = makeDots(isMobile ? 6000 : 9000, mask);
+    S.current.dots = makeDots(isMobile ? 4000 : 8000, mask);
   }, []);
 
   useEffect(() => {

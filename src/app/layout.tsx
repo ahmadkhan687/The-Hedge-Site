@@ -12,12 +12,16 @@ const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
   weight: ["400", "500", "800"],
+  display: "swap",
+  preload: true,
 });
 
 const barlowCondensed = Barlow_Condensed({
   variable: "--font-barlow-condensed",
   subsets: ["latin"],
   weight: "800",
+  display: "swap",
+  preload: false,
 });
 
 const ebGaramond = EB_Garamond({
@@ -25,18 +29,24 @@ const ebGaramond = EB_Garamond({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],
+  display: "swap",
+  preload: true,
 });
 
 const archivoNarrow = Archivo_Narrow({
   variable: "--font-archivo-narrow",
   subsets: ["latin"],
   weight: ["600", "700"],
+  display: "swap",
+  preload: false,
 });
 
 const schibstedGrotesk = Schibsted_Grotesk({
   variable: "--font-schibsted-grotesk",
   subsets: ["latin"],
   weight: "600",
+  display: "swap",
+  preload: false,
 });
 
 export const metadata: Metadata = {

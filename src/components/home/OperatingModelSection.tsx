@@ -1,7 +1,7 @@
 import Image from "next/image";
+import Link from "next/link";
 import OperatingModelColorBars from "@/components/home/OperatingModelColorBars";
 import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
-import { FadeUp, MotionCTA } from "@/components/ui/text-reveal";
 
 export default function OperatingModelSection() {
   return (
@@ -10,7 +10,6 @@ export default function OperatingModelSection() {
       className="overflow-hidden bg-[#F4F0EA] pb-10 sm:pb-10 lg:pb-12"
     >
       <div className={HOME_CONTENT_SHELL}>
-        {/* Desktop: intro only (CTA moves below image) */}
         <div className="hidden border-t-[4.14px] border-[#111] pt-10 lg:block lg:pt-12">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <p className="font-inter text-sm font-extrabold uppercase leading-normal text-[#E83387] sm:text-base">
@@ -19,13 +18,10 @@ export default function OperatingModelSection() {
             <OperatingModelColorBars />
           </div>
 
-          <FadeUp
-            as="p"
-            className="mt-6 max-w-full font-eb-garamond text-[clamp(1.2rem,4vw,2.07rem)] font-medium leading-[120%] text-[#111111] sm:mt-8"
-          >
+          <p className="mt-6 max-w-full font-eb-garamond text-[clamp(1.2rem,4vw,2.07rem)] font-medium leading-[120%] text-[#111111] sm:mt-8">
             One mind reads the whole field. The analysis, the attribution, the
             answer - before the country has formed the question.
-          </FadeUp>
+          </p>
         </div>
 
         <div className="relative -mx-5 mt-0 w-[calc(100%+2.5rem)] overflow-hidden sm:-mx-8 sm:w-[calc(100%+4rem)] lg:mx-0 lg:mt-10 lg:w-full lg:border lg:border-[#111]">
@@ -36,14 +32,13 @@ export default function OperatingModelSection() {
             height={760}
             className="h-auto w-full object-cover"
             sizes="100vw"
+            loading="lazy"
           />
         </div>
 
-        {/* Single CTA — after image, before Threat section */}
         <div className="mt-6 flex w-full justify-start sm:mt-8 sm:justify-end lg:mt-10">
-          <MotionCTA
+          <Link
             href="/request-access"
-            tapScale={0.95}
             className="flex min-h-[44px] w-full items-center justify-center gap-2 border-2 border-[#111] bg-transparent px-4 py-3 font-inter text-xs font-extrabold uppercase leading-normal text-[#111] transition-opacity hover:opacity-80 sm:w-auto sm:justify-end sm:px-4 sm:pr-[8px] sm:pb-[10px] sm:pt-3 sm:text-sm lg:text-base"
           >
             Request a Briefing
@@ -63,11 +58,10 @@ export default function OperatingModelSection() {
                 strokeLinecap="round"
               />
             </svg>
-          </MotionCTA>
+          </Link>
         </div>
       </div>
 
-      {/* Mobile: space + full-width line after CTA */}
       <div className="flex flex-col lg:hidden">
         <div className="h-6 w-full bg-[#F4F0EA]" aria-hidden="true" />
         <div className="h-px w-full bg-[#111]" />
