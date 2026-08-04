@@ -33,38 +33,45 @@ body {
   font-family: var(--font-inter), sans-serif;
 }
 
-/* Globe signal tooltip — visible scrollbar so users notice overflow */
+/* Globe signal tooltip — custom sticky scrollbar (always visible on mobile) */
+.globe-signal-scroll-wrap {
+  position: relative;
+  height: 6.25em;
+}
+
 .globe-signal-scroll {
-  scrollbar-gutter: stable;
-  scrollbar-width: auto;
-  scrollbar-color: #8a857f #e8e4dc;
-  padding-right: 4px;
+  height: 100%;
+  padding-right: 14px;
+  /* Hide native bar; custom track stays visible on iOS/Android */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .globe-signal-scroll::-webkit-scrollbar {
-  width: 8px;
-}
-
-.globe-signal-scroll::-webkit-scrollbar-track {
-  background: #e8e4dc;
-  border-radius: 4px;
-  margin: 2px 0;
-}
-
-.globe-signal-scroll::-webkit-scrollbar-thumb {
-  background: #8a857f;
-  border-radius: 4px;
-  border: 1px solid #e8e4dc;
-}
-
-.globe-signal-scroll::-webkit-scrollbar-thumb:hover {
-  background: #6b665f;
-}
-
-.globe-signal-scroll::-webkit-scrollbar-button {
   display: none;
   width: 0;
   height: 0;
+}
+
+.globe-signal-scroll-track {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 8px;
+  border-radius: 4px;
+  background: #e8e4dc;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+}
+
+.globe-signal-scroll-thumb {
+  width: 100%;
+  min-height: 18px;
+  border-radius: 4px;
+  background: #8a857f;
+  will-change: transform, height;
 }
 
 .globe-signal-scroll a {

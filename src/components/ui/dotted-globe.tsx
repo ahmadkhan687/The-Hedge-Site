@@ -492,7 +492,8 @@ export default function DottedGlobe({
   const tooltipNameRef = useRef<HTMLSpanElement>(null);
   const tooltipSourceRef = useRef<HTMLSpanElement>(null);
   const tooltipCountryRef = useRef<HTMLSpanElement>(null);
-  const tooltipContentRef = useRef<HTMLParagraphElement>(null);
+  const tooltipContentRef = useRef<HTMLDivElement>(null);
+  const tooltipScrollThumbRef = useRef<HTMLDivElement>(null);
   const tooltipNewBadgeRef = useRef<HTMLSpanElement>(null);
   const tooltipPinnedRef = useRef(false);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
@@ -992,6 +993,29 @@ export default function DottedGlobe({
       }
     }
 
+    function syncTooltipScrollThumb() {
+      const content = tooltipContentRef.current;
+      const thumb = tooltipScrollThumbRef.current;
+      if (!content || !thumb) return;
+      const { scrollTop, scrollHeight, clientHeight } = content;
+      const canScroll = scrollHeight > clientHeight + 1;
+      const track = thumb.parentElement as HTMLElement | null;
+      if (track) {
+        track.style.opacity = canScroll ? "1" : "0";
+        track.style.pointerEvents = canScroll ? "auto" : "none";
+      }
+      if (!canScroll) return;
+      const ratio = clientHeight / scrollHeight;
+      const thumbH = Math.max(18, Math.round(clientHeight * ratio));
+      const maxTop = clientHeight - thumbH;
+      const top =
+        maxTop <= 0
+          ? 0
+          : Math.round((scrollTop / (scrollHeight - clientHeight)) * maxTop);
+      thumb.style.height = `${thumbH}px`;
+      thumb.style.transform = `translateY(${top}px)`;
+    }
+
     function showTooltip(mk: MarkerData) {
       const el = tooltipElRef.current;
       if (!el) return;
@@ -1028,6 +1052,7 @@ export default function DottedGlobe({
       el.style.opacity = "1";
       el.style.transform = "translateY(0px) scale(1)";
       el.style.pointerEvents = "auto";
+      requestAnimationFrame(syncTooltipScrollThumb);
     }
 
     function hideTooltipNow() {
@@ -1141,9 +1166,15 @@ export default function DottedGlobe({
     }
 
     rafId = requestAnimationFrame(tick);
+
+    const contentEl = tooltipContentRef.current;
+    const onScroll = () => syncTooltipScrollThumb();
+    contentEl?.addEventListener("scroll", onScroll, { passive: true });
+
     return () => {
       cancelAnimationFrame(rafId);
       clearHideTimer();
+      contentEl?.removeEventListener("scroll", onScroll);
     };
   }, []);
 
@@ -1536,25 +1567,33 @@ export default function DottedGlobe({
               }}
             />
 
-            <p
-              ref={tooltipContentRef}
-              className="globe-signal-scroll"
-              style={{
-                margin: 0,
-                fontFamily: "var(--font-inter), sans-serif",
-                fontSize: "13px",
-                fontWeight: 400,
-                fontStyle: "normal",
-                color: "#272521",
-                lineHeight: 1.35,
-                height: "6.25em",
-                overflowY: "auto",
-                overflowX: "hidden",
-                wordBreak: "break-word",
-                whiteSpace: "pre-wrap",
-                overscrollBehavior: "contain",
-              }}
-            />
+            <div className="globe-signal-scroll-wrap">
+              <div
+                ref={tooltipContentRef}
+                className="globe-signal-scroll"
+                style={{
+                  margin: 0,
+                  fontFamily: "var(--font-inter), sans-serif",
+                  fontSize: "13px",
+                  fontWeight: 400,
+                  fontStyle: "normal",
+                  color: "#272521",
+                  lineHeight: 1.35,
+                  overflowY: "auto",
+                  overflowX: "hidden",
+                  wordBreak: "break-word",
+                  whiteSpace: "pre-wrap",
+                  overscrollBehavior: "contain",
+                  WebkitOverflowScrolling: "touch",
+                }}
+              />
+              <div className="globe-signal-scroll-track" aria-hidden="true">
+                <div
+                  ref={tooltipScrollThumbRef}
+                  className="globe-signal-scroll-thumb"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
