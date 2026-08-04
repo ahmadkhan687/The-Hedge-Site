@@ -62,6 +62,31 @@ export async function getPublishedArticles(): Promise<Article[]> {
   return data.map((row) => mapRow(row as Record<string, unknown>));
 }
 
+/** Listing cards only — skips heavy `body` JSON for faster Perspectives page load. */
+export async function getPublishedArticlesListing(): Promise<Article[]> {
+  if (!isSupabaseConfigured()) {
+    return [];
+  }
+
+  const supabase = createPublicClient();
+  const { data, error } = await supabase
+    .from("articles")
+    .select(
+      "id, number, slug, title, subtitle, category, reading_time_minutes, cover_image_url, status, author_id, published_at, subscribers_notified_at, created_at, updated_at",
+    )
+    .eq("status", "published")
+    .order("published_at", { ascending: false });
+
+  if (error || !data) {
+    console.error("getPublishedArticlesListing:", error?.message);
+    return [];
+  }
+
+  return data.map((row) =>
+    mapRow({ ...(row as Record<string, unknown>), body: [] }),
+  );
+}
+
 export async function getPublishedArticleBySlug(
   slug: string,
 ): Promise<Article | null> {

@@ -535,7 +535,7 @@ export default function DottedGlobe({
   useEffect(() => {
     const mask = buildMask();
     const isMobile = window.matchMedia("(max-width: 1023px)").matches;
-    S.current.dots = makeDots(isMobile ? 7000 : 12000, mask);
+    S.current.dots = makeDots(isMobile ? 6000 : 9000, mask);
   }, []);
 
   useEffect(() => {
@@ -547,19 +547,26 @@ export default function DottedGlobe({
     S.current.markers = [];
   }, [pulses]);
 
-  // Render loop
+  // Render loop — pauses when canvas is off-screen to free main thread while scrolling
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d")!;
     let raf = 0;
+    let inView = true;
 
     const AUTO_V = 0.0055;
     const DAMP = 0.905;
 
     function frame() {
+      raf = 0;
+      if (!inView) return;
+
       const st = S.current;
-      if (!canvas || !st.dots.length) { raf = requestAnimationFrame(frame); return; }
+      if (!canvas || !st.dots.length) {
+        raf = requestAnimationFrame(frame);
+        return;
+      }
       const now = performance.now() / 1000; // seconds
 
       const dpr = window.devicePixelRatio || 1;
@@ -977,8 +984,25 @@ export default function DottedGlobe({
       raf = requestAnimationFrame(frame);
     }
 
-    raf = requestAnimationFrame(frame);
-    return () => cancelAnimationFrame(raf);
+    const startLoop = () => {
+      if (!raf) raf = requestAnimationFrame(frame);
+    };
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        inView = entry.isIntersecting;
+        if (inView) startLoop();
+      },
+      { rootMargin: "120px 0px", threshold: 0 },
+    );
+    io.observe(canvas);
+
+    startLoop();
+    return () => {
+      inView = false;
+      io.disconnect();
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, []);
 
   // Tooltip hover detection + position tracking RAF (no React setState — keeps pulses smooth)

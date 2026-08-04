@@ -1,8 +1,8 @@
-import { getPublishedArticles } from "@/lib/articles-api";
+"use client";
+
 import PerspectivesBlogClient from "@/components/perspectives/PerspectivesBlogClient";
 
-export default async function PerspectivesMainBlogListingSection() {
-  const articles = await getPublishedArticles();
-
-  return <PerspectivesBlogClient articles={articles} />;
+/** Renders layout immediately; client fetches articles and shows skeleton until ready. */
+export default function PerspectivesMainBlogListingSection() {
+  return <PerspectivesBlogClient />;
 }

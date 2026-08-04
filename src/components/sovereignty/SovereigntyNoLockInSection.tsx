@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CharReveal } from "@/components/ui/text-reveal";
+import { WordReveal } from "@/components/ui/text-reveal";
 
 const linkFocus =
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#C6A02C]";
@@ -151,9 +151,8 @@ export default function SovereigntyNoLockInSection() {
       </div>
 
       <div className="mx-auto mt-16 hidden w-full max-w-[1488px] justify-center lg:mt-16 lg:flex">
-        <CharReveal
+        <WordReveal
           as="p"
-          blur
           className="text-center font-eb-garamond text-[clamp(2rem,5vw,68px)] font-medium leading-[1.1] text-[#111]"
           segments={[
             { text: "Sovereignty is not a feature. It is the " },

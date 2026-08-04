@@ -1,8 +1,19 @@
 "use client";
 
-import { Fragment, type ComponentProps, type ReactNode } from "react";
+import {
+  Fragment,
+  useRef,
+  type ComponentProps,
+  type ElementType,
+  type ReactNode,
+} from "react";
 import Link from "next/link";
-import { motion, useReducedMotion, type Variants } from "motion/react";
+import {
+  motion,
+  useInView,
+  useReducedMotion,
+  type Variants,
+} from "motion/react";
 
 const MotionNextLink = motion.create(Link);
 
@@ -12,7 +23,12 @@ export type TextSegment = {
 };
 
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
-const VIEWPORT = { once: true, amount: 0.3 } as const;
+/** Fire well before the section is on screen; catch-up snaps if already mid-viewport. */
+const VIEWPORT = {
+  once: true,
+  amount: 0.05,
+  margin: "0px 0px 55% 0px",
+} as const;
 
 type RevealTag = "h1" | "h2" | "h3" | "p" | "span";
 
@@ -23,7 +39,7 @@ function containerVariants(stagger: number): Variants {
   };
 }
 
-function unitVariants(blur: boolean): Variants {
+function unitVariants(duration: number, blur = false): Variants {
   return {
     hidden: {
       opacity: 0,
@@ -34,9 +50,15 @@ function unitVariants(blur: boolean): Variants {
       opacity: 1,
       y: 0,
       ...(blur ? { filter: "blur(0px)" } : {}),
-      transition: { duration: 0.7, ease: EASE },
+      transition: { duration, ease: EASE },
     },
   };
+}
+
+/** True when element is already well into the viewport (fast-scroll catch-up). */
+function shouldSnapIn(el: Element | null): boolean {
+  if (!el || typeof window === "undefined") return false;
+  return el.getBoundingClientRect().top < window.innerHeight * 0.55;
 }
 
 function plainText(segments: TextSegment[], Tag: RevealTag, className?: string) {
@@ -112,18 +134,20 @@ type RevealProps = {
 export function WordReveal({ as = "h2", className, segments }: RevealProps) {
   const reduceMotion = useReducedMotion();
   const Tag = as;
+  const ref = useRef<HTMLElement | null>(null);
+  const inView = useInView(ref, VIEWPORT);
 
   if (reduceMotion) return plainText(segments, Tag, className);
 
-  const variants = unitVariants(false);
+  const snap = inView && shouldSnapIn(ref.current);
+  const variants = unitVariants(snap ? 0.15 : 0.4);
 
   return (
-    <Tag className={className}>
+    <Tag ref={ref as never} className={className}>
       <motion.span
-        variants={containerVariants(0.06)}
+        variants={containerVariants(snap ? 0 : 0.03)}
         initial="hidden"
-        whileInView="visible"
-        viewport={VIEWPORT}
+        animate={inView ? "visible" : "hidden"}
       >
         {segments.map((seg, si) => (
           <span key={si} className={seg.className}>
@@ -135,27 +159,32 @@ export function WordReveal({ as = "h2", className, segments }: RevealProps) {
   );
 }
 
-/** Reveals text character by character; optional blur-in on each character. */
+/**
+ * Character reveal — hero-only. Prefer WordReveal below the fold.
+ * Blur is ignored (too expensive on scroll); uses transform/opacity only.
+ */
 export function CharReveal({
   as = "h2",
   className,
   segments,
-  blur = false,
+  blur: _blur = false,
 }: RevealProps & { blur?: boolean }) {
   const reduceMotion = useReducedMotion();
   const Tag = as;
+  const ref = useRef<HTMLElement | null>(null);
+  const inView = useInView(ref, VIEWPORT);
 
   if (reduceMotion) return plainText(segments, Tag, className);
 
-  const variants = unitVariants(blur);
+  const snap = inView && shouldSnapIn(ref.current);
+  const variants = unitVariants(snap ? 0.12 : 0.35, false);
 
   return (
-    <Tag className={className}>
+    <Tag ref={ref as never} className={className}>
       <motion.span
-        variants={containerVariants(0.02)}
+        variants={containerVariants(snap ? 0 : 0.012)}
         initial="hidden"
-        whileInView="visible"
-        viewport={VIEWPORT}
+        animate={inView ? "visible" : "hidden"}
       >
         {segments.map((seg, si) => (
           <span key={si} className={seg.className}>
@@ -171,25 +200,31 @@ export function CharReveal({
 export function Char3DReveal({ as = "h2", className, segments }: RevealProps) {
   const reduceMotion = useReducedMotion();
   const Tag = as;
+  const ref = useRef<HTMLElement | null>(null);
+  const inView = useInView(ref, VIEWPORT);
 
   if (reduceMotion) return plainText(segments, Tag, className);
 
+  const snap = inView && shouldSnapIn(ref.current);
   const variants: Variants = {
     hidden: { opacity: 0, rotateY: 90 },
     visible: {
       opacity: 1,
       rotateY: 0,
-      transition: { duration: 0.5, ease: EASE },
+      transition: { duration: snap ? 0.12 : 0.35, ease: EASE },
     },
   };
 
   return (
-    <Tag className={className} style={{ perspective: "800px" }}>
+    <Tag
+      ref={ref as never}
+      className={className}
+      style={{ perspective: "800px" }}
+    >
       <motion.span
-        variants={containerVariants(0.05)}
+        variants={containerVariants(snap ? 0 : 0.03)}
         initial="hidden"
-        whileInView="visible"
-        viewport={VIEWPORT}
+        animate={inView ? "visible" : "hidden"}
       >
         {segments.map((seg, si) => (
           <span key={si} className={seg.className}>
@@ -198,6 +233,62 @@ export function Char3DReveal({ as = "h2", className, segments }: RevealProps) {
         ))}
       </motion.span>
     </Tag>
+  );
+}
+
+function BlockReveal({
+  as = "div",
+  className,
+  children,
+  delay = 0,
+  from,
+}: {
+  as?: "div" | "p" | "span" | "article";
+  className?: string;
+  children: ReactNode;
+  delay?: number;
+  from: { opacity?: number; x?: number; y?: number; scale?: number };
+}) {
+  const reduceMotion = useReducedMotion();
+  const ref = useRef<HTMLElement | null>(null);
+  const inView = useInView(ref, VIEWPORT);
+
+  if (reduceMotion) {
+    const Plain = (as === "article" ? "div" : as) as ElementType;
+    return <Plain className={className}>{children}</Plain>;
+  }
+
+  const snap = inView && shouldSnapIn(ref.current);
+  const Comp = {
+    div: motion.div,
+    p: motion.p,
+    span: motion.span,
+    article: motion.article,
+  }[as];
+
+  return (
+    <Comp
+      ref={ref as never}
+      className={className}
+      initial={from}
+      animate={
+        inView
+          ? {
+              opacity: 1,
+              x: 0,
+              y: 0,
+              scale: 1,
+              transition: {
+                duration: snap ? 0.15 : 0.4,
+                ease: EASE,
+                delay: snap ? 0 : delay,
+              },
+            }
+          : from
+      }
+    >
+      {children}
+    </Comp>
   );
 }
 
@@ -213,25 +304,15 @@ export function SlideInLeft({
   children: ReactNode;
   delay?: number;
 }) {
-  const reduceMotion = useReducedMotion();
-
-  if (reduceMotion) {
-    const Plain = as;
-    return <Plain className={className}>{children}</Plain>;
-  }
-
-  const Comp = { div: motion.div, p: motion.p, span: motion.span }[as];
-
   return (
-    <Comp
+    <BlockReveal
+      as={as}
       className={className}
-      initial={{ opacity: 0, x: -150 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.7, ease: EASE, delay }}
-      viewport={VIEWPORT}
+      delay={delay}
+      from={{ opacity: 0, x: -80 }}
     >
       {children}
-    </Comp>
+    </BlockReveal>
   );
 }
 
@@ -242,50 +323,28 @@ export function FadeUp({
   children,
   delay = 0,
   y = 24,
-  once = true,
-  amount = 0.3,
-  spring = false,
+  once: _once = true,
+  amount: _amount = 0.05,
+  spring: _spring = false,
 }: {
   as?: "div" | "p" | "span" | "article";
   className?: string;
   children: ReactNode;
   delay?: number;
-  /** Starting Y offset in px (default 24; capability cards use 150). */
   y?: number;
-  /** If false, animation replays each time the element enters view. */
   once?: boolean;
   amount?: number;
-  /** Use spring (bounce ~0.2) instead of ease curve. */
   spring?: boolean;
 }) {
-  const reduceMotion = useReducedMotion();
-
-  if (reduceMotion) {
-    const Plain = as === "article" ? "div" : as;
-    return <Plain className={className}>{children}</Plain>;
-  }
-
-  const Comp = {
-    div: motion.div,
-    p: motion.p,
-    span: motion.span,
-    article: motion.article,
-  }[as];
-
   return (
-    <Comp
+    <BlockReveal
+      as={as}
       className={className}
-      initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={
-        spring
-          ? { type: "spring", duration: 0.7, bounce: 0.08, delay }
-          : { duration: 0.85, ease: EASE, delay }
-      }
-      viewport={{ once, amount, margin: "0px 0px -8% 0px" }}
+      delay={delay}
+      from={{ opacity: 0, y }}
     >
       {children}
-    </Comp>
+    </BlockReveal>
   );
 }
 
@@ -346,25 +405,15 @@ export function SlideInRight({
   children: ReactNode;
   delay?: number;
 }) {
-  const reduceMotion = useReducedMotion();
-
-  if (reduceMotion) {
-    const Plain = as;
-    return <Plain className={className}>{children}</Plain>;
-  }
-
-  const Comp = { div: motion.div, p: motion.p, span: motion.span }[as];
-
   return (
-    <Comp
+    <BlockReveal
+      as={as}
       className={className}
-      initial={{ opacity: 0, x: 150 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.6, ease: EASE, delay }}
-      viewport={VIEWPORT}
+      delay={delay}
+      from={{ opacity: 0, x: 80 }}
     >
       {children}
-    </Comp>
+    </BlockReveal>
   );
 }
 
@@ -380,25 +429,15 @@ export function FadeIn({
   children: ReactNode;
   delay?: number;
 }) {
-  const reduceMotion = useReducedMotion();
-
-  if (reduceMotion) {
-    const Plain = as;
-    return <Plain className={className}>{children}</Plain>;
-  }
-
-  const Comp = { div: motion.div, p: motion.p, span: motion.span }[as];
-
   return (
-    <Comp
+    <BlockReveal
+      as={as}
       className={className}
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      transition={{ duration: 0.7, ease: EASE, delay }}
-      viewport={VIEWPORT}
+      delay={delay}
+      from={{ opacity: 0 }}
     >
       {children}
-    </Comp>
+    </BlockReveal>
   );
 }
 
@@ -414,20 +453,15 @@ export function ScaleFadeIn({
   delay?: number;
   from?: number;
 }) {
-  const reduceMotion = useReducedMotion();
-
-  if (reduceMotion) return <div className={className}>{children}</div>;
-
   return (
-    <motion.div
+    <BlockReveal
+      as="div"
       className={className}
-      initial={{ opacity: 0, scale: from }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5, ease: EASE, delay }}
-      viewport={VIEWPORT}
+      delay={delay}
+      from={{ opacity: 0, scale: from }}
     >
       {children}
-    </motion.div>
+    </BlockReveal>
   );
 }
 

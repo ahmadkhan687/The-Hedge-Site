@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ARTICLE_CATEGORIES,
   type Article,
@@ -56,9 +56,71 @@ function ReadDossierLink() {
   );
 }
 
-type Props = { articles: Article[] };
+type Props = { articles?: Article[] | null };
 
-export default function PerspectivesBlogClient({ articles }: Props) {
+function Pulse({ className }: { className?: string }) {
+  return (
+    <div
+      aria-hidden
+      className={`animate-pulse rounded-[2px] bg-[#d9d4cb] ${className ?? ""}`}
+    />
+  );
+}
+
+function ArticlesLoadingSkeleton() {
+  return (
+    <div aria-busy="true" aria-live="polite">
+      <section className="relative flex w-full flex-col items-start px-5 pb-12 sm:px-8 sm:pb-16 lg:px-[120px] lg:pb-20">
+        <p className="mb-4 font-inter text-[11px] font-extrabold uppercase tracking-[0.1em] text-[#C6A02C]">
+          Loading intelligence…
+        </p>
+        <div className="relative min-h-[420px] w-full overflow-hidden border border-[#1e2124] bg-[#ebe6dc] sm:min-h-[480px] lg:h-[540px] lg:min-h-[540px]">
+          <div className="flex h-full min-h-[420px] flex-col lg:min-h-0 lg:flex-row">
+            <Pulse className="h-[200px] w-full shrink-0 rounded-none bg-[#cfc9bd] sm:h-[280px] lg:h-full lg:w-[55%]" />
+            <div className="flex flex-1 flex-col justify-between gap-6 p-5 sm:p-8 lg:p-12">
+              <div className="flex flex-col gap-3">
+                <Pulse className="h-3 w-24 bg-[#cfc9bd]" />
+                <Pulse className="h-8 w-full max-w-md bg-[#cfc9bd]" />
+                <Pulse className="h-8 w-[75%] max-w-sm bg-[#cfc9bd]" />
+                <Pulse className="mt-2 h-4 w-full max-w-lg bg-[#cfc9bd]" />
+                <Pulse className="h-4 w-[85%] max-w-md bg-[#cfc9bd]" />
+              </div>
+              <div className="flex justify-between gap-4">
+                <Pulse className="h-10 w-28 bg-[#cfc9bd]" />
+                <Pulse className="h-10 w-28 bg-[#cfc9bd]" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="relative flex w-full flex-col gap-8 px-5 pb-16 sm:gap-10 sm:px-8 sm:pb-20 lg:gap-12 lg:px-[120px] lg:pb-[120px]">
+        <Pulse className="h-4 w-64 bg-[#cfc9bd]" />
+        <div className="grid w-full grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div
+              key={i}
+              className="flex min-h-[360px] flex-col overflow-hidden border border-[#1e2124] bg-[#ebe6dc] sm:min-h-[480px]"
+            >
+              <Pulse className="aspect-[16/10] w-full shrink-0 rounded-none bg-[#cfc9bd] sm:aspect-auto sm:h-[200px] lg:h-[240px]" />
+              <div className="flex flex-1 flex-col gap-3 p-4 sm:p-5 lg:p-6">
+                <Pulse className="h-3 w-20 bg-[#cfc9bd]" />
+                <Pulse className="h-6 w-full bg-[#cfc9bd]" />
+                <Pulse className="h-6 w-[80%] bg-[#cfc9bd]" />
+                <Pulse className="mt-auto h-4 w-full bg-[#cfc9bd]" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+export default function PerspectivesBlogClient({
+  articles: articlesProp = null,
+}: Props) {
+  const [articles, setArticles] = useState<Article[] | null>(articlesProp);
   const [activeFilter, setActiveFilter] = useState<ArticleCategory | null>(
     null,
   );
@@ -68,10 +130,38 @@ export default function PerspectivesBlogClient({ articles }: Props) {
   >("idle");
   const [subscribeMessage, setSubscribeMessage] = useState("");
 
+  // Own fetch so first paint is always loading skeleton (not an empty gap)
+  useEffect(() => {
+    if (articlesProp !== null && articlesProp !== undefined) {
+      setArticles(articlesProp);
+      return;
+    }
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/perspectives/articles");
+        const data = (await res.json()) as { articles?: Article[] };
+        if (!cancelled) {
+          setArticles(Array.isArray(data.articles) ? data.articles : []);
+        }
+      } catch {
+        if (!cancelled) setArticles([]);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [articlesProp]);
+
+  const isLoading = articles === null;
+  const list = articles ?? [];
+
   const filtered = useMemo(() => {
-    if (!activeFilter) return articles;
-    return articles.filter((a) => a.category === activeFilter);
-  }, [articles, activeFilter]);
+    if (!activeFilter) return list;
+    return list.filter((a) => a.category === activeFilter);
+  }, [list, activeFilter]);
 
   const featured = filtered[0] ?? null;
   const grid = featured ? filtered.slice(1, 7) : filtered.slice(0, 6);
@@ -173,6 +263,11 @@ export default function PerspectivesBlogClient({ articles }: Props) {
         </div>
       </section>
 
+      {/* Featured + grid — skeleton while articles load */}
+      {isLoading ? (
+        <ArticlesLoadingSkeleton />
+      ) : (
+        <>
       {/* Featured card */}
       <section className="relative flex w-full flex-col items-start px-5 pb-12 sm:px-8 sm:pb-16 lg:px-[120px] lg:pb-20">
         <div className="relative w-full overflow-hidden border border-[#1e2124] lg:h-[540px]">
@@ -345,6 +440,8 @@ export default function PerspectivesBlogClient({ articles }: Props) {
           </p>
         )}
       </section>
+        </>
+      )}
 
       {/* Newsletter */}
       <section className="relative flex w-full flex-col items-start gap-8 bg-[#111315] px-5 pb-12 pt-14 sm:gap-10 sm:px-8 sm:pb-16 sm:pt-20 lg:gap-12 lg:px-[120px] lg:pb-16 lg:pt-24">

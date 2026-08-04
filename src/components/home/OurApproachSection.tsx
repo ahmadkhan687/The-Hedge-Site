@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
-import { CharReveal, FadeUp, HoverShrink } from "@/components/ui/text-reveal";
+import { FadeUp, HoverShrink, WordReveal } from "@/components/ui/text-reveal";
 
 const linkFocus =
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#C6A02C]";
@@ -56,9 +56,8 @@ export default function OurApproachSection() {
             href="/sovereignty"
             className={`inline-block w-fit text-inherit no-underline transition-opacity hover:opacity-70 hover:outline hover:outline-2 hover:outline-offset-4 hover:outline-[#C6A02C] ${linkFocus}`}
           >
-            <CharReveal
+            <WordReveal
               as="h2"
-              blur
               className="font-inter text-sm font-extrabold uppercase leading-none tracking-[0.04em] text-[#C6A02C] lg:font-eb-garamond lg:text-[clamp(2rem,5vw,62.341px)] lg:font-bold lg:tracking-normal"
               segments={[{ text: "Our Approach" }]}
             />

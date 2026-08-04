@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
-import { CharReveal } from "@/components/ui/text-reveal";
+import { WordReveal } from "@/components/ui/text-reveal";
 
 const bars = [
   { width: 65, color: "#E83387" },
@@ -58,9 +58,8 @@ export default function DarkContainerSection() {
           VARRO
         </Link>
 
-        <CharReveal
+        <WordReveal
           as="p"
-          blur
           className="font-inter text-sm font-extrabold uppercase leading-normal tracking-[0.04em] text-[#C6A02C]"
           segments={[
             { text: "The system a state " },
@@ -104,9 +103,8 @@ export default function DarkContainerSection() {
               VARRO
             </Link>
 
-            <CharReveal
+            <WordReveal
               as="p"
-              blur
               className="font-eb-garamond text-[clamp(1.45rem,5vw,2.5rem)] font-medium leading-[90%] text-[#FBFAF7]"
               segments={[
                 { text: "The system a state " },

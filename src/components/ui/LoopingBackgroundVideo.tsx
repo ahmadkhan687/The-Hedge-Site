@@ -36,7 +36,7 @@ export default function LoopingBackgroundVideo({
           video.pause();
         }
       },
-      { rootMargin: "200px 0px", threshold: 0.01 },
+      { rootMargin: "40% 0px", threshold: 0.01 },
     );
 
     observer.observe(video);
