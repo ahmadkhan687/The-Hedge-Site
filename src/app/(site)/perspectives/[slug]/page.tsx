@@ -23,6 +23,8 @@ export async function generateMetadata({
   }
 
   const description = article.subtitle || article.title;
+  const defaultShareImage = "https://thehedgecollective.co.uk/og/share-og.png";
+  const shareImage = article.cover_image_url ?? defaultShareImage;
 
   return {
     title: article.title,
@@ -32,15 +34,13 @@ export async function generateMetadata({
       title: article.title,
       description,
       url: `https://thehedgecollective.co.uk/perspectives/${article.slug}`,
-      images: article.cover_image_url
-        ? [{ url: article.cover_image_url }]
-        : undefined,
+      images: [{ url: shareImage }],
     },
     twitter: {
       card: "summary_large_image",
       title: article.title,
       description,
-      images: article.cover_image_url ? [article.cover_image_url] : undefined,
+      images: [{ url: shareImage }],
     },
   };
 }
