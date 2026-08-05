@@ -54,7 +54,6 @@ const SITE_TITLE =
   "The Hedge Collective | Strategic Intelligence for the AI Era";
 const SITE_DESCRIPTION =
   "Silent on the work. Loud on the thinking. Judge the mind before you trust the hand.";
-/** Absolute URL — Twitter/X requires a stable HTTPS image, not dynamic /twitter-image routes. */
 const OG_SHARE_IMAGE = `${SITE_URL}/og/share-og.png?v=2`;
 
 export const metadata: Metadata = {
@@ -96,23 +95,6 @@ export const metadata: Metadata = {
         type: "image/png",
       },
     ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: SITE_TITLE,
-    description: SITE_DESCRIPTION,
-    images: [
-      {
-        url: OG_SHARE_IMAGE,
-        width: 1200,
-        height: 630,
-        alt: SITE_TITLE,
-        type: "image/png",
-      },
-    ],
-  },
-  other: {
-    "twitter:image:src": OG_SHARE_IMAGE,
   },
   alternates: {
     canonical: SITE_URL,

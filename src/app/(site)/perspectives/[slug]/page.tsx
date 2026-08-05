@@ -37,12 +37,6 @@ export async function generateMetadata({
       url: `https://thehedgecollective.co.uk/perspectives/${article.slug}`,
       images: [{ url: shareImage }],
     },
-    twitter: {
-      card: "summary_large_image",
-      title: article.title,
-      description,
-      images: [{ url: shareImage }],
-    },
   };
 }
 
