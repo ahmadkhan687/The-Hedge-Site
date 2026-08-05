@@ -23,7 +23,8 @@ export async function generateMetadata({
   }
 
   const description = article.subtitle || article.title;
-  const defaultShareImage = "https://thehedgecollective.co.uk/og/share-og.png";
+  const defaultShareImage =
+    "https://thehedgecollective.co.uk/og/share-og.png?v=2";
   const shareImage = article.cover_image_url ?? defaultShareImage;
 
   return {
