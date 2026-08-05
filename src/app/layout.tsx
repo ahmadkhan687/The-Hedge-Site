@@ -53,7 +53,7 @@ const SITE_URL = "https://thehedgecollective.co.uk";
 const SITE_TITLE =
   "The Hedge Collective | Strategic Intelligence for the AI Era";
 const SITE_DESCRIPTION =
-  "Independent research and strategic analysis on AI, geopolitics, cybersecurity, and the technologies reshaping global power.";
+  "Silent on the work. Loud on the thinking. Judge the mind before you trust the hand.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
