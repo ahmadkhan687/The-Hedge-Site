@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { GoogleTagManager } from "@next/third-parties/google";
 import {
   Archivo_Narrow,
   Barlow_Condensed,
@@ -114,6 +115,8 @@ export const metadata: Metadata = {
   },
 };
 
+const gtmId = process.env.NEXT_PUBLIC_GTM_ID;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -124,6 +127,7 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${barlowCondensed.variable} ${ebGaramond.variable} ${archivoNarrow.variable} ${schibstedGrotesk.variable} h-full antialiased`}
     >
+      {gtmId ? <GoogleTagManager gtmId={gtmId} /> : null}
       <body className="flex min-h-full flex-col overflow-x-clip bg-[#F4F0EA] text-black">
         {children}
       </body>
