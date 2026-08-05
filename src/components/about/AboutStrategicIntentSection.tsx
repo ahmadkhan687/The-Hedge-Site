@@ -1,11 +1,13 @@
 import Image from "next/image";
-import Link from "next/link";
+import { TrackedLink } from "@/components/analytics/TrackedLink";
 
 export default function AboutStrategicIntentSection() {
   return (
     <section className="relative overflow-hidden">
-      <Link
+      <TrackedLink
         href="/request-access"
+        event="request_access_click"
+        eventParams={{ location: "about_strategic_intent" }}
         aria-label="Request a briefing"
         className="relative flex min-h-[400px] items-center justify-center px-5 py-20 text-inherit no-underline transition-opacity hover:opacity-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-[#C6A02C] sm:px-8 lg:min-h-[501px] lg:px-[120px]"
       >
@@ -35,7 +37,7 @@ export default function AboutStrategicIntentSection() {
             not a machine. We build the room it happens in.
           </p>
         </div>
-      </Link>
+      </TrackedLink>
     </section>
   );
 }

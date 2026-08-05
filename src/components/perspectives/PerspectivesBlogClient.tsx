@@ -8,6 +8,7 @@ import {
   type Article,
   type ArticleCategory,
 } from "@/lib/articles";
+import { trackEvent } from "@/lib/gtm";
 
 const TELEMETRY_COLORS = [
   "#e83387",
@@ -143,6 +144,9 @@ export default function PerspectivesBlogClient({
           : "You are subscribed to briefings.",
       );
       setEmail("");
+      if (!data.already) {
+        trackEvent("briefing_subscribe_success");
+      }
     } catch {
       setSubscribeStatus("error");
       setSubscribeMessage("Unable to subscribe right now.");

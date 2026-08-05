@@ -20,6 +20,7 @@ export default function SovereigntyCtaSection() {
 
         <MotionCTA
           href="/request-access"
+          analyticsEvent="request_access_click"
           tapScale={0.95}
           className="flex w-full items-center gap-2.5 border border-[#111] px-5 py-4 font-inter text-sm font-extrabold uppercase text-[#111] no-underline transition-opacity hover:opacity-70 lg:hidden"
         >
@@ -29,6 +30,7 @@ export default function SovereigntyCtaSection() {
 
         <MotionCTA
           href="/request-access"
+          analyticsEvent="request_access_click"
           className="hidden w-fit items-center gap-2.5 border-b border-[#111] pb-0.5 font-inter text-base font-extrabold uppercase text-[#111] no-underline transition-opacity hover:opacity-70 lg:inline-flex"
         >
           Request a briefing

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { TrackedLink } from "@/components/analytics/TrackedLink";
 
 const cards = [
   {
@@ -59,15 +59,17 @@ export default function PerspectivesDoctrineSection() {
             ))}
           </div>
 
-          <Link
+          <TrackedLink
             href="/request-access"
+            event="request_access_click"
+            eventParams={{ location: "perspectives_doctrine" }}
             className="inline-flex w-fit items-center gap-3 border-b border-[#111] pb-1 font-inter text-base font-extrabold uppercase tracking-[0.96px] text-[#C6A02C] transition-opacity hover:opacity-70"
           >
             Read the doctrine
             <span className="font-eb-garamond text-lg font-normal text-[#111]">
               →
             </span>
-          </Link>
+          </TrackedLink>
         </div>
       </div>
     </section>

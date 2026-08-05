@@ -14,6 +14,7 @@ import {
   useReducedMotion,
   type Variants,
 } from "motion/react";
+import { trackEvent } from "@/lib/gtm";
 
 const MotionNextLink = motion.create(Link);
 
@@ -471,17 +472,27 @@ const SPRING = { type: "spring", stiffness: 400, damping: 17 } as const;
 export function MotionCTA({
   hoverScale = 1.05,
   tapScale = 0.95,
+  analyticsEvent,
+  onClick,
   children,
   ...props
 }: ComponentProps<typeof MotionNextLink> & {
   hoverScale?: number;
   tapScale?: number;
+  /** Optional GTM event name fired on click. */
+  analyticsEvent?: string;
 }) {
   const reduceMotion = useReducedMotion();
 
   return (
     <MotionNextLink
       {...props}
+      onClick={(e) => {
+        if (analyticsEvent) {
+          trackEvent(analyticsEvent);
+        }
+        onClick?.(e);
+      }}
       whileHover={reduceMotion ? undefined : { scale: hoverScale }}
       whileTap={reduceMotion ? undefined : { scale: tapScale }}
       transition={SPRING}

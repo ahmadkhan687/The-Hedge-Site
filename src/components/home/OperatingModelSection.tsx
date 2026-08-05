@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import { TrackedLink } from "@/components/analytics/TrackedLink";
 import OperatingModelColorBars from "@/components/home/OperatingModelColorBars";
 import { HOME_CONTENT_SHELL } from "@/components/home/homeLayout";
 
@@ -38,8 +38,10 @@ export default function OperatingModelSection() {
         </div>
 
         <div className="mt-6 flex w-full justify-start sm:mt-8 sm:justify-end lg:mt-10">
-          <Link
+          <TrackedLink
             href="/request-access"
+            event="request_access_click"
+            eventParams={{ location: "home_operating_model" }}
             className="flex min-h-[44px] w-full items-center justify-center gap-2 border-2 border-[#111] bg-transparent px-4 py-3 font-inter text-xs font-extrabold uppercase leading-normal text-[#111] transition-opacity hover:opacity-80 sm:w-auto sm:justify-end sm:px-4 sm:pr-[8px] sm:pb-[10px] sm:pt-3 sm:text-sm lg:text-base"
           >
             Request a Briefing
@@ -59,7 +61,7 @@ export default function OperatingModelSection() {
                 strokeLinecap="round"
               />
             </svg>
-          </Link>
+          </TrackedLink>
         </div>
       </div>
 

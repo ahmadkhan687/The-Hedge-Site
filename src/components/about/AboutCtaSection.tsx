@@ -22,6 +22,7 @@ export default function AboutCtaSection() {
 
       <MotionCTA
         href="/request-access"
+        analyticsEvent="request_access_click"
         hoverScale={1.05}
         tapScale={0.95}
         className="inline-flex items-center justify-center bg-[#C6A02C] px-12 py-5 font-inter text-sm font-bold uppercase text-[#111] transition-opacity hover:opacity-85"

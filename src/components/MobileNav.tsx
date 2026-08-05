@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { trackEvent } from "@/lib/gtm";
 import { navItems } from "@/lib/nav";
 
 export default function MobileNav() {
@@ -39,7 +40,14 @@ export default function MobileNav() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    onClick={() => setOpen(false)}
+                    onClick={() => {
+                      if (item.href === "/request-access") {
+                        trackEvent("request_access_click", {
+                          location: "nav_mobile",
+                        });
+                      }
+                      setOpen(false);
+                    }}
                     className={`font-inter text-base font-medium uppercase leading-normal text-black ${
                       isActive
                         ? "underline underline-offset-4"

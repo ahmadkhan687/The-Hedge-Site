@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { FadeIn, MotionButton, WordReveal } from "@/components/ui/text-reveal";
+import { trackEvent } from "@/lib/gtm";
 
 type ContactFormFields = {
   name: string;
@@ -126,6 +127,7 @@ export default function RequestAccessFormSection() {
       if (response.ok && result && result.success !== false) {
         setStatus("success");
         setForm(initialForm);
+        trackEvent("request_access_success");
       } else {
         setStatus("error");
         setErrorMessage(

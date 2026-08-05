@@ -21,6 +21,7 @@ export default function PerspectivesCtaSection() {
 
         <MotionCTA
           href="/request-access"
+          analyticsEvent="request_access_click"
           className="inline-flex w-fit items-center gap-2.5 border-b border-white pb-0.5 font-inter text-base font-extrabold uppercase text-white transition-opacity hover:opacity-70"
         >
           Request a briefing

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { TrackedLink } from "@/components/analytics/TrackedLink";
 
 const footerNav = [
   { label: "VARRO", href: "/varro" },
@@ -39,20 +40,24 @@ export default function Footer() {
           </nav>
 
           <div className="flex items-center gap-8">
-            <Link
+            <TrackedLink
               href="/request-access"
+              event="request_access_click"
+              eventParams={{ location: "footer_mobile" }}
               className="font-inter text-sm font-extrabold uppercase leading-normal tracking-[0.04em] text-white no-underline"
             >
               Contact Us
-            </Link>
-            <Link
+            </TrackedLink>
+            <TrackedLink
               href="https://www.linkedin.com/company/thehedgecollective/"
+              event="linkedin_click"
+              eventParams={{ location: "footer_mobile" }}
               target="_blank"
               rel="noopener noreferrer"
               className="font-inter text-sm font-extrabold uppercase leading-normal tracking-[0.04em] text-white no-underline"
             >
               Open Roles
-            </Link>
+            </TrackedLink>
           </div>
 
           <div className="h-px w-full bg-white" />
@@ -72,20 +77,24 @@ export default function Footer() {
               Building foundational infrastructure for digital resilience
             </p>
             <div className="flex items-center gap-5">
-              <Link
+              <TrackedLink
                 href="/request-access"
+                event="request_access_click"
+                eventParams={{ location: "footer_desktop" }}
                 className="font-inter text-base font-extrabold uppercase leading-normal text-[#EAEAEA] no-underline"
               >
                 Contact Us
-              </Link>
-              <Link
+              </TrackedLink>
+              <TrackedLink
                 href="https://www.linkedin.com/company/thehedgecollective/"
+                event="linkedin_click"
+                eventParams={{ location: "footer_desktop" }}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-inter text-base font-extrabold uppercase leading-normal text-[#EAEAEA] no-underline"
               >
                 Open Roles
-              </Link>
+              </TrackedLink>
             </div>
           </div>
 
