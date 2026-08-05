@@ -49,15 +49,50 @@ const schibstedGrotesk = Schibsted_Grotesk({
   preload: false,
 });
 
+const SITE_URL = "https://thehedgecollective.co.uk";
+const SITE_TITLE =
+  "The Hedge Collective | Strategic Intelligence for the AI Era";
+const SITE_DESCRIPTION =
+  "Independent research and strategic analysis on AI, geopolitics, cybersecurity, and the technologies reshaping global power.";
+
 export const metadata: Metadata = {
-  title: "The Hedge Collective",
-  description: "The Hedge Collective",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: SITE_TITLE,
+    template: "%s | The Hedge Collective",
+  },
+  description: SITE_DESCRIPTION,
+  applicationName: "The Hedge Collective",
+  authors: [{ name: "The Hedge Collective" }],
+  keywords: [
+    "strategic intelligence",
+    "AI",
+    "geopolitics",
+    "cybersecurity",
+    "sovereignty",
+  ],
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
       { url: "/icon.png", type: "image/png", sizes: "32x32" },
     ],
     apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_GB",
+    url: SITE_URL,
+    siteName: "The Hedge Collective",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+  },
+  alternates: {
+    canonical: SITE_URL,
   },
 };
 

@@ -22,9 +22,26 @@ export async function generateMetadata({
     return { title: "Article | The Hedge Collective" };
   }
 
+  const description = article.subtitle || article.title;
+
   return {
-    title: `${article.title} | The Hedge Collective`,
-    description: article.subtitle || article.title,
+    title: article.title,
+    description,
+    openGraph: {
+      type: "article",
+      title: article.title,
+      description,
+      url: `https://thehedgecollective.co.uk/perspectives/${article.slug}`,
+      images: article.cover_image_url
+        ? [{ url: article.cover_image_url }]
+        : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: article.title,
+      description,
+      images: article.cover_image_url ? [article.cover_image_url] : undefined,
+    },
   };
 }
 
