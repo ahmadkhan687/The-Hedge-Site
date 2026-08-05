@@ -85,11 +85,21 @@ export const metadata: Metadata = {
     siteName: "The Hedge Collective",
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
+    images: [
+      {
+        url: "/og/share-og.png",
+        width: 1200,
+        height: 630,
+        alt: SITE_TITLE,
+        type: "image/png",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
+    images: ["/og/share-og.png"],
   },
   alternates: {
     canonical: SITE_URL,
