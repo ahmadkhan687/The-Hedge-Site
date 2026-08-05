@@ -51,12 +51,12 @@ export default async function OpenGraphImage() {
         <img
           src={logoSrc}
           alt=""
-          width={72}
-          height={72}
+          width={96}
+          height={96}
           style={{
             position: "absolute",
-            left: 48,
-            top: 40,
+            left: 44,
+            top: 36,
             objectFit: "contain",
           }}
         />
