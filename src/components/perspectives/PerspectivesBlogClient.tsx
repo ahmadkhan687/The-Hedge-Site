@@ -106,7 +106,9 @@ export default function PerspectivesBlogClient({
   }, [list, activeFilter]);
 
   const featured = filtered[0] ?? null;
-  const grid = featured ? filtered.slice(1, 7) : filtered.slice(0, 6);
+  // With one article, show it in featured and in the grid so the section isn't empty.
+  const grid =
+    filtered.length === 1 ? filtered : filtered.slice(1, 7);
 
   const filters: { label: string; value: ArticleCategory | null }[] = [
     { label: "ALL INTELLIGENCE", value: null },

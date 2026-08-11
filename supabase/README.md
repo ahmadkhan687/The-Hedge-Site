@@ -27,6 +27,7 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 - Free Resend key: https://resend.com
 - For production, verify your domain in Resend and set `EMAIL_FROM` to that domain
 - Testing: `onboarding@resend.dev` can only send to your Resend account email
+- Set the same variables in Vercel for production
 
 ## 5. Create admin user
 Authentication → Users → Add user (email + password).
