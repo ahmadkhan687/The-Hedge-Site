@@ -1,15 +1,30 @@
 import type { Metadata } from "next";
 import AboutSection from "@/components/about/AboutSection";
 
+const title = "About | The Hedge Collective";
+const description =
+  "We build sovereign intelligence. Owned by the state that uses it. Institutional-grade infrastructure designed for strategic independence.";
+const url = "https://thehedgecollective.co.uk/about";
+const shareImage = "https://thehedgecollective.co.uk/og/share-og.png?v=2";
+
 export const metadata: Metadata = {
-  title: "About | The Hedge Collective",
-  description:
-    "We build sovereign intelligence. Owned by the state that uses it. Institutional-grade infrastructure designed for strategic independence.",
+  title,
+  description,
   alternates: {
-    canonical: "https://thehedgecollective.co.uk/about",
+    canonical: url,
   },
   openGraph: {
-    url: "https://thehedgecollective.co.uk/about",
+    type: "website",
+    title,
+    description,
+    url,
+    images: [{ url: shareImage }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: [{ url: shareImage }],
   },
 };
 

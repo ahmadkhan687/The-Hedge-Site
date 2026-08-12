@@ -1,15 +1,30 @@
 import type { Metadata } from "next";
 import RequestAccessSection from "@/components/request-access/RequestAccessSection";
 
+const title = "Request Access | The Hedge Collective";
+const description =
+  "See for yourself. Request a briefing held in confidence. For governments and institutions building sovereign capability.";
+const url = "https://thehedgecollective.co.uk/request-access";
+const shareImage = "https://thehedgecollective.co.uk/og/share-og.png?v=2";
+
 export const metadata: Metadata = {
-  title: "Request Access | The Hedge Collective",
-  description:
-    "See for yourself. Request a briefing held in confidence. For governments and institutions building sovereign capability.",
+  title,
+  description,
   alternates: {
-    canonical: "https://thehedgecollective.co.uk/request-access",
+    canonical: url,
   },
   openGraph: {
-    url: "https://thehedgecollective.co.uk/request-access",
+    type: "website",
+    title,
+    description,
+    url,
+    images: [{ url: shareImage }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: [{ url: shareImage }],
   },
 };
 
