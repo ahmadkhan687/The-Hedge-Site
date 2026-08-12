@@ -22,9 +22,10 @@ create table if not exists public.articles (
 alter table public.articles drop column if exists author_name;
 alter table public.articles drop column if exists author_image_url;
 
--- Category column (matches filter pills on the Perspectives page)
-alter table public.articles add column if not exists category text default 'GEO-STRATEGY'
-  check (category in ('GEO-STRATEGY', 'CYBER SIGNALS', 'TELEMETRY', 'CRYPTOGRAPHY', 'SUPPLY CHAINS'));
+-- Category column (preset or custom; filter pills come from published articles)
+alter table public.articles add column if not exists category text default 'GEO-STRATEGY';
+-- Legacy installs may still have a fixed CHECK — remove it if present
+alter table public.articles drop constraint if exists articles_category_check;
 
 -- Ensure remaining optional columns exist
 alter table public.articles add column if not exists reading_time_minutes integer;

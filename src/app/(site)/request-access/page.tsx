@@ -5,6 +5,12 @@ export const metadata: Metadata = {
   title: "Request Access | The Hedge Collective",
   description:
     "See for yourself. Request a briefing held in confidence. For governments and institutions building sovereign capability.",
+  alternates: {
+    canonical: "https://thehedgecollective.co.uk/request-access",
+  },
+  openGraph: {
+    url: "https://thehedgecollective.co.uk/request-access",
+  },
 };
 
 export default function RequestAccessPage() {

@@ -110,9 +110,28 @@ export default function PerspectivesBlogClient({
   const grid =
     filtered.length === 1 ? filtered : filtered.slice(1, 7);
 
+  // Only show category pills that currently have at least one published article.
+  const categoriesWithArticles = useMemo(() => {
+    const present = new Set(list.map((a) => a.category));
+    const presets = ARTICLE_CATEGORIES.filter((c) => present.has(c));
+    const custom = [...present]
+      .filter((c) => !(ARTICLE_CATEGORIES as readonly string[]).includes(c))
+      .sort((a, b) => a.localeCompare(b));
+    return [...presets, ...custom];
+  }, [list]);
+
+  useEffect(() => {
+    if (
+      activeFilter &&
+      !categoriesWithArticles.includes(activeFilter)
+    ) {
+      setActiveFilter(null);
+    }
+  }, [activeFilter, categoriesWithArticles]);
+
   const filters: { label: string; value: ArticleCategory | null }[] = [
     { label: "ALL INTELLIGENCE", value: null },
-    ...ARTICLE_CATEGORIES.map((c) => ({ label: c, value: c })),
+    ...categoriesWithArticles.map((c) => ({ label: c, value: c })),
   ];
 
   async function handleSubscribe(e: React.FormEvent) {
@@ -357,12 +376,7 @@ export default function PerspectivesBlogClient({
                           <div className="absolute inset-0 bg-[#111]/10" />
                         )}
 
-                        <div className="absolute left-3 right-3 top-3 flex items-center justify-between sm:left-4 sm:right-4 sm:top-4">
-                          <div className="flex items-start bg-[#111315] px-2 py-1">
-                            <p className="whitespace-nowrap font-inter text-[9px] font-medium uppercase text-[#f3f1ea]">
-                              RESTRICTED
-                            </p>
-                          </div>
+                        <div className="absolute bottom-3 right-3 flex items-end sm:bottom-4 sm:right-4">
                           <TelemetryStrip h={4} w={8} />
                         </div>
                       </div>

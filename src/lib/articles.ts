@@ -48,6 +48,7 @@ export type ArticleBlock =
 
 export type ArticleStatus = "draft" | "published";
 
+/** Suggested defaults in the admin editor — custom categories are also allowed. */
 export const ARTICLE_CATEGORIES = [
   "GEO-STRATEGY",
   "CYBER SIGNALS",
@@ -56,7 +57,20 @@ export const ARTICLE_CATEGORIES = [
   "SUPPLY CHAINS",
 ] as const;
 
-export type ArticleCategory = (typeof ARTICLE_CATEGORIES)[number];
+export type PresetArticleCategory = (typeof ARTICLE_CATEGORIES)[number];
+
+/** Any non-empty category label (preset or custom). */
+export type ArticleCategory = string;
+
+export function normalizeCategory(value: string): ArticleCategory {
+  return value.trim().replace(/\s+/g, " ").toUpperCase();
+}
+
+export function isPresetCategory(
+  value: string,
+): value is PresetArticleCategory {
+  return (ARTICLE_CATEGORIES as readonly string[]).includes(value);
+}
 
 export type Article = {
   id: string;

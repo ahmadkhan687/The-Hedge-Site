@@ -15,6 +15,8 @@ Supabase → SQL Editor → New query → paste and run **`schema.sql`**.
 
 If your project already had the articles table, also run **`subscribers.sql`** (or re-run the subscribers section at the bottom of `schema.sql`).
 
+To allow custom categories when publishing (beyond the 5 presets), run **`allow-custom-categories.sql`** once.
+
 ## 4. Newsletter email (Resend)
 Add to `.env.local`:
 

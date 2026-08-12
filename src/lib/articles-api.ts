@@ -1,5 +1,5 @@
 import type { Article, ArticleBlock, ArticleCategory, ArticleInput } from "@/lib/articles";
-import { ARTICLE_CATEGORIES } from "@/lib/articles";
+import { normalizeCategory } from "@/lib/articles";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createPublicClient } from "@/lib/supabase/public";
 import { createClient } from "@/lib/supabase/server";
@@ -10,8 +10,8 @@ function parseBody(value: unknown): ArticleBlock[] {
 }
 
 function parseCategory(value: unknown): ArticleCategory {
-  if (typeof value === "string" && ARTICLE_CATEGORIES.includes(value as ArticleCategory)) {
-    return value as ArticleCategory;
+  if (typeof value === "string" && value.trim()) {
+    return normalizeCategory(value);
   }
   return "GEO-STRATEGY";
 }
@@ -168,7 +168,7 @@ export async function createArticle(
     .from("articles")
     .insert({
       ...input,
-      category: input.category ?? "GEO-STRATEGY",
+      category: normalizeCategory(input.category ?? "GEO-STRATEGY") || "GEO-STRATEGY",
       author_id: authorId,
       published_at:
         input.status === "published"
@@ -196,7 +196,7 @@ export async function updateArticle(
     slug: input.slug,
     title: input.title,
     subtitle: input.subtitle ?? "",
-    category: input.category ?? "GEO-STRATEGY",
+    category: normalizeCategory(input.category ?? "GEO-STRATEGY") || "GEO-STRATEGY",
     reading_time_minutes: input.reading_time_minutes ?? null,
     cover_image_url: input.cover_image_url ?? null,
     body: input.body,

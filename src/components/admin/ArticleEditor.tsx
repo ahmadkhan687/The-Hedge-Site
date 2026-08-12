@@ -6,6 +6,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ARTICLE_CATEGORIES,
   createBlockId,
+  isPresetCategory,
+  normalizeCategory,
   slugify,
   type Article,
   type ArticleBlock,
@@ -85,6 +87,9 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
   const [articleId, setArticleId] = useState<string | null>(initial?.id ?? null);
   const [autoSaveLabel, setAutoSaveLabel] = useState("");
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [customCategoryMode, setCustomCategoryMode] = useState(
+    () => Boolean(initial?.category && !isPresetCategory(initial.category)),
+  );
   const notifiedRef = useRef(Boolean(initial?.subscribers_notified_at));
 
   const formRef = useRef(form);
@@ -169,7 +174,7 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
       subtitle: current.subtitle.trim(),
       slug: slugify(current.slug || current.title),
       number: current.number.trim() || null,
-      category: current.category,
+      category: normalizeCategory(current.category) || "GEO-STRATEGY",
       reading_time_minutes:
         reading != null && !Number.isNaN(reading) ? reading : null,
       cover_image_url: current.cover_image_url.trim() || null,
@@ -196,6 +201,10 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
 
     if (!title || !slug) {
       return { ok: false as const, error: "Title and slug are required." };
+    }
+
+    if (!normalizeCategory(current.category)) {
+      return { ok: false as const, error: "Category is required." };
     }
 
     const supabase = createClient();
@@ -669,19 +678,57 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
           />
         </Field>
         <Field label="Category">
-          <select
-            value={form.category}
-            onChange={(e) =>
-              updateField("category", e.target.value as ArticleCategory)
-            }
-            className={inputClass}
-          >
-            {ARTICLE_CATEGORIES.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
+          <div className="flex flex-col gap-2">
+            <select
+              value={
+                customCategoryMode
+                  ? "__custom__"
+                  : isPresetCategory(form.category)
+                    ? form.category
+                    : "__custom__"
+              }
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === "__custom__") {
+                  setCustomCategoryMode(true);
+                  if (isPresetCategory(form.category)) {
+                    updateField("category", "");
+                  }
+                  return;
+                }
+                setCustomCategoryMode(false);
+                updateField("category", value);
+              }}
+              className={inputClass}
+            >
+              {ARTICLE_CATEGORIES.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+              <option value="__custom__">Add new category…</option>
+            </select>
+            {customCategoryMode || !isPresetCategory(form.category) ? (
+              <input
+                value={
+                  isPresetCategory(form.category) && !customCategoryMode
+                    ? ""
+                    : form.category
+                }
+                onChange={(e) => {
+                  setCustomCategoryMode(true);
+                  updateField("category", e.target.value);
+                }}
+                onBlur={() => {
+                  const normalized = normalizeCategory(form.category);
+                  if (normalized) updateField("category", normalized);
+                }}
+                className={inputClass}
+                placeholder="e.g. DEFENSE BRIEF"
+                aria-label="New category name"
+              />
+            ) : null}
+          </div>
         </Field>
         <Field label="Status">
           <select

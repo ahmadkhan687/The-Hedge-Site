@@ -5,6 +5,12 @@ export const metadata: Metadata = {
   title: "Sovereignty | The Hedge Collective",
   description:
     "See. Judge. Own. Sovereign intelligence infrastructure, engineered for those who act with authority.",
+  alternates: {
+    canonical: "https://thehedgecollective.co.uk/sovereignty",
+  },
+  openGraph: {
+    url: "https://thehedgecollective.co.uk/sovereignty",
+  },
 };
 
 export default function SovereigntyPage() {

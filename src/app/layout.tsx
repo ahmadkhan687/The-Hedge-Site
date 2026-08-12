@@ -83,7 +83,6 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_GB",
-    url: SITE_URL,
     siteName: "The Hedge Collective",
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
@@ -109,9 +108,6 @@ export const metadata: Metadata = {
         alt: SITE_TITLE,
       },
     ],
-  },
-  alternates: {
-    canonical: SITE_URL,
   },
 };
 

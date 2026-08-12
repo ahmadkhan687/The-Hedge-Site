@@ -27,14 +27,19 @@ export async function generateMetadata({
     "https://thehedgecollective.co.uk/og/share-og.png?v=2";
   const shareImage = article.cover_image_url ?? defaultShareImage;
 
+  const canonicalUrl = `https://thehedgecollective.co.uk/perspectives/${article.slug}`;
+
   return {
     title: article.title,
     description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       type: "article",
       title: article.title,
       description,
-      url: `https://thehedgecollective.co.uk/perspectives/${article.slug}`,
+      url: canonicalUrl,
       images: [{ url: shareImage }],
     },
     twitter: {

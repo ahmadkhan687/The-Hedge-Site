@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import HeroSection from "@/components/home/HeroSection";
 import OperatingModelSection from "@/components/home/OperatingModelSection";
@@ -19,6 +20,15 @@ const SovereigntySection = dynamic(
 const PerspectiveSection = dynamic(
   () => import("@/components/home/PerspectiveSection"),
 );
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "https://thehedgecollective.co.uk/",
+  },
+  openGraph: {
+    url: "https://thehedgecollective.co.uk/",
+  },
+};
 
 export default function Home() {
   return (

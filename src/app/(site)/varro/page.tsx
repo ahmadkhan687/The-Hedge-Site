@@ -9,6 +9,12 @@ export const metadata: Metadata = {
   title: "Varro | The Hedge Collective",
   description:
     "A passage through the unrecorded tides of the northern straits. Sovereign intelligence, awake when the country sleeps.",
+  alternates: {
+    canonical: "https://thehedgecollective.co.uk/varro",
+  },
+  openGraph: {
+    url: "https://thehedgecollective.co.uk/varro",
+  },
 };
 
 export default function VarroPage() {
