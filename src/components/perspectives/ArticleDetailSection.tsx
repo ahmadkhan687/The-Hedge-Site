@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import ArticleBody from "@/components/perspectives/ArticleBody";
+import ArticleReadProgress from "@/components/perspectives/ArticleReadProgress";
 import { formatArticleDate, type Article } from "@/lib/articles";
 
 type ArticleDetailSectionProps = {
@@ -29,33 +30,35 @@ export default function ArticleDetailSection({
             ← Back to Perspectives
           </Link>
 
-          <header className="flex flex-col gap-5">
-            <h1 className="font-eb-garamond text-[clamp(2.25rem,5.5vw,3.5rem)] font-medium leading-[1.12] text-[#111]">
-              {article.title}
-            </h1>
+          <ArticleReadProgress>
+            <header className="flex flex-col gap-5">
+              <h1 className="font-eb-garamond text-[clamp(2.25rem,5.5vw,3.5rem)] font-medium leading-[1.12] text-[#111]">
+                {article.title}
+              </h1>
 
-            {meta ? (
-              <p className="font-inter text-xs font-medium uppercase tracking-[0.08em] text-[#6B665F]">
-                {meta}
-              </p>
-            ) : null}
-          </header>
+              {meta ? (
+                <p className="font-inter text-xs font-medium uppercase tracking-[0.08em] text-[#6B665F]">
+                  {meta}
+                </p>
+              ) : null}
+            </header>
 
-          {article.cover_image_url && (
-            <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#111]/8">
-              <Image
-                src={article.cover_image_url}
-                alt=""
-                fill
-                className="object-cover"
-                sizes="(max-width: 900px) 100vw, 860px"
-                priority
-                unoptimized={article.cover_image_url.includes("supabase.co")}
-              />
-            </div>
-          )}
+            {article.cover_image_url && (
+              <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#111]/8">
+                <Image
+                  src={article.cover_image_url}
+                  alt=""
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 900px) 100vw, 860px"
+                  priority
+                  unoptimized={article.cover_image_url.includes("supabase.co")}
+                />
+              </div>
+            )}
 
-          <ArticleBody blocks={article.body} />
+            <ArticleBody blocks={article.body} />
+          </ArticleReadProgress>
         </div>
       </div>
 
