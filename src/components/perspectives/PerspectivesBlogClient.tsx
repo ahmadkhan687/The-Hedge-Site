@@ -246,15 +246,15 @@ export default function PerspectivesBlogClient({
             </div>
           </section>
 
-          {/* Featured card */}
-          <section className="relative flex w-full flex-col items-start px-5 pb-12 sm:px-8 sm:pb-16 lg:px-[120px] lg:pb-20">
-            <div className="relative w-full overflow-hidden border border-[#1e2124] lg:h-[540px]">
+          {/* Featured card — side-by-side from md+ (laptop same as desktop) */}
+          <section className="relative flex w-full flex-col items-start px-5 pb-12 sm:px-8 sm:pb-16 md:px-10 lg:px-16 xl:px-[120px] lg:pb-20">
+            <div className="relative w-full overflow-hidden border border-[#1e2124] md:h-[440px] lg:h-[500px] xl:h-[540px]">
               {featured ? (
                 <Link
                   href={`/perspectives/${featured.slug}`}
-                  className="flex h-full flex-col items-stretch no-underline lg:flex-row"
+                  className="flex h-full flex-col items-stretch no-underline md:flex-row"
                 >
-                  <div className="relative h-[200px] w-full sm:h-[280px] lg:h-full lg:w-[55%] xl:w-[900px]">
+                  <div className="relative h-[200px] w-full shrink-0 sm:h-[280px] md:h-full md:w-[52%] lg:w-[55%] xl:w-[58%]">
                     {featured.cover_image_url ? (
                       <div className="relative h-full w-full">
                         <Image
@@ -262,7 +262,7 @@ export default function PerspectivesBlogClient({
                           alt={featured.title}
                           fill
                           priority
-                          sizes="(max-width: 1024px) 100vw, 55vw"
+                          sizes="(max-width: 768px) 100vw, 55vw"
                           unoptimized={featured.cover_image_url.includes(
                             "supabase.co",
                           )}
@@ -285,16 +285,16 @@ export default function PerspectivesBlogClient({
                     </div>
                   </div>
 
-                  <div className="flex h-full flex-1 flex-col justify-between gap-6 p-5 sm:gap-8 sm:p-8 lg:p-12">
+                  <div className="flex h-full min-w-0 flex-1 flex-col justify-between gap-6 p-5 sm:gap-8 sm:p-8 md:p-8 lg:p-10 xl:p-12">
                     <div className="flex flex-col items-start gap-3 sm:gap-4">
                       <p className="whitespace-nowrap font-inter text-[11px] font-extrabold uppercase leading-normal text-[#e83387] sm:text-[12px]">
                         {featured.category}
                       </p>
-                      <p className="font-eb-garamond text-[clamp(1.35rem,4vw,40px)] font-medium leading-[1.15] text-[#111]">
+                      <p className="font-eb-garamond text-[clamp(1.35rem,3.2vw,40px)] font-medium leading-[1.15] text-[#111]">
                         {featured.title}
                       </p>
                       {featured.subtitle ? (
-                        <p className="font-eb-garamond text-base font-normal leading-[1.5] text-[#6b665f] sm:text-lg">
+                        <p className="font-eb-garamond text-base font-normal leading-[1.5] text-[#6b665f] sm:text-lg md:text-base lg:text-lg">
                           {featured.subtitle}
                         </p>
                       ) : null}
@@ -321,7 +321,7 @@ export default function PerspectivesBlogClient({
                   </div>
                 </Link>
               ) : (
-                <div className="flex h-[200px] items-center justify-center sm:h-[300px]">
+                <div className="flex h-[200px] items-center justify-center sm:h-[300px] md:h-full">
                   <p className="px-4 text-center font-inter text-sm text-[#6B665F] sm:text-base">
                     No articles in this category yet.
                   </p>
