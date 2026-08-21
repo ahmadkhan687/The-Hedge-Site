@@ -36,6 +36,29 @@ function formatDate(iso: string | null): string {
   return `${day} ${month.toUpperCase()} ${year}`;
 }
 
+/** Highlight query matches with brand gold/yellow. */
+function highlightMatch(text: string, query: string) {
+  const q = query.trim();
+  if (!q || !text) return text;
+
+  const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const parts = text.split(new RegExp(`(${escaped})`, "gi"));
+  if (parts.length === 1) return text;
+
+  return parts.map((part, i) =>
+    part.toLowerCase() === q.toLowerCase() ? (
+      <mark
+        key={`${part}-${i}`}
+        className="rounded-[1px] bg-[#D7A92C]/55 px-0.5 text-inherit"
+      >
+        {part}
+      </mark>
+    ) : (
+      <span key={`${part}-${i}`}>{part}</span>
+    ),
+  );
+}
+
 function TelemetryStrip({ h, w }: { h: number; w: number }) {
   return (
     <div className="flex shrink-0 items-start gap-[3px]" style={{ height: h }}>
@@ -66,6 +89,7 @@ export default function PerspectivesBlogClient({
   const [activeFilter, setActiveFilter] = useState<ArticleCategory | null>(
     null,
   );
+  const [query, setQuery] = useState("");
   const [email, setEmail] = useState("");
   const [subscribeStatus, setSubscribeStatus] = useState<
     "idle" | "loading" | "success" | "error"
@@ -101,9 +125,15 @@ export default function PerspectivesBlogClient({
   const list = articles ?? [];
 
   const filtered = useMemo(() => {
-    if (!activeFilter) return list;
-    return list.filter((a) => a.category === activeFilter);
-  }, [list, activeFilter]);
+    const q = query.trim().toLowerCase();
+    return list.filter((a) => {
+      if (activeFilter && a.category !== activeFilter) return false;
+      if (!q) return true;
+      const haystack =
+        `${a.title} ${a.subtitle ?? ""} ${a.category} ${a.number ?? ""}`.toLowerCase();
+      return haystack.includes(q);
+    });
+  }, [list, activeFilter, query]);
 
   const featured = filtered[0] ?? null;
   // With one article, show it in featured and in the grid so the section isn't empty.
@@ -217,32 +247,77 @@ export default function PerspectivesBlogClient({
               <div className="absolute inset-x-0 top-[-1px] border-t border-[#1E2124]" />
             </div>
 
-            <div className="-mx-5 flex gap-2.5 overflow-x-auto px-5 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:flex-wrap sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0">
-              {filters.map((f) => {
-                const isActive = f.value === activeFilter;
-                return (
-                  <button
-                    key={f.label}
-                    type="button"
-                    onClick={() => setActiveFilter(f.value)}
-                    className={
-                      isActive
-                        ? "flex shrink-0 cursor-pointer items-center rounded-[2px] border border-[#111315] bg-[#111315] px-3 py-2 sm:px-4"
-                        : "flex shrink-0 cursor-pointer items-center rounded-[2px] border border-[rgba(107,102,95,0.2)] bg-transparent px-3 py-2 sm:px-4"
-                    }
-                  >
-                    <span
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+              <div className="-mx-5 flex min-w-0 flex-1 gap-2.5 overflow-x-auto px-5 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:flex-wrap sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0">
+                {filters.map((f) => {
+                  const isActive = f.value === activeFilter;
+                  return (
+                    <button
+                      key={f.label}
+                      type="button"
+                      onClick={() => setActiveFilter(f.value)}
                       className={
                         isActive
-                          ? "whitespace-nowrap font-inter text-[11px] font-medium uppercase leading-normal text-[#f3f1ea] sm:text-[12px]"
-                          : "whitespace-nowrap font-inter text-[11px] font-medium uppercase leading-normal text-[#6b665f] sm:text-[12px]"
+                          ? "flex shrink-0 cursor-pointer items-center rounded-[2px] border border-[#111315] bg-[#111315] px-3 py-2 sm:px-4"
+                          : "flex shrink-0 cursor-pointer items-center rounded-[2px] border border-[rgba(107,102,95,0.2)] bg-transparent px-3 py-2 sm:px-4"
                       }
                     >
-                      {f.label}
-                    </span>
-                  </button>
-                );
-              })}
+                      <span
+                        className={
+                          isActive
+                            ? "whitespace-nowrap font-inter text-[11px] font-medium uppercase leading-normal text-[#f3f1ea] sm:text-[12px]"
+                            : "whitespace-nowrap font-inter text-[11px] font-medium uppercase leading-normal text-[#6b665f] sm:text-[12px]"
+                        }
+                      >
+                        {f.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="relative w-full shrink-0 sm:w-[280px] lg:w-[320px]">
+                <label className="group flex h-11 w-full items-center gap-2.5 border border-[#111]/15 bg-[#F4F0EA] px-3 transition-colors focus-within:border-[#C6A02C]/70 focus-within:bg-white/40">
+                  <span className="sr-only">Search articles</span>
+                  <svg
+                    aria-hidden
+                    viewBox="0 0 20 20"
+                    className="size-4 shrink-0 text-[#6b665f] transition-colors group-focus-within:text-[#C6A02C]"
+                    fill="none"
+                  >
+                    <circle
+                      cx="8.5"
+                      cy="8.5"
+                      r="5.5"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                    />
+                    <path
+                      d="M12.5 12.5 16.5 16.5"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <input
+                    type="search"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Search by word…"
+                    className="min-w-0 flex-1 bg-transparent font-inter text-sm text-[#111] outline-none placeholder:text-[#6b665f]/55 [&::-webkit-search-cancel-button]:hidden"
+                  />
+                  {query.trim() ? (
+                    <button
+                      type="button"
+                      onClick={() => setQuery("")}
+                      className="shrink-0 font-inter text-[10px] font-extrabold uppercase tracking-[0.08em] text-[#6b665f] transition-colors hover:text-[#111]"
+                      aria-label="Clear search"
+                    >
+                      Clear
+                    </button>
+                  ) : null}
+                </label>
+              </div>
             </div>
           </section>
 
@@ -288,14 +363,14 @@ export default function PerspectivesBlogClient({
                   <div className="flex h-full min-w-0 flex-1 flex-col justify-between gap-6 p-5 sm:gap-8 sm:p-8 md:p-8 lg:p-10 xl:p-12">
                     <div className="flex flex-col items-start gap-3 sm:gap-4">
                       <p className="whitespace-nowrap font-inter text-[11px] font-extrabold uppercase leading-normal text-[#e83387] sm:text-[12px]">
-                        {featured.category}
+                        {highlightMatch(featured.category, query)}
                       </p>
                       <p className="font-eb-garamond text-[clamp(1.35rem,3.2vw,40px)] font-medium leading-[1.15] text-[#111]">
-                        {featured.title}
+                        {highlightMatch(featured.title, query)}
                       </p>
                       {featured.subtitle ? (
                         <p className="font-eb-garamond text-base font-normal leading-[1.5] text-[#6b665f] sm:text-lg md:text-base lg:text-lg">
-                          {featured.subtitle}
+                          {highlightMatch(featured.subtitle, query)}
                         </p>
                       ) : null}
                     </div>
@@ -323,7 +398,9 @@ export default function PerspectivesBlogClient({
               ) : (
                 <div className="flex h-[200px] items-center justify-center sm:h-[300px] md:h-full">
                   <p className="px-4 text-center font-inter text-sm text-[#6B665F] sm:text-base">
-                    No articles in this category yet.
+                    {query.trim()
+                      ? "No articles match your search."
+                      : "No articles in this category yet."}
                   </p>
                 </div>
               )}
@@ -384,14 +461,14 @@ export default function PerspectivesBlogClient({
                       <div className="flex flex-1 flex-col justify-between gap-6 p-4 sm:p-5 lg:p-6">
                         <div className="flex flex-col items-start gap-2.5 sm:gap-3">
                           <p className="whitespace-nowrap font-inter text-[10px] font-extrabold uppercase text-[#d7a92c] sm:text-[11px]">
-                            {article.category}
+                            {highlightMatch(article.category, query)}
                           </p>
                           <p className="font-eb-garamond text-xl font-medium leading-[1.2] text-[#111] sm:text-[22px] lg:text-2xl">
-                            {article.title}
+                            {highlightMatch(article.title, query)}
                           </p>
                           {article.subtitle ? (
                             <p className="line-clamp-3 font-eb-garamond text-sm font-normal leading-[1.4] text-[#6b665f] sm:text-[15px]">
-                              {article.subtitle}
+                              {highlightMatch(article.subtitle, query)}
                             </p>
                           ) : null}
                         </div>
@@ -409,7 +486,9 @@ export default function PerspectivesBlogClient({
               </div>
             ) : (
               <p className="font-inter text-sm text-[#6B665F] sm:text-base">
-                No published perspectives yet.
+                {query.trim()
+                  ? "No articles match your search."
+                  : "No published perspectives yet."}
               </p>
             )}
           </section>
