@@ -44,6 +44,7 @@ Open http://localhost:3000/admin/login
 - title, slug, subtitle, number, category
 - reading_time_minutes
 - cover_image_url (upload)
+- cover_image_alt (accessibility text for cover)
 - body blocks: heading | paragraph | quote | list | image
 - status: draft | published
 - subscribers emails (Perspectives briefing list)

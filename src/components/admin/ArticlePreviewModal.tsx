@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect } from "react";
 import ArticleBody from "@/components/perspectives/ArticleBody";
-import { formatArticleDate, type Article } from "@/lib/articles";
+import { formatArticleDate, coverImageAlt, type Article } from "@/lib/articles";
 
 type ArticlePreviewModalProps = {
   article: Article;
@@ -92,7 +92,7 @@ export default function ArticlePreviewModal({
                 <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#111]/8">
                   <Image
                     src={article.cover_image_url}
-                    alt=""
+                    alt={coverImageAlt(article)}
                     fill
                     className="object-cover"
                     sizes="(max-width: 900px) 100vw, 860px"

@@ -81,6 +81,7 @@ export type Article = {
   category: ArticleCategory;
   reading_time_minutes: number | null;
   cover_image_url: string | null;
+  cover_image_alt: string | null;
   body: ArticleBlock[];
   status: ArticleStatus;
   author_id: string | null;
@@ -98,10 +99,19 @@ export type ArticleInput = {
   category?: ArticleCategory;
   reading_time_minutes?: number | null;
   cover_image_url?: string | null;
+  cover_image_alt?: string | null;
   body: ArticleBlock[];
   status: ArticleStatus;
   published_at?: string | null;
 };
+
+export function coverImageAlt(article: {
+  cover_image_alt?: string | null;
+  title: string;
+}): string {
+  const alt = article.cover_image_alt?.trim();
+  return alt || article.title;
+}
 
 export function createBlockId(): string {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {

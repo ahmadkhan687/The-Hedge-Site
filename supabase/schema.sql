@@ -9,6 +9,7 @@ create table if not exists public.articles (
   subtitle text default '',
   reading_time_minutes integer,
   cover_image_url text,
+  cover_image_alt text,
   body jsonb not null default '[]'::jsonb,
   status text not null default 'draft'
     check (status in ('draft', 'published')),
@@ -157,6 +158,9 @@ create policy "Authenticated can delete subscribers"
 
 alter table public.articles
   add column if not exists subscribers_notified_at timestamptz;
+
+alter table public.articles
+  add column if not exists cover_image_alt text;
 
 -- Public unsubscribe (email link → /api/unsubscribe)
 create or replace function public.unsubscribe_email(p_email text)

@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import ArticleBody from "@/components/perspectives/ArticleBody";
 import ArticleReadProgress from "@/components/perspectives/ArticleReadProgress";
-import { formatArticleDate, type Article } from "@/lib/articles";
+import { formatArticleDate, coverImageAlt, type Article } from "@/lib/articles";
 
 type ArticleDetailSectionProps = {
   article: Article;
@@ -47,7 +47,7 @@ export default function ArticleDetailSection({
               <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#111]/8">
                 <Image
                   src={article.cover_image_url}
-                  alt=""
+                  alt={coverImageAlt(article)}
                   fill
                   className="object-cover"
                   sizes="(max-width: 900px) 100vw, 860px"
@@ -80,7 +80,7 @@ export default function ArticleDetailSection({
                     {item.cover_image_url ? (
                       <Image
                         src={item.cover_image_url}
-                        alt=""
+                        alt={coverImageAlt(item)}
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                         sizes="(max-width: 768px) 100vw, 33vw"

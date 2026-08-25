@@ -38,6 +38,7 @@ type FormState = {
   category: ArticleCategory;
   reading_time_minutes: string;
   cover_image_url: string;
+  cover_image_alt: string;
   status: ArticleStatus;
   body: ArticleBlock[];
 };
@@ -51,6 +52,7 @@ function emptyForm(): FormState {
     category: "GEO-STRATEGY",
     reading_time_minutes: "",
     cover_image_url: "",
+    cover_image_alt: "",
     status: "draft",
     body: [],
   };
@@ -68,6 +70,7 @@ function fromArticle(article: Article): FormState {
         ? String(article.reading_time_minutes)
         : "",
     cover_image_url: article.cover_image_url ?? "",
+    cover_image_alt: article.cover_image_alt ?? "",
     status: article.status,
     body: article.body,
   };
@@ -150,6 +153,7 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
       reading_time_minutes:
         reading != null && !Number.isNaN(reading) ? reading : null,
       cover_image_url: form.cover_image_url.trim() || null,
+      cover_image_alt: form.cover_image_alt.trim() || null,
       body: form.body,
       status: form.status,
       author_id: initial?.author_id ?? null,
@@ -178,6 +182,7 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
       reading_time_minutes:
         reading != null && !Number.isNaN(reading) ? reading : null,
       cover_image_url: current.cover_image_url.trim() || null,
+      cover_image_alt: current.cover_image_alt.trim() || null,
       body: current.body,
       status: current.status,
       published_at:
@@ -754,7 +759,7 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
               <div className="relative aspect-[16/9] w-full max-w-xl overflow-hidden border border-[#C6A02C]/40 bg-[#111]/5">
                 <Image
                   src={form.cover_image_url}
-                  alt="Cover"
+                  alt={form.cover_image_alt.trim() || "Cover"}
                   fill
                   className="object-cover"
                   sizes="600px"
@@ -763,6 +768,12 @@ export default function ArticleEditor({ mode, initial }: ArticleEditorProps) {
               </div>
             ) : null
           }
+        />
+        <input
+          value={form.cover_image_alt}
+          onChange={(e) => updateField("cover_image_alt", e.target.value)}
+          className={`${inputClass} mt-3`}
+          placeholder="Alt text"
         />
       </Field>
 

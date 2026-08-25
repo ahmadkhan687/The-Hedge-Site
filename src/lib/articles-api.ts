@@ -31,6 +31,7 @@ function mapRow(row: Record<string, unknown>): Article {
           ? Number(row.reading_time_minutes)
           : null,
     cover_image_url: (row.cover_image_url as string | null) ?? null,
+    cover_image_alt: (row.cover_image_alt as string | null) ?? null,
     body: parseBody(row.body),
     status: row.status === "published" ? "published" : "draft",
     author_id: (row.author_id as string | null) ?? null,
@@ -72,7 +73,7 @@ export async function getPublishedArticlesListing(): Promise<Article[]> {
   const { data, error } = await supabase
     .from("articles")
     .select(
-      "id, number, slug, title, subtitle, category, reading_time_minutes, cover_image_url, status, author_id, published_at, subscribers_notified_at, created_at, updated_at",
+      "id, number, slug, title, subtitle, category, reading_time_minutes, cover_image_url, cover_image_alt, status, author_id, published_at, subscribers_notified_at, created_at, updated_at",
     )
     .eq("status", "published")
     .order("published_at", { ascending: false });
@@ -199,6 +200,7 @@ export async function updateArticle(
     category: normalizeCategory(input.category ?? "GEO-STRATEGY") || "GEO-STRATEGY",
     reading_time_minutes: input.reading_time_minutes ?? null,
     cover_image_url: input.cover_image_url ?? null,
+    cover_image_alt: input.cover_image_alt?.trim() || null,
     body: input.body,
     status: input.status,
   };

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import {
   ARTICLE_CATEGORIES,
+  coverImageAlt,
   type Article,
   type ArticleCategory,
 } from "@/lib/articles";
@@ -334,7 +335,7 @@ export default function PerspectivesBlogClient({
                       <div className="relative h-full w-full">
                         <Image
                           src={featured.cover_image_url}
-                          alt={featured.title}
+                          alt={coverImageAlt(featured)}
                           fill
                           priority
                           sizes="(max-width: 768px) 100vw, 55vw"
@@ -439,7 +440,7 @@ export default function PerspectivesBlogClient({
                           <div className="relative h-full w-full">
                             <Image
                               src={article.cover_image_url}
-                              alt={article.title}
+                              alt={coverImageAlt(article)}
                               fill
                               sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                               className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
