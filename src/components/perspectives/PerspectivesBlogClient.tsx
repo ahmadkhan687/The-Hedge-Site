@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import {
   ARTICLE_CATEGORIES,
   coverImageAlt,
@@ -18,6 +19,142 @@ const TELEMETRY_COLORS = [
   "#19b8b7",
   "#23b6d2",
 ];
+
+/** Page 1: 1 featured + up to 6 grid cards. Later pages: 6 grid cards each. */
+const PAGE_1_SIZE = 7;
+const PAGE_SIZE = 6;
+
+function getTotalPages(count: number): number {
+  if (count === 0) return 0;
+  if (count <= PAGE_1_SIZE) return 1;
+  return 1 + Math.ceil((count - PAGE_1_SIZE) / PAGE_SIZE);
+}
+
+function getPageContent(articles: Article[], page: number) {
+  if (page <= 1) {
+    const featured = articles[0] ?? null;
+    const grid =
+      articles.length === 1 ? articles : articles.slice(1, PAGE_1_SIZE);
+    return { featured, grid };
+  }
+
+  const start = PAGE_1_SIZE + (page - 2) * PAGE_SIZE;
+  return { featured: null, grid: articles.slice(start, start + PAGE_SIZE) };
+}
+
+function getShowingRange(
+  count: number,
+  page: number,
+): { start: number; end: number } | null {
+  if (count === 0) return null;
+  if (page <= 1) {
+    return { start: 1, end: Math.min(PAGE_1_SIZE, count) };
+  }
+  const start = PAGE_1_SIZE + (page - 2) * PAGE_SIZE + 1;
+  const end = Math.min(start + PAGE_SIZE - 1, count);
+  return { start, end };
+}
+
+/** Compact page list: 1 … 4 5 6 … 10 */
+function getVisiblePages(current: number, total: number): (number | "ellipsis")[] {
+  if (total <= 7) {
+    return Array.from({ length: total }, (_, i) => i + 1);
+  }
+
+  const pages = new Set<number>([1, total, current, current - 1, current + 1]);
+  const sorted = [...pages].filter((p) => p >= 1 && p <= total).sort((a, b) => a - b);
+  const result: (number | "ellipsis")[] = [];
+
+  for (let i = 0; i < sorted.length; i++) {
+    const p = sorted[i];
+    const prev = sorted[i - 1];
+    if (i > 0 && prev !== undefined && p - prev > 1) {
+      result.push("ellipsis");
+    }
+    result.push(p);
+  }
+
+  return result;
+}
+
+function PaginationControls({
+  page,
+  totalPages,
+  totalItems,
+  showing,
+  onPageChange,
+}: {
+  page: number;
+  totalPages: number;
+  totalItems: number;
+  showing: { start: number; end: number } | null;
+  onPageChange: (page: number) => void;
+}) {
+  if (totalPages <= 1) return null;
+
+  const visible = getVisiblePages(page, totalPages);
+
+  return (
+    <nav
+      className="flex w-full flex-col items-center gap-4 border-t border-[#111]/10 pt-8 sm:pt-10"
+      aria-label="Article pagination"
+    >
+      {showing ? (
+        <p className="font-inter text-[10px] font-medium uppercase tracking-[0.08em] text-[#6b665f] sm:text-[11px]">
+          Showing {showing.start}–{showing.end} of {totalItems}
+        </p>
+      ) : null}
+
+      <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+        <button
+          type="button"
+          disabled={page <= 1}
+          onClick={() => onPageChange(page - 1)}
+          className="rounded-[2px] border border-[rgba(107,102,95,0.2)] px-3 py-2 font-inter text-[11px] font-semibold uppercase tracking-[0.04em] text-[#6b665f] transition-opacity hover:opacity-70 disabled:cursor-not-allowed disabled:opacity-35"
+        >
+          ← Previous
+        </button>
+
+        <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
+          {visible.map((item, i) =>
+            item === "ellipsis" ? (
+              <span
+                key={`ellipsis-${i}`}
+                className="px-1 font-inter text-xs text-[#6b665f]"
+                aria-hidden
+              >
+                …
+              </span>
+            ) : (
+              <button
+                key={item}
+                type="button"
+                onClick={() => onPageChange(item)}
+                aria-current={item === page ? "page" : undefined}
+                className={
+                  item === page
+                    ? "min-w-[2.25rem] rounded-[2px] border border-[#111315] bg-[#111315] px-2.5 py-2 font-inter text-[11px] font-semibold uppercase text-[#f3f1ea]"
+                    : "min-w-[2.25rem] rounded-[2px] border border-[rgba(107,102,95,0.2)] px-2.5 py-2 font-inter text-[11px] font-semibold uppercase text-[#6b665f] transition-opacity hover:opacity-70"
+                }
+              >
+                {item}
+              </button>
+            ),
+          )}
+        </div>
+
+        <button
+          type="button"
+          disabled={page >= totalPages}
+          onClick={() => onPageChange(page + 1)}
+          className="rounded-[2px] border border-[rgba(107,102,95,0.2)] px-3 py-2 font-inter text-[11px] font-semibold uppercase tracking-[0.04em] text-[#6b665f] transition-opacity hover:opacity-70 disabled:cursor-not-allowed disabled:opacity-35"
+        >
+          Next →
+        </button>
+      </div>
+    </nav>
+  );
+}
 
 function formatDate(iso: string | null): string {
   if (!iso) return "—";
@@ -96,6 +233,8 @@ export default function PerspectivesBlogClient({
     "idle" | "loading" | "success" | "error"
   >("idle");
   const [subscribeMessage, setSubscribeMessage] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const listingTopRef = useRef<HTMLElement>(null);
 
   // Fetch after first paint so hero can show immediately
   useEffect(() => {
@@ -136,10 +275,35 @@ export default function PerspectivesBlogClient({
     });
   }, [list, activeFilter, query]);
 
-  const featured = filtered[0] ?? null;
-  // With one article, show it in featured and in the grid so the section isn't empty.
-  const grid =
-    filtered.length === 1 ? filtered : filtered.slice(1, 7);
+  const totalPages = getTotalPages(filtered.length);
+  const safePage =
+    totalPages === 0 ? 1 : Math.min(Math.max(1, currentPage), totalPages);
+  const { featured, grid } = getPageContent(filtered, safePage);
+  const showingRange = getShowingRange(filtered.length, safePage);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeFilter, query]);
+
+  useEffect(() => {
+    if (currentPage !== safePage) {
+      setCurrentPage(safePage);
+    }
+  }, [currentPage, safePage]);
+
+  function goToPage(page: number) {
+    const next = Math.min(Math.max(1, page), Math.max(1, totalPages));
+    if (next === safePage) return;
+
+    flushSync(() => {
+      setCurrentPage(next);
+    });
+
+    listingTopRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }
 
   // Only show category pills that currently have at least one published article.
   const categoriesWithArticles = useMemo(() => {
@@ -243,7 +407,10 @@ export default function PerspectivesBlogClient({
       ) : (
         <>
           {/* Filter pills — horizontal scroll on mobile */}
-          <section className="relative flex w-full flex-col gap-5 px-5 pb-8 sm:gap-6 sm:px-8 sm:pb-10 lg:px-[120px] lg:pb-12">
+          <section
+            ref={listingTopRef}
+            className="relative scroll-mt-24 flex w-full flex-col gap-5 px-5 pb-8 sm:gap-6 sm:px-8 sm:pb-10 lg:px-[120px] lg:pb-12"
+          >
             <div className="relative h-0 w-full shrink-0">
               <div className="absolute inset-x-0 top-[-1px] border-t border-[#1E2124]" />
             </div>
@@ -322,7 +489,8 @@ export default function PerspectivesBlogClient({
             </div>
           </section>
 
-          {/* Featured card — side-by-side from md+ (laptop same as desktop) */}
+          {/* Featured card — page 1 only */}
+          {safePage === 1 ? (
           <section className="relative flex w-full flex-col items-start px-5 pb-12 sm:px-8 sm:pb-16 md:px-10 lg:px-16 xl:px-[120px] lg:pb-20">
             <div className="relative w-full overflow-hidden border border-[#1e2124] md:h-[440px] lg:h-[500px] xl:h-[540px]">
               {featured ? (
@@ -407,6 +575,7 @@ export default function PerspectivesBlogClient({
               )}
             </div>
           </section>
+          ) : null}
 
           {/* Grid */}
           <section className="relative flex w-full flex-col gap-8 px-5 pb-16 sm:gap-10 sm:px-8 sm:pb-20 lg:gap-12 lg:px-[120px] lg:pb-[120px]">
@@ -489,9 +658,19 @@ export default function PerspectivesBlogClient({
               <p className="font-inter text-sm text-[#6B665F] sm:text-base">
                 {query.trim()
                   ? "No articles match your search."
-                  : "No published perspectives yet."}
+                  : safePage > 1
+                    ? "No articles on this page."
+                    : "No published perspectives yet."}
               </p>
             )}
+
+            <PaginationControls
+              page={safePage}
+              totalPages={totalPages}
+              totalItems={filtered.length}
+              showing={showingRange}
+              onPageChange={goToPage}
+            />
           </section>
 
           {/* Newsletter */}
