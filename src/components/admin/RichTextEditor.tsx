@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { sanitizeRichHtml } from "@/lib/rich-text";
+import { useEffect, useRef, useState } from "react";
+import { normalizeLinkHref, sanitizeRichHtml } from "@/lib/rich-text";
 
 type RichTextEditorProps = {
   value: string;
@@ -11,7 +11,7 @@ type RichTextEditorProps = {
   minHeight?: number;
 };
 
-/** Word-like editor: select text, then Bold / Italic. Stores HTML. */
+/** Word-like editor: select text, then Bold / Italic / Link. Stores HTML. */
 export default function RichTextEditor({
   value,
   onChange,
@@ -20,6 +20,9 @@ export default function RichTextEditor({
   minHeight = 120,
 }: RichTextEditorProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const [linkOpen, setLinkOpen] = useState(false);
+  const [linkUrl, setLinkUrl] = useState("");
+  const [linkError, setLinkError] = useState("");
 
   useEffect(() => {
     const el = ref.current;
@@ -52,9 +55,48 @@ export default function RichTextEditor({
     emitRaw();
   }
 
+  function openLinkInput() {
+    ref.current?.focus();
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed) {
+      setLinkError("Select text first, then add a link.");
+      setLinkOpen(true);
+      return;
+    }
+    setLinkError("");
+    setLinkOpen(true);
+  }
+
+  function applyLink() {
+    const normalized = normalizeLinkHref(linkUrl);
+    if (!normalized) {
+      setLinkError("Enter a valid path (/varro) or URL (https://…).");
+      return;
+    }
+
+    ref.current?.focus();
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed) {
+      setLinkError("Select text first, then add a link.");
+      return;
+    }
+
+    document.execCommand("createLink", false, normalized);
+    emitClean();
+    setLinkOpen(false);
+    setLinkUrl("");
+    setLinkError("");
+  }
+
+  function cancelLink() {
+    setLinkOpen(false);
+    setLinkUrl("");
+    setLinkError("");
+  }
+
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
           onMouseDown={(e) => e.preventDefault()}
@@ -73,10 +115,67 @@ export default function RichTextEditor({
         >
           I
         </button>
-        <span className="self-center font-inter text-[10px] uppercase tracking-[0.06em] text-[#6B665F]">
-          Select text → Bold / Italic
+        <button
+          type="button"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={openLinkInput}
+          className="border border-[#111]/20 px-2.5 py-1 font-inter text-xs font-semibold text-[#111] underline decoration-[#C6A02C] underline-offset-2 transition-opacity hover:opacity-70"
+          title="Link"
+        >
+          Link
+        </button>
+        <span className="font-inter text-[10px] uppercase tracking-[0.06em] text-[#6B665F]">
+          Select text → Bold / Italic / Link
         </span>
       </div>
+
+      {linkOpen ? (
+        <div className="flex flex-col gap-2 border border-[#111]/15 bg-[#F4F0EA] p-3">
+          <label className="font-inter text-[10px] font-extrabold uppercase tracking-[0.06em] text-[#6B665F]">
+            Link URL
+          </label>
+          <div className="flex flex-wrap items-center gap-2">
+            <input
+              type="text"
+              value={linkUrl}
+              onChange={(e) => {
+                setLinkUrl(e.target.value);
+                setLinkError("");
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  applyLink();
+                }
+                if (e.key === "Escape") cancelLink();
+              }}
+              placeholder="/varro or https://example.com"
+              className="min-w-[220px] flex-1 border border-[#111]/20 bg-white px-3 py-2 font-inter text-sm text-[#111] outline-none focus:border-[#111]/40"
+            />
+            <button
+              type="button"
+              onClick={applyLink}
+              className="border border-[#111] bg-[#111] px-3 py-2 font-inter text-xs font-semibold uppercase tracking-[0.06em] text-white transition-opacity hover:opacity-85"
+            >
+              Apply
+            </button>
+            <button
+              type="button"
+              onClick={cancelLink}
+              className="border border-[#111]/20 px-3 py-2 font-inter text-xs font-semibold uppercase tracking-[0.06em] text-[#111] transition-opacity hover:opacity-70"
+            >
+              Cancel
+            </button>
+          </div>
+          {linkError ? (
+            <p className="font-inter text-xs text-[#B3261E]">{linkError}</p>
+          ) : (
+            <p className="font-inter text-xs text-[#6B665F]">
+              Internal: /varro, /domains, /perspectives/your-slug
+            </p>
+          )}
+        </div>
+      ) : null}
 
       <div className="relative">
         {!value && placeholder ? (
@@ -92,7 +191,7 @@ export default function RichTextEditor({
           aria-multiline="true"
           onInput={emitRaw}
           onBlur={emitClean}
-          className={`${className} outline-none`}
+          className={`${className} outline-none [&_a]:font-semibold [&_a]:text-[#111] [&_a]:underline [&_a]:decoration-[#C6A02C] [&_a]:underline-offset-2`}
           style={{ minHeight }}
         />
       </div>

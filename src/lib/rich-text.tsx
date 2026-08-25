@@ -2,6 +2,54 @@
  * Allow only safe inline formatting tags from the Word-like editor.
  * Flattens block tags (p/div) so content is safe inside headings/paragraphs.
  */
+
+const ALLOWED_INLINE_TAGS = "b|strong|i|em|br|span|a";
+
+/** Validate and normalize URLs for article body links. */
+export function normalizeLinkHref(raw: string): string | null {
+  const href = raw.trim();
+  if (!href) return null;
+  if (/^(javascript|data|vbscript):/i.test(href)) return null;
+
+  if (href.startsWith("/") && !href.startsWith("//")) {
+    return /^\/(?!\/)[^<>\s"']*$/.test(href) ? href : null;
+  }
+
+  if (/^https?:\/\//i.test(href)) {
+    try {
+      const url = new URL(href);
+      if (url.protocol === "http:" || url.protocol === "https:") {
+        return url.href;
+      }
+    } catch {
+      return null;
+    }
+  }
+
+  const path = href.replace(/^\/+/, "");
+  if (/^[a-z0-9][\w-]*(?:\/[^\s"'<>]*)?$/i.test(path)) {
+    return `/${path}`;
+  }
+
+  return null;
+}
+
+function sanitizeAnchorTags(html: string): string {
+  return html.replace(/<a\b[^>]*>([\s\S]*?)<\/a>/gi, (match, inner: string) => {
+    const hrefMatch = match.match(/\shref=["']([^"']*)["']/i);
+    if (!hrefMatch) return inner;
+
+    const safeHref = normalizeLinkHref(hrefMatch[1]);
+    if (!safeHref) return inner;
+
+    const isExternal = /^https?:\/\//i.test(safeHref);
+    const target = isExternal ? ' target="_blank"' : "";
+    const rel = isExternal ? ' rel="noopener noreferrer"' : "";
+
+    return `<a href="${safeHref}"${target}${rel}>${inner}</a>`;
+  });
+}
+
 export function sanitizeRichHtml(html: string): string {
   if (!html) return "";
 
@@ -20,9 +68,11 @@ export function sanitizeRichHtml(html: string): string {
 
   // Keep only inline formatting tags; strip everything else
   clean = clean.replace(
-    /<\/?(?!\/?(?:b|strong|i|em|br|span)\b)[^>]+>/gi,
+    new RegExp(`<\\/?(?!\\/?(?:${ALLOWED_INLINE_TAGS})\\b)[^>]+>`, "gi"),
     "",
   );
+
+  clean = sanitizeAnchorTags(clean);
 
   // Collapse trailing breaks / empty content
   clean = clean.replace(/(?:<br\s*\/?>\s*)+$/gi, "").trim();
@@ -56,3 +106,6 @@ export function toDisplayHtml(text: string): string {
   html = html.replace(/\n/g, "<br />");
   return html;
 }
+
+export const ARTICLE_LINK_STYLES =
+  "[&_a]:font-semibold [&_a]:underline [&_a]:decoration-[#C6A02C] [&_a]:decoration-2 [&_a]:underline-offset-2 [&_a]:transition-opacity hover:[&_a]:opacity-70";

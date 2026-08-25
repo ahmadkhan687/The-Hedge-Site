@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { toDisplayHtml } from "@/lib/rich-text";
+import { ARTICLE_LINK_STYLES, toDisplayHtml } from "@/lib/rich-text";
 import type { ArticleBlock, ListItem } from "@/lib/articles";
 
 type ArticleBodyProps = {
@@ -36,7 +36,7 @@ export default function ArticleBody({ blocks }: ArticleBodyProps) {
                 key={block.id}
                 as="h3"
                 text={block.text}
-                className="mt-4 font-eb-garamond text-[clamp(1.35rem,3vw,1.75rem)] font-medium leading-[1.3] text-[#111]"
+                className={`mt-4 font-eb-garamond text-[clamp(1.35rem,3vw,1.75rem)] font-medium leading-[1.3] text-[#111] ${ARTICLE_LINK_STYLES}`}
               />
             );
           }
@@ -46,7 +46,7 @@ export default function ArticleBody({ blocks }: ArticleBodyProps) {
               key={block.id}
               as="h2"
               text={block.text}
-              className="mt-6 font-eb-garamond text-[clamp(1.5rem,3.5vw,2rem)] font-semibold leading-[1.25] text-[#111]"
+              className={`mt-6 font-eb-garamond text-[clamp(1.5rem,3.5vw,2rem)] font-semibold leading-[1.25] text-[#111] ${ARTICLE_LINK_STYLES}`}
             />
           );
         }
@@ -57,7 +57,9 @@ export default function ArticleBody({ blocks }: ArticleBodyProps) {
               key={block.id}
               className="my-2 border border-[#C6A02C]/25 bg-[#EDE6D8] px-6 py-7 sm:px-8 sm:py-8"
             >
-              <p className="font-eb-garamond text-[clamp(1.15rem,2.5vw,1.4rem)] font-medium italic leading-[1.55] text-[#111]">
+              <p
+                className={`font-eb-garamond text-[clamp(1.15rem,2.5vw,1.4rem)] font-medium italic leading-[1.55] text-[#111] ${ARTICLE_LINK_STYLES}`}
+              >
                 &ldquo;
                 <Html text={block.text} />
                 &rdquo;
@@ -80,7 +82,9 @@ export default function ArticleBody({ blocks }: ArticleBodyProps) {
                     className="mt-2 size-2.5 shrink-0 bg-[#C6A02C]"
                     aria-hidden
                   />
-                  <p className="font-eb-garamond text-lg leading-[1.55] text-[#111] sm:text-xl">
+                  <p
+                    className={`font-eb-garamond text-lg leading-[1.55] text-[#111] sm:text-xl ${ARTICLE_LINK_STYLES}`}
+                  >
                     {item.title ? (
                       <>
                         <Html
@@ -134,8 +138,8 @@ export default function ArticleBody({ blocks }: ArticleBodyProps) {
               text={block.text}
               className={
                 block.lead
-                  ? "font-eb-garamond text-[clamp(1.2rem,2.5vw,1.45rem)] font-normal leading-[1.65] text-[#111] [&_strong]:font-semibold [&_b]:font-semibold [&_em]:italic [&_i]:italic"
-                  : "font-eb-garamond text-lg font-normal leading-[1.7] text-[#111]/85 sm:text-xl [&_strong]:font-semibold [&_b]:font-semibold [&_em]:italic [&_i]:italic"
+                  ? `font-eb-garamond text-[clamp(1.2rem,2.5vw,1.45rem)] font-normal leading-[1.65] text-[#111] [&_strong]:font-semibold [&_b]:font-semibold [&_em]:italic [&_i]:italic ${ARTICLE_LINK_STYLES}`
+                  : `font-eb-garamond text-lg font-normal leading-[1.7] text-[#111]/85 sm:text-xl [&_strong]:font-semibold [&_b]:font-semibold [&_em]:italic [&_i]:italic ${ARTICLE_LINK_STYLES}`
               }
             />
           );
