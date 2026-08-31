@@ -518,12 +518,6 @@ export default function PerspectivesBlogClient({
                       <div className="absolute inset-0 bg-[#111]/10" />
                     )}
 
-                    <div className="absolute left-3 top-3 rounded-[2px] bg-[#d7a92c] px-2.5 py-1.5 sm:left-6 sm:top-6 sm:px-3 sm:py-1.5">
-                      <p className="whitespace-nowrap font-inter text-[9px] font-extrabold uppercase text-[#111315] sm:text-[11px]">
-                        FEATURED INTERCEPT // CLASSIFIED
-                      </p>
-                    </div>
-
                     <div className="absolute bottom-3 right-3 flex items-end sm:bottom-6 sm:right-6">
                       <TelemetryStrip h={6} w={18} />
                     </div>
