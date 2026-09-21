@@ -10,7 +10,7 @@ export default function VarroCtaSection() {
           alt=""
           fill
           className="object-cover object-center opacity-45"
-          sizes="100vw"
+          sizes="(max-width: 1024px) 100vw, 1600px"
         />
       </div>
 

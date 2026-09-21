@@ -12,7 +12,7 @@ export default function Navbar() {
           className="flex items-center gap-2.5 text-black no-underline sm:gap-3"
         >
           <Image
-            src="/Home/logo.png"
+            src="/Home/logo.webp"
             alt=""
             width={40}
             height={40}

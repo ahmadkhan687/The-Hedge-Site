@@ -31,7 +31,7 @@ export default function VarroEditorialSection() {
               width={1200}
               height={700}
               className="block h-auto w-full"
-              sizes="100vw"
+              sizes="(max-width: 1023px) 100vw, 0px"
             />
           </div>
 

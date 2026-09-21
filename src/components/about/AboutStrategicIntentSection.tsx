@@ -18,7 +18,7 @@ export default function AboutStrategicIntentSection() {
             alt=""
             fill
             className="object-cover object-top blur-[2px]"
-            sizes="100vw"
+            sizes="(max-width: 1024px) 100vw, 1200px"
           />
         </div>
 

@@ -100,7 +100,7 @@ export default function VarroIntelligenceSection() {
           alt="Varro intelligence banner visual"
           fill
           className="object-cover object-center"
-          sizes="100vw"
+          sizes="(max-width: 1024px) 100vw, 1728px"
         />
       </VarroBannerScrollButton>
 
@@ -111,7 +111,7 @@ export default function VarroIntelligenceSection() {
           alt="Varro intelligence banner visual"
           fill
           className="object-cover object-center"
-          sizes="100vw"
+          sizes="(max-width: 1728px) 100vw, 1728px"
         />
       </VarroBannerScrollButton>
     </section>

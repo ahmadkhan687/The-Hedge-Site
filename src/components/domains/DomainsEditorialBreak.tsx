@@ -11,7 +11,7 @@ export default function DomainsEditorialBreak() {
         alt="Case dossier with intelligence flow visualizations"
         fill
         className="object-cover"
-        sizes="100vw"
+        sizes="(max-width: 1024px) 100vw, 1600px"
       />
       <div className="absolute inset-0 bg-[#111]/[0.06]" />
     </section>

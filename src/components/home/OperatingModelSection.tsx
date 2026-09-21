@@ -33,7 +33,6 @@ export default function OperatingModelSection() {
             className="h-auto w-full object-cover"
             sizes="100vw"
             priority
-            unoptimized
           />
         </div>
 

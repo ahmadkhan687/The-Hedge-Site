@@ -39,7 +39,7 @@ export default function VarroHeroSection() {
             fill
             className="object-cover object-[center_42%]"
             priority
-            sizes="100vw"
+            sizes="(max-width: 1023px) 100vw, 0px"
           />
         </div>
       </section>

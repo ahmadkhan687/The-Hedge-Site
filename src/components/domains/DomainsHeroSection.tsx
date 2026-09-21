@@ -13,7 +13,7 @@ export default function DomainsHeroSection() {
           alt=""
           fill
           className="object-cover object-bottom opacity-60"
-          sizes="100vw"
+          sizes="(max-width: 1024px) 100vw, 1600px"
           priority
         />
       </div>

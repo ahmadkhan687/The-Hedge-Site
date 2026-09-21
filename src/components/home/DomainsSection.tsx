@@ -28,7 +28,7 @@ export default function DomainsSection() {
         alt=""
         fill
         aria-hidden="true"
-        sizes="100vw"
+        sizes="(max-width: 1024px) 100vw, 1200px"
         className="pointer-events-none object-cover object-center opacity-20 invert mix-blend-multiply"
       />
 

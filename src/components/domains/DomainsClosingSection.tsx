@@ -44,7 +44,7 @@ export default function DomainsClosingSection() {
           alt=""
           fill
           className="object-cover"
-          sizes="100vw"
+          sizes="(max-width: 1024px) 100vw, 1600px"
           aria-hidden
         />
         <div className="absolute inset-0 bg-black/86" />

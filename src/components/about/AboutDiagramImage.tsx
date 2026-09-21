@@ -8,7 +8,7 @@ export default function AboutDiagramImage() {
         alt="Strategic technology and intelligence architecture diagram"
         fill
         className="object-contain object-center"
-        sizes="100vw"
+        sizes="(max-width: 1728px) 100vw, 1728px"
         priority
       />
     </section>

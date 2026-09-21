@@ -52,7 +52,7 @@ export default function SovereigntyNoLockInSection() {
             alt="Sovereign capability equipment and tools"
             fill
             className="object-cover"
-            sizes="100vw"
+            sizes="(max-width: 1023px) 100vw, 0px"
           />
         </div>
 

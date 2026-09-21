@@ -11,7 +11,7 @@ export default function RequestAccessHeroSection() {
         height={922}
         className="block h-auto w-full max-w-none"
         priority
-        sizes="100vw"
+        sizes="(max-width: 1873px) 100vw, 1873px"
       />
 
       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/70" />

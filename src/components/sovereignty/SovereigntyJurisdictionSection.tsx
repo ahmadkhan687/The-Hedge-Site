@@ -31,7 +31,7 @@ export default function SovereigntyJurisdictionSection() {
             alt="Sovereign infrastructure hardware in a minimalist setting"
             fill
             className="object-cover"
-            sizes="100vw"
+            sizes="(max-width: 1023px) 100vw, 0px"
           />
         </div>
 
