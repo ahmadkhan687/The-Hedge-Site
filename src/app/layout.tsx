@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { GoogleTagManager } from "@next/third-parties/google";
 import {
   Archivo_Narrow,
   Barlow_Condensed,
@@ -7,7 +6,11 @@ import {
   Inter,
   Schibsted_Grotesk,
 } from "next/font/google";
+import ConsentGtm from "@/components/cookies/ConsentGtm";
+import CookieBanner from "@/components/cookies/CookieBanner";
 import "./globals.css";
+
+
 
 const inter = Inter({
   variable: "--font-inter",
@@ -123,9 +126,10 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${barlowCondensed.variable} ${ebGaramond.variable} ${archivoNarrow.variable} ${schibstedGrotesk.variable} h-full antialiased`}
     >
-      {gtmId ? <GoogleTagManager gtmId={gtmId} /> : null}
+      {gtmId ? <ConsentGtm gtmId={gtmId} /> : null}
       <body className="flex min-h-full flex-col overflow-x-clip bg-[#F4F0EA] text-black">
         {children}
+        <CookieBanner />
       </body>
     </html>
   );

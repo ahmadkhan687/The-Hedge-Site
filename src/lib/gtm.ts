@@ -1,3 +1,5 @@
+import { hasAnalyticsConsent } from "@/lib/cookie-consent";
+
 type DataLayerEvent = {
   event: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- GTM payloads are loosely typed
@@ -11,7 +13,8 @@ declare global {
 }
 
 /**
- * Push a custom event to the GTM dataLayer (no-op on the server).
+ * Push a custom event to the GTM dataLayer (no-op on the server
+ * or when the visitor has not accepted analytics cookies).
  */
 export function trackEvent(
   eventName: string,
@@ -19,6 +22,7 @@ export function trackEvent(
   params?: Record<string, any>,
 ): void {
   if (typeof window === "undefined") return;
+  if (!hasAnalyticsConsent()) return;
 
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push({

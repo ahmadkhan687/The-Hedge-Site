@@ -7,6 +7,7 @@ const footerNav = [
   { label: "SOVEREIGNTY", href: "/sovereignty" },
   { label: "PERSPECTIVES", href: "/perspectives" },
   { label: "ABOUT", href: "/about" },
+  { label: "PRIVACY POLICY", href: "/privacy" },
 ];
 
 export default function Footer() {
