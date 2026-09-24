@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
 const TOC = [
   { id: "information-we-collect", n: "01", label: "Information we collect" },
   { id: "how-we-use-information", n: "02", label: "How we use information" },
@@ -121,6 +125,33 @@ const SECTIONS = [
 ] as const;
 
 export default function PrivacyPolicySection() {
+  const [activeId, setActiveId] = useState<string>(TOC[0].id);
+
+  useEffect(() => {
+    const updateActive = () => {
+      // Marker near sticky nav — section under that point stays bold
+      const markerY = 140;
+      let current: (typeof TOC)[number]["id"] = TOC[0].id;
+
+      for (const item of TOC) {
+        const el = document.getElementById(item.id);
+        if (!el) continue;
+        const top = el.getBoundingClientRect().top;
+        if (top <= markerY) current = item.id;
+      }
+
+      setActiveId(current);
+    };
+
+    updateActive();
+    window.addEventListener("scroll", updateActive, { passive: true });
+    window.addEventListener("resize", updateActive);
+    return () => {
+      window.removeEventListener("scroll", updateActive);
+      window.removeEventListener("resize", updateActive);
+    };
+  }, []);
+
   return (
     <section className="bg-[#F4F0EA] text-[#111]">
       <div className="mx-auto flex w-full max-w-[1728px] flex-col gap-12 px-5 pb-16 pt-12 sm:gap-14 sm:px-8 sm:pb-20 sm:pt-16 lg:gap-[70px] lg:px-[94px] lg:pb-[120px] lg:pt-[104px]">
@@ -162,21 +193,36 @@ export default function PrivacyPolicySection() {
               On this page
             </p>
             <ul className="m-0 flex list-none flex-col gap-5 p-0">
-              {TOC.map((item) => (
-                <li key={item.id}>
-                  <a
-                    href={`#${item.id}`}
-                    className="flex gap-3.5 no-underline transition-opacity hover:opacity-70"
-                  >
-                    <span className="w-7 shrink-0 font-inter text-xs font-normal text-[#E83387]">
-                      {item.n}
-                    </span>
-                    <span className="font-inter text-[13px] font-normal leading-[1.35] text-[#111]">
-                      {item.label}
-                    </span>
-                  </a>
-                </li>
-              ))}
+              {TOC.map((item) => {
+                const isActive = activeId === item.id;
+                return (
+                  <li key={item.id}>
+                    <a
+                      href={`#${item.id}`}
+                      aria-current={isActive ? "location" : undefined}
+                      onClick={() => setActiveId(item.id)}
+                      className={`group flex gap-3.5 no-underline transition-opacity hover:opacity-70 ${
+                        isActive ? "font-bold" : "font-normal"
+                      }`}
+                    >
+                      <span
+                        className={`w-7 shrink-0 font-inter text-xs text-[#E83387] group-hover:font-bold ${
+                          isActive ? "font-bold" : "font-normal"
+                        }`}
+                      >
+                        {item.n}
+                      </span>
+                      <span
+                        className={`font-inter text-[13px] leading-[1.35] text-[#111] group-hover:font-bold ${
+                          isActive ? "font-bold" : "font-normal"
+                        }`}
+                      >
+                        {item.label}
+                      </span>
+                    </a>
+                  </li>
+                );
+              })}
             </ul>
           </nav>
 
@@ -185,6 +231,7 @@ export default function PrivacyPolicySection() {
               <article
                 key={section.id}
                 id={section.id}
+                onMouseEnter={() => setActiveId(section.id)}
                 className="scroll-mt-28 border-t border-[#C9C3BA] pb-10 pt-8 sm:pb-[52px] sm:pt-[42px]"
               >
                 <div className="flex gap-6 sm:gap-11">
@@ -200,15 +247,17 @@ export default function PrivacyPolicySection() {
                         key={paragraph.slice(0, 40)}
                         className="font-eb-garamond text-base font-normal leading-[1.62] text-[#111] sm:text-lg"
                       >
-                        {paragraph.includes("privacy@thehedgecollective.com") ? (
+                        {paragraph.includes(
+                          "innovate@thehedgecollective.com",
+                        ) ? (
                           <>
                             Questions, requests or concerns about privacy can be
                             sent to{" "}
                             <a
-                              href="mailto:privacy@thehedgecollective.com"
+                              href="mailto:innovate@thehedgecollective.com"
                               className="text-[#111] underline underline-offset-2"
                             >
-                              privacy@thehedgecollective.com
+                              innovate@thehedgecollective.com
                             </a>
                             .
                           </>
